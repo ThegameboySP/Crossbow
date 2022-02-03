@@ -1,0 +1,11 @@
+[package]
+name = "thegameboysp/crossbow"
+version = "0.0.0"
+realm = "shared"
+registry = "https://github.com/upliftgames/wally-index"
+exclude = ["examples", "Packages"]
+
+[dependencies]
+Matter = "evaera/matter@0.1.2"
+TestEZ = "roblox/testez@0.4.1"
+t = "osyrisrblx/t@3.0.0"

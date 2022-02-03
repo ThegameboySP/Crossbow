@@ -1,0 +1,25 @@
+{
+	"name": "CrossbowECS",
+	"tree": {
+		"$className": "DataModel",
+
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"$path": "Packages",
+			"Crossbow": {
+				"$path": "default.project.json"
+			}
+		},
+
+		"TestService": {
+			"$ignoreUnknownInstances": true,
+			"$properties": {
+				"ExecuteWithStudioRun": true
+			},
+
+			"CrossbowRun": {
+				"$path": "runTests.server.lua"
+			}
+		}
+	}
+}

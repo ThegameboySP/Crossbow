@@ -1,0 +1,9 @@
+{
+	"name": "CrossbowECS",
+	"tree": {
+		"$path": "src",
+		"Assets": {
+			"$path": "assets"
+		}
+	}
+}

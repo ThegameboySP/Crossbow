@@ -1,0 +1,12 @@
+# Project place file
+/RojoECS.rbxlx
+
+# Local examples
+/examples
+
+# Wally packages
+/Packages
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock

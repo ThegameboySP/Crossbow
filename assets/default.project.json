@@ -1,0 +1,126 @@
+{
+	"name": "assets",
+	"tree": {
+		"$className": "Folder",
+		"Audio": {
+			"$className": "Folder",
+
+			"SuperballBounce": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxasset://sounds//short spring sound.wav",
+					"Volume": 0.5
+				}
+			},
+
+			"SwordEquip": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxassetid://12222225",
+					"Volume": 0.2
+				},
+				"Equalizer": {
+					"$className": "EqualizerSoundEffect",
+					"$properties": {
+						"HighGain": -5,
+						"MidGain": -5,
+						"LowGain": 0
+					}
+				}
+			},
+
+			"SwordLunge": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxasset://sounds/swordlunge.wav",
+					"Volume": 0.2
+				},
+				"Equalizer": {
+					"$className": "EqualizerSoundEffect",
+					"$properties": {
+						"HighGain": 0,
+						"MidGain": -7.5,
+						"LowGain": -2
+					}
+				}
+			},
+
+			"SwordSlash": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxasset://sounds/swordslash.wav",
+					"Volume": 0.2
+				}
+			},
+
+			"SlingshotModern": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxassetid://94795238",
+					"Volume": 2,
+					"PlaybackSpeed": 1.2,
+					"Pitch": 1.2
+				}
+			},
+
+			"SlingshotClassic": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxassetid://844029237",
+					"Volume": 0.4
+				}
+			},
+
+			"TrowelBuild": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxassetid://8240892807",
+					"Volume": 0.6
+				},
+				"Equalizer": {
+					"$className": "EqualizerSoundEffect",
+					"$properties": {
+						"HighGain": 0,
+						"MidGain": -2,
+						"LowGain": -6
+					}
+				}
+			},
+			
+			"BombExplodeModern": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxassetid://1842360200",
+					"Volume": 1
+				}
+			},
+
+			"BombExplodeClassic": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxasset://sounds/Rocket shot.wav",
+					"Volume": 0.5
+				}
+			},
+
+			"BombTick": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxasset://sounds//clickfast.wav",
+					"Volume": 0.5
+				}
+			},
+
+			"RocketExplode": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxasset://sounds/collide.wav",
+					"Volume": 0.3
+				}
+			}
+		},
+		"Prefabs": {
+			"$className": "Folder"
+		}
+	}
+}
