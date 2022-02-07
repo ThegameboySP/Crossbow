@@ -120,7 +120,7 @@
 			}
 		},
 		"Prefabs": {
-			"$className": "Folder"
+			"$path": "prefabs.rbxmx"
 		}
 	}
 }

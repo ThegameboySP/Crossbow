@@ -1,4 +1,4 @@
-local t = require(script.Parent.Parent.Parent.Vendor.t)
+local t = require(script.Parent.Parent.Parent.t)
 
 local Filters = require(script.Parent.Parent.Utilities.Filters)
 local Value = require(script.Parent.Parent.Utilities.Value)
@@ -6,11 +6,11 @@ local General = require(script.Parent.Parent.Utilities.General)
 
 local NetMode = require(script.Parent.NetMode)
 local Assets = script.Parent.Parent.Assets
-local Sounds = Assets.Sounds
+local Audio = Assets.Audio
 local Prefabs = Assets.Prefabs
 
 local function find(instance, name)
-	return instance:FindFirstChild(name) or error(("No child named %s under %s"):format(name, instance:GetFullName()))
+	return instance:FindFirstChild(name) or error(("No child named %q under %s"):format(name, instance:GetFullName()), 2)
 end
 
 return General.lockTable("Configuration", {
@@ -32,23 +32,29 @@ return General.lockTable("Configuration", {
 	});
 
 	Sounds = General.lockTable("Sounds", {
-		FireSuperball = Value.new(find(Sounds, "SuperballBounce"), t.instanceIsA("Sound"));
-		SwordLunge = Value.new(find(Sounds, "SwordLunge"), t.instanceIsA("Sound"));
-		SwordEquip = Value.new(find(Sounds, "SwordEquip"), t.instanceIsA("Sound"));
-		SwordSlash = Value.new(find(Sounds, "SwordSlash"), t.instanceIsA("Sound"));
-		RocketExplode = Value.new(find(Sounds, "RocketExplode"), t.instanceIsA("Sound"));
-		BombExplode = Value.new(find(Sounds, "BombExplodeModern"), t.instanceIsA("Sound"));
-		BombTick = Value.new(find(Sounds, "BombTick"), t.instanceIsA("Sound"));
-		FireSlingshot = Value.new(find(Sounds, "SlingshotModern"), t.instanceIsA("Sound"));
-		Build = Value.new(find(Sounds, "TrowelBuild"), t.instanceIsA("Sound"));
+		FireSuperball = Value.new(find(Audio, "SuperballBounce"), t.instanceIsA("Sound"));
+		SwordLunge = Value.new(find(Audio, "SwordLunge"), t.instanceIsA("Sound"));
+		SwordEquip = Value.new(find(Audio, "SwordEquip"), t.instanceIsA("Sound"));
+		SwordSlash = Value.new(find(Audio, "SwordSlash"), t.instanceIsA("Sound"));
+		RocketExplode = Value.new(find(Audio, "RocketExplode"), t.instanceIsA("Sound"));
+		BombExplode = Value.new(find(Audio, "BombExplodeModern"), t.instanceIsA("Sound"));
+		BombTick = Value.new(find(Audio, "BombTick"), t.instanceIsA("Sound"));
+		FireSlingshot = Value.new(find(Audio, "SlingshotModern"), t.instanceIsA("Sound"));
+		Build = Value.new(find(Audio, "TrowelBuild"), t.instanceIsA("Sound"));
 	});
 
 	Prefabs = General.lockTable("Prefabs", {
+		SuperballTool = find(Prefabs, "SuperballTool");
+		RocketTool = find(Prefabs, "RocketTool");
+		BombTool = find(Prefabs, "BombTool");
+		TrowelTool = find(Prefabs, "TrowelTool");
+		SlingshotTool = find(Prefabs, "SlingshotTool");
+		SwordTool = find(Prefabs, "SwordTool");
+
 		Superball = find(Prefabs, "Superball");
 		Rocket = find(Prefabs, "Rocket");
 		Bomb = find(Prefabs, "Bomb");
-		Trowel = find(Prefabs, "TrowelBrick");
-		Slingshot = find(Prefabs, "Slingshot");
+		Pellet = find(Prefabs, "Pellet");
 	});
 
 	Rules = General.lockTable("Rules", {

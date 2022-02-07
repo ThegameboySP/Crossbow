@@ -1,4 +1,4 @@
 local TestEZ = require(game:GetService("ReplicatedStorage").TestEZ)
-require(TestEZ).TestBootstrap:run({
+TestEZ.TestBootstrap:run({
 	game:GetService("ReplicatedStorage").Crossbow
 })
