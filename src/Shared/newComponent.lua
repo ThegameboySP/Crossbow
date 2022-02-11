@@ -6,6 +6,9 @@ return function(name, tbl)
 	component.schema = function()
 		return true
 	end
+	component.shouldReplicate = function()
+		return true
+	end
 	
 	function component.new(data)
 		local comp

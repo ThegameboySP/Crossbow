@@ -9,40 +9,55 @@ local bindSignals = require(script.Parent.bindSignals)
 local Prefabs = script.Parent.Assets.Prefabs
 
 local Components = require(script.Parent.Components)
+local Definitions = require(script.Parent.Shared.Definitions)
 local Events = require(script.Parent.Utilities.Events)
 local Filters = require(script.Parent.Utilities.Filters)
 local Observers = require(script.Parent.Utilities.Observers)
 local Packs = require(script.Parent.Shared.Packs)
 local Configuration = require(script.Parent.Shared.Configuration)
 
-local params = {
-	events = Events.new();
-}
-local world = Matter.World.new()
-
-local Crossbow = {
-	IsTesting = false;
-	Initialized = false;
-
-	World = world;
-	Loop = Matter.Loop.new(world, params);
-	_systemsSet = {};
-
-	Configuration = Configuration;
-	Tools = {};
-	Observers = Observers.new();
-	
-	remoteEvent = nil;
-}
+local Crossbow = {}
+Crossbow.__index = Crossbow
 
 local IS_SERVER = RunService:IsServer()
+
+function Crossbow.new()
+	local params = {}
+	local world = Matter.World.new()
+
+	return setmetatable({
+		Components = Components;
+		
+		IsServer = IS_SERVER;
+		IsTesting = false;
+		Initialized = false;
+	
+		Params = params;
+		World = world;
+		Loop = Matter.Loop.new(world, params);
+		_systemsSet = {};
+	
+		Configuration = Configuration;
+		Tools = {};
+		Observers = Observers.new();
+	}, Crossbow)
+end
+
+function Crossbow:PopulateParams()
+	self.Params.Crossbow = self
+	self.Params.events = Events.new()
+	self.Params.remoteEvent = Instance.new("RemoteEvent")
+	self.Params.entityKey = self.IsServer and "serverEntityId" or "clientEntityId"
+end
 
 function Crossbow:Init()
 	if self.Initialized then return end
 	self.Initialized = true
-
+	
+	self:PopulateParams()
 	self:_registerSystems(script.Parent.Systems)
 
+	local params = self.Params
 	self.Loop:begin(bindSignals(function(nextFn, signalName)
 		return function()
 			debug.profilebegin("Crossbow")
@@ -80,15 +95,16 @@ function Crossbow:Init()
 		-- 		self.Observers:Fire("Client" .. eventName, player, ...)
 		-- 	end)
 		-- end)
-	elseif not IS_SERVER and not self.IsTesting then
-		-- self.remoteEvent = ReplicatedStorage:WaitForChild("CrossbowRemoteEvent")
+	-- elseif not IS_SERVER and not self.IsTesting then
+	-- 	self.remoteEvent = ReplicatedStorage:WaitForChild("CrossbowRemoteEvent")
 
-		-- task.defer(function()
-		-- 	self.remoteEvent.OnClientEvent:Connect(function(eventName, ...)
-		-- 		self.Observers:Fire("Server" .. eventName, ...)
-		-- 		self.Observers:Fire(eventName, ...)
-		-- 	end)
-		-- end)
+	-- 	task.defer(function()
+	-- 		self.remoteEvent.OnClientEvent:Connect(function(eventName, ...)
+	-- 			self.Observers:Fire("Server" .. eventName, ...)
+	-- 			self.Observers:Fire(eventName, ...)
+	-- 		end)
+	-- 	end)
+	-- end
 	end
 end
 
@@ -192,7 +208,17 @@ function Crossbow:_registerSystems(target)
 	local newSystems = {}
 
 	self:ForEachModulescript(function(module)
+		if module.name:find(".spec$") then return end
+
 		local source = require(module)
+		assert(Definitions.system(source))
+
+		if
+			(source.realm == "server" and not self.IsServer)
+			or (source.realm == "client" and self.IsServer)
+		then
+			return
+		end
 
 		if not self._systemsSet[source] then
 			self._systemsSet[source] = true
@@ -213,5 +239,4 @@ function Crossbow:ForEachModulescript(handler, folder)
 	end
 end
 
-
-return Crossbow
+return Crossbow.new()

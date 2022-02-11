@@ -3,6 +3,7 @@ local function toolPack(componentName)
 		local component = components[componentName]
 
 		return
+			components.Exists(),
 			components.Tool({
 				character = character;
 				component = component;
@@ -21,6 +22,7 @@ local function projectilePack(componentName)
 
 		local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, spawnPos)
 		return
+			components.Exists(),
 			components.Projectile({
 				component = component;
 				spawnerId = spawnerId;
