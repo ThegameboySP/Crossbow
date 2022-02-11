@@ -64,16 +64,16 @@ local function useToolActions(world, params)
 	end
 	
 	for index, activation in ipairs(activations) do
-		if activation.name == "Fire" 
-			and activation.event[1] == nil
-			and activation.tool.onlyActivateOnPartHit
+		if activation.name == "Fire"
+			and
+				(not world:get(activation.id, Components.Tool):canFire()
+				or (activation.event[1] == nil
+					and activation.tool.onlyActivateOnPartHit))
 		then 
 			continue 
 		end
 		
-		for _=1, 100 do
-			params.events:fire("on" .. activation.name, activation.id, unpack(activation.event))
-		end
+		params.events:fire("on" .. activation.name, activation.id, unpack(activation.event))
 		activations[index] = nil
 	end
 	
@@ -81,14 +81,12 @@ local function useToolActions(world, params)
 	for id, part in params.events:iterate("onFire") do
 		local tool = world:get(id, Components.Tool)
 		local specificTool = world:get(id, tool.component)
-		
-		if
-			part == nil
-			and specificTool.onlyActivateOnPartHit
-		then 
-			continue 
-		end
-		
+
+		world:insert(id, tool:patch({
+			reloading = true;
+			reloadTimeLeft = specificTool.reloadTime;
+		}))
+
 		world:spawn(specificTool.projectilePack(Components, id, tool, specificTool, part))
 	end
 	

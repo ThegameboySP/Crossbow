@@ -10,8 +10,8 @@ local RocketTool = newComponent("RocketTool", {
 	getProjectileCFrame = Tool.getProjectileCFrame;
 
 	defaults = Matter.merge(Tool.inheritedDefaults, {
-		reloadTime = 0;
-		velocity = 10;--60;
+		reloadTime = 7;
+		velocity = 60;
 		spawnDistance = 6;
 
 		prefab = Prefabs.Rocket;

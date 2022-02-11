@@ -11,12 +11,14 @@ local Tool = newComponent("Tool", {
 		
 		isEquipped = t.boolean;
 		reloading = t.boolean;
+		reloadTimeLeft = t.number;
 		character = t.optional(t.Instance);
 	});
 	
 	defaults = {
 		isEquipped = false;
 		reloading = false;
+		reloadTimeLeft = 0;
 	};
 	
 	getProjectileCFrame = function(tool, spawnDistance, spawnPos)
