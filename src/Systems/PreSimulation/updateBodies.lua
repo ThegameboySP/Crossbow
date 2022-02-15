@@ -1,16 +1,14 @@
-local Components = require(script.Parent.Parent.Parent.Components)
-
 local updateToolActions = require(script.Parent.updateToolActions)
 
-local function updateBodies(world)
+local function updateBodies(world, components)
 	-- If a Part + Transform was just added/changed, set its CFrame and setup physics bodies.
-	for id, partRecord, transform in world:queryChanged(Components.Part, Components.Transform) do
+	for id, partRecord, transform in world:queryChanged(components.Part, components.Transform) do
 		if partRecord.new then
 			local part = partRecord.new.part
 			part.Anchored = false
 			part.Massless = true
 			
-			local velocity = world:get(id, Components.Velocity)
+			local velocity = world:get(id, components.Velocity)
 			if velocity then
 				local bodyVelocity = Instance.new("BodyVelocity")
 				bodyVelocity.Name = "BodyVelocity"
@@ -37,9 +35,9 @@ local function updateBodies(world)
 	end
 	
 	-- Handle Transform added/changed to existing entity with Part
-	for id, transformRecord, part in world:queryChanged(Components.Transform, Components.Part) do
+	for id, transformRecord, part in world:queryChanged(components.Transform, components.Part) do
 		if transformRecord.new and not transformRecord.new.doNotReconcile then
-			local velocity = world:get(id, Components.Velocity)
+			local velocity = world:get(id, components.Velocity)
 			if velocity == nil then
 				part.part.BodyPosition.Position = transformRecord.new.cframe.Position
 			end
@@ -48,7 +46,7 @@ local function updateBodies(world)
 		end
 	end
 	
-	for _id, velocityRecord, part in world:queryChanged(Components.Velocity, Components.Part) do
+	for _id, velocityRecord, part in world:queryChanged(components.Velocity, components.Part) do
 		if velocityRecord.new then
 			part.part.BodyVelocity.Velocity = velocityRecord.new.velocity
 		end

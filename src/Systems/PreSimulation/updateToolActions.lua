@@ -1,6 +1,5 @@
 local RunService = game:GetService("RunService")
 
-local Components = require(script.Parent.Parent.Parent.Components)
 local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 
 local InputStrategies = require(script.Parent.Parent.Parent.Input.InputStrategies)
@@ -53,9 +52,9 @@ local function useInput(world, id, tool)
 	end
 end
 
-local function useToolActions(world, params)
+local function useToolActions(world, components, params)
 	-- Run input checks for tool actions.
-	for id, tool in world:query(Components.Tool, Components.Local) do
+	for id, tool in world:query(components.Tool, components.Local) do
 		if not tool.isEquipped then continue end
 		
 		debug.profilebegin("input")
@@ -66,7 +65,7 @@ local function useToolActions(world, params)
 	for index, activation in ipairs(activations) do
 		if activation.name == "Fire"
 			and
-				(not world:get(activation.id, Components.Tool):canFire()
+				(not world:get(activation.id, components.Tool):canFire()
 				or (activation.event[1] == nil
 					and activation.tool.onlyActivateOnPartHit))
 		then 
@@ -79,7 +78,7 @@ local function useToolActions(world, params)
 	
 	-- Assign components to projectiles according to tool's pack.
 	for id, part in params.events:iterate("onFire") do
-		local tool = world:get(id, Components.Tool)
+		local tool = world:get(id, components.Tool)
 		local specificTool = world:get(id, tool.component)
 
 		world:insert(id, tool:patch({
@@ -87,11 +86,11 @@ local function useToolActions(world, params)
 			reloadTimeLeft = specificTool.reloadTime;
 		}))
 
-		world:spawn(specificTool.projectilePack(Components, id, tool, specificTool, part))
+		world:spawn(specificTool.pack(id, tool, specificTool, part))
 	end
 	
-	for id, projectile in world:query(Components.Projectile):without(Components.Part, Components.Instance) do
-		local tool = world:get(projectile.spawnerId, Components.Tool)
+	for id, projectile in world:query(components.Projectile):without(components.Part, components.Instance) do
+		local tool = world:get(projectile.spawnerId, components.Tool)
 		local specificTool = world:get(projectile.spawnerId, tool.component)
 		local part = specificTool.prefab:Clone()
 		
@@ -102,10 +101,10 @@ local function useToolActions(world, params)
 
 		world:insert(
 			id,
-			Components.Instance({
+			components.Instance({
 				instance = part,
 			}),
-			Components.Part({
+			components.Part({
 				part = part
 			})
 		)

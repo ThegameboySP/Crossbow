@@ -4,7 +4,7 @@ local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 
 local newPlayers = {}
 
-local function serverReplication(world, params)
+local function serverReplication(world, components, params)
 	local newComponents = {}
 	local removedComponents = {}
 
@@ -12,7 +12,7 @@ local function serverReplication(world, params)
 		newPlayers[player] = true
 	end
 
-	for _, definition in pairs(params.Crossbow.Components) do
+	for _, definition in pairs(components) do
 		if definition.noReplicate then continue end
 		
 		for id, changedRecord in world:queryChanged(definition) do
@@ -36,7 +36,7 @@ local function serverReplication(world, params)
 	for player in pairs(newPlayers) do
 		local new = {}
 
-		for _, definition in pairs(params.Crossbow.Components) do
+		for _, definition in pairs(components) do
 			if definition.noReplicate then continue end
 
 			for id, component in world:query(definition) do

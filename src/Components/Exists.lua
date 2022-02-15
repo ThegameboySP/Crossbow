@@ -1,2 +1,4 @@
 local newComponent = require(script.Parent.Parent.Shared.newComponent)
-return newComponent("Exists")
+return function()
+	return newComponent("Exists")
+end

@@ -1,33 +1,16 @@
-local Matter = require(script.Parent.Parent.Parent.Matter)
-local t = require(script.Parent.Parent.Parent.t)
-
-local Prefabs = script.Parent.Parent.Assets.Prefabs
-local Tool = require(script.Parent.Tool)
-local Packs = require(script.Parent.Parent.Shared.Packs)
+local General = require(script.Parent.Parent.Utilities.General)
 local newComponent = require(script.Parent.Parent.Shared.newComponent)
 
-local RocketTool = newComponent("RocketTool", {
-	getProjectileCFrame = Tool.getProjectileCFrame;
+return function(settings)
+	return newComponent("RocketTool", {
+		getProjectileCFrame = General.getProjectileCFrame;
 
-	defaults = Matter.merge(Tool.inheritedDefaults, {
-		reloadTime = 7;
-		velocity = 60;
-		spawnDistance = 6;
-
-		prefab = Prefabs.Rocket;
-
-		pack = Packs.RocketTool;
-		projectilePack = Packs.Rocket;
-	});
-	
-	schema = t.strictInterface(Matter.merge(Tool.inheritedSchema, {
-		reloadTime = t.number;
-		velocity = t.number;
-		spawnDistance = t.number;
-		pack = t.callback;
-		projectilePack = t.callback;
-		prefab = t.instanceIsA("BasePart");
-	}));
-})
-
-return RocketTool
+		index = {
+			reloadTime = settings.RocketTool.reloadTime;
+			velocity = settings.RocketTool.velocity;
+			spawnDistance = settings.RocketTool.spawnDistance;
+			prefab = settings.RocketTool.prefab;
+			pack = settings.RocketTool.pack;
+		};
+	})
+end

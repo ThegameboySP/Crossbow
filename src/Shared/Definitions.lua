@@ -5,6 +5,14 @@ return {
 		realm = t.optional(t.valueOf({"server", "client"}));
 	});
 
+	component = t.interface({
+		noReplicate = t.optional(t.boolean);
+		index = t.optional(t.table);
+		defaults = t.optional(t.table);
+		schemaNotStrict = t.optional(t.boolean);
+		schema = t.optional(t.table);
+	});
+
 	params = t.strictInterface({
 		Crossbow = t.table;
 
@@ -30,4 +38,6 @@ return {
 		onActivated = t.optional(t.callback);
 		onDeactivated = t.optional(t.callback);
 	});
+
+	damageType = t.valueOf({"Hit", "Explosion", "Melee"});
 }

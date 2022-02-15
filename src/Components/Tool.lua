@@ -3,86 +3,68 @@ local Players = game:GetService("Players")
 local t = require(script.Parent.Parent.Parent.t)
 local newComponent = require(script.Parent.Parent.Shared.newComponent)
 
-local Tool = newComponent("Tool", {
-	schema = t.strictInterface({
-		component = t.interface({
-			patch = t.callback;
-		});
+return function()
+	local Tool = newComponent("Tool", {
+		schema = {
+			component = t.interface({
+				patch = t.callback;
+			});
+			
+			isEquipped = t.boolean;
+			reloading = t.boolean;
+			reloadTimeLeft = t.number;
+			character = t.optional(t.Instance);
+		};
 		
-		isEquipped = t.boolean;
-		reloading = t.boolean;
-		reloadTimeLeft = t.number;
-		character = t.optional(t.Instance);
-	});
-	
-	defaults = {
-		isEquipped = false;
-		reloading = false;
-		reloadTimeLeft = 0;
-	};
-	
-	getProjectileCFrame = function(tool, spawnDistance, spawnPos)
-		local pos = tool:getPosition("Head")
-		local dir = tool:getDirection(spawnPos, "Head")
-		local at = pos + dir * spawnDistance
-		return CFrame.lookAt(at, at + dir)
-	end;
+		defaults = {
+			isEquipped = false;
+			reloading = false;
+			reloadTimeLeft = 0;
+		};
+	})
 
-	inheritedDefaults = {
-		reloadTime = 0;
-	};
-	
-	inheritedSchema = {
-		reloadTime = t.number;
-		onlyActivateOnPartHit = t.optional(t.boolean);
-
-		fireSound = t.optional(t.table);
-
-		pack = t.callback;
-	};
-})
-
-function Tool:canFire()
-	return self.isEquipped and not self.reloading and not self.firePending
-end
-
-function Tool:getPlayer()
-	local char = self.character
-	if char then
-		return Players:GetPlayerFromCharacter(char)
+	function Tool:canFire()
+		return self.isEquipped and not self.reloading and not self.firePending
 	end
 
-	return nil
-end
+	function Tool:getPlayer()
+		local char = self.character
+		if char then
+			return Players:GetPlayerFromCharacter(char)
+		end
 
-function Tool:getHead()
-	local char = self.character
-	if char == nil then
 		return nil
 	end
 
-	return char:FindFirstChild("Head")
-end
+	function Tool:getHead()
+		local char = self.character
+		if char == nil then
+			return nil
+		end
 
-function Tool:getHumanoid()
-	local char = self.character
-	if char == nil then
-		return nil
+		return char:FindFirstChild("Head")
 	end
 
-	return char:FindFirstChildOfClass("Humanoid")
-end
+	function Tool:getHumanoid()
+		local char = self.character
+		if char == nil then
+			return nil
+		end
 
-function Tool:getDirection(pos, name)
-	local char = self.character
-	local part = char and char:FindFirstChild(name)
-	return part and (pos - part.Position).Unit or Vector3.zero
-end
+		return char:FindFirstChildOfClass("Humanoid")
+	end
 
-function Tool:getPosition(name)
-	local char = self.character
-	local part = char and char:FindFirstChild(name)
-	return part and part.Position or Vector3.zero
-end
+	function Tool:getDirection(pos, name)
+		local char = self.character
+		local part = char and char:FindFirstChild(name)
+		return part and (pos - part.Position).Unit or Vector3.zero
+	end
 
-return Tool
+	function Tool:getPosition(name)
+		local char = self.character
+		local part = char and char:FindFirstChild(name)
+		return part and part.Position or Vector3.zero
+	end
+
+	return Tool
+end

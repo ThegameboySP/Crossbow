@@ -1,5 +1,13 @@
 local General = {}
 
+function General.getProjectileCFrame(tool, spawnDistance, spawnPos)
+	local pos = tool:getPosition("Head")
+	local dir = tool:getDirection(spawnPos, "Head")
+	local at = pos + dir * spawnDistance
+	
+	return CFrame.lookAt(at, at + dir)
+end
+
 function General.getCharacter(instance)
 	local parent = instance.Parent
 

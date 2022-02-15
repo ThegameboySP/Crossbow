@@ -1,4 +1,4 @@
-local function fireRemotes(_, params)
+local function fireRemotes(_, _, params)
 	if params.events.remote then
 		if params.Crossbow.IsServer then
 			local packedClientBodies = {}

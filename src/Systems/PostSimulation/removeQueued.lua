@@ -1,19 +1,17 @@
-local Components = require(script.Parent.Parent.Parent.Components)
-
-local function removedQueued(world)
-	for id, record in world:queryChanged(Components.Exists) do
+local function removedQueued(world, components)
+	for id, record in world:queryChanged(components.Exists) do
 		if record.new == nil then
 			world:despawn(id)
 		end
 	end
 
-	for _id, instanceRecord in world:queryChanged(Components.Instance) do
+	for _id, instanceRecord in world:queryChanged(components.Instance) do
 		if instanceRecord.new == nil then
 			instanceRecord.old.instance:Destroy()
 		end
 	end
 
-	for _id, partRecord in world:queryChanged(Components.Part) do
+	for _id, partRecord in world:queryChanged(components.Part) do
 		if partRecord.new == nil then
 			partRecord.old.part:Destroy()
 		end

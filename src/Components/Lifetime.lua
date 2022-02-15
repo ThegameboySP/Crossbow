@@ -2,10 +2,10 @@ local t = require(script.Parent.Parent.Parent.t)
 local newComponent = require(script.Parent.Parent.Shared.newComponent)
 
 return function()
-	return newComponent("Transform", {
+	return newComponent("Lifetime", {
 		schema = {
-			cframe = t.CFrame;
-			doNotReconcile = t.optional(t.boolean);
+			duration = t.number;
+			timestamp = t.number;
 		};
 	})
 end

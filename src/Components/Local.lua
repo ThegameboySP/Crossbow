@@ -1,4 +1,6 @@
 local newComponent = require(script.Parent.Parent.Shared.newComponent)
-return newComponent("Local", {
-	noReplicate = true;
-})
+return function()
+	return newComponent("Local", {
+		noReplicate = true;
+	})
+end

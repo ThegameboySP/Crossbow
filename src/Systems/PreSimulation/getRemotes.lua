@@ -1,6 +1,6 @@
 local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 
-local function getRemotes(_, params)
+local function getRemotes(_, _, params)
 	if params.Crossbow.IsServer then
 		for client, bodies in Matter.useEvent(params.remoteEvent, "OnServerEvent") do
 			for name, body in pairs(bodies) do

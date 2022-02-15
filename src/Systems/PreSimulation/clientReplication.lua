@@ -1,30 +1,28 @@
-local Components = require(script.Parent.Parent.Parent.Components)
-
-local function patchComponents(world, id, components)
+local function patchComponents(components, world, id, remoteComponents)
 	local toUnpack = {}
-	for name, body in pairs(components) do
-		table.insert(toUnpack, world:get(id, Components[name]):patch(body))
+	for name, body in pairs(remoteComponents) do
+		table.insert(toUnpack, world:get(id, components[name]):patch(body))
 	end
 	return unpack(toUnpack)
 end
 
-local function createNewComponents(components)
+local function createNewComponents(components, remoteComponents)
 	local toUnpack = {}
-	for name, body in pairs(components) do
-		table.insert(toUnpack, Components[name](body))
+	for name, body in pairs(remoteComponents) do
+		table.insert(toUnpack, components[name](body))
 	end
 	return unpack(toUnpack)
 end
 
-local function clientReplication(world, params)
+local function clientReplication(world, components, params)
 	for newComponents, removedComponents in params.events:iterate("remote-replication") do
 		for id, name in pairs(removedComponents) do
-			world:remove(serverToClientId[id], Components[name])
+			world:remove(serverToClientId[id], components[name])
 		end
 
-		for id, components in pairs(newComponents) do
-			if components.Instance then
-				local instance = components.Instance.instance
+		for id, remoteComponents in pairs(newComponents) do
+			if remoteComponents.Instance then
+				local instance = remoteComponents.Instance.instance
 				if instance == nil then
 					warn(string.format("%d.Instance: instance doesn't exist in this realm.", id))
 					continue
@@ -32,9 +30,9 @@ local function clientReplication(world, params)
 				
 				local entityId = instance:GetAttribute(params.entityKey)
 				if entityId then
-					world:insert(entityId, patchComponents(world, entityId, components))
+					world:insert(entityId, patchComponents(components, world, entityId, remoteComponents))
 				else
-					world:spawn(createNewComponents(components))
+					world:spawn(createNewComponents(components, remoteComponents))
 				end
 			else
 				warn("Can't replicate entity: it has no attached Instance.")

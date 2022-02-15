@@ -1,28 +1,30 @@
 local Value = {}
 Value.__index = Value
 
-function Value.new(default, checker)
-	local event = Instance.new("BindableEvent")
-
+function Value.new(default, validator)
 	return setmetatable({
 		_value = default;
-		Changed = event.Event;
-		_event = event;
-		_checker = checker
+		_event = Instance.new("BindableEvent");
+		validator = validator
 	}, Value)
 end
 
 function Value:OnChanged(handler)
-	if self._value ~= nil then
-		handler(self._value)
+	local value = self:Get()
+	if value ~= nil then
+		handler(value)
 	end
 
-	return self.Changed:Connect(handler)
+	return self._event.Event:Connect(handler)
+end
+
+function Value:Connect(handler)
+	return self._event.Event:Connect(handler)
 end
 
 function Value:Set(value)
-	if self._checker then
-		assert(self._checker(value))
+	if self.validator then
+		assert(self.validator(value))
 	end
 	
 	local old = self._value
@@ -36,4 +38,9 @@ function Value:Get()
 	return self._value
 end
 
-return Value
+return {
+	new = Value.new;
+	is = function(value)
+		return type(value) == "table" and getmetatable(value) == Value
+	end;
+}

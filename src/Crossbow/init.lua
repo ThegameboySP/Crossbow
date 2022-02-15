@@ -3,18 +3,17 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 
-local Matter = require(script.Parent.Parent.Matter)
-local bindSignals = require(script.Parent.bindSignals)
-
 local Prefabs = script.Parent.Assets.Prefabs
 
-local Components = require(script.Parent.Components)
+local Matter = require(script.Parent.Parent.Matter)
 local Definitions = require(script.Parent.Shared.Definitions)
-local Events = require(script.Parent.Utilities.Events)
 local Filters = require(script.Parent.Utilities.Filters)
-local Observers = require(script.Parent.Utilities.Observers)
-local Packs = require(script.Parent.Shared.Packs)
-local Configuration = require(script.Parent.Shared.Configuration)
+
+local Events = require(script.Events)
+local Observers = require(script.Observers)
+local packs = require(script.packs)
+local settings = require(script.settings)
+local bindSignals = require(script.bindSignals)
 
 local Crossbow = {}
 Crossbow.__index = Crossbow
@@ -25,22 +24,41 @@ function Crossbow.new()
 	local params = {}
 	local world = Matter.World.new()
 
-	return setmetatable({
-		Components = Components;
-		
+	local self = setmetatable({
+		Components = nil;
+		Settings = nil;
+		Packs = nil;
+
 		IsServer = IS_SERVER;
 		IsTesting = false;
 		Initialized = false;
 	
 		Params = params;
 		World = world;
-		Loop = Matter.Loop.new(world, params);
+		Loop = nil;
 		_systemsSet = {};
 	
-		Configuration = Configuration;
 		Tools = {};
 		Observers = Observers.new();
 	}, Crossbow)
+
+	local listeners = {}
+	local function onInit(...)
+		table.insert(listeners, table.pack( ... ))
+		return ...
+	end
+
+	self.Settings = settings(self, onInit)
+	self.Packs = packs(self, onInit)
+	self.Components = self:_getComponents(script.Parent.Components)
+
+	for _, listener in ipairs(listeners) do
+		listener[listener.n](unpack(listener, 1, listener.n - 1))
+	end
+
+	self.Loop = Matter.Loop.new(world, self.Components, params)
+
+	return self
 end
 
 function Crossbow:PopulateParams()
@@ -82,44 +100,16 @@ function Crossbow:Init()
 	end))
 
 	if IS_SERVER and not self.IsTesting then
-		self.remoteEvent = Instance.new("RemoteEvent")
-		self.remoteEvent.Name = "CrossbowRemoteEvent"
-		self.remoteEvent.Parent = ReplicatedStorage
-
 		local soundGroup = Instance.new("SoundGroup")
 		soundGroup.Name = "CrossbowSounds"
 		soundGroup.Parent = SoundService
-
-		-- task.defer(function()
-		-- 	self.remoteEvent.OnServerEvent:Connect(function(player, eventName, ...)
-		-- 		self.Observers:Fire("Client" .. eventName, player, ...)
-		-- 	end)
-		-- end)
-	-- elseif not IS_SERVER and not self.IsTesting then
-	-- 	self.remoteEvent = ReplicatedStorage:WaitForChild("CrossbowRemoteEvent")
-
-	-- 	task.defer(function()
-	-- 		self.remoteEvent.OnClientEvent:Connect(function(eventName, ...)
-	-- 			self.Observers:Fire("Server" .. eventName, ...)
-	-- 			self.Observers:Fire(eventName, ...)
-	-- 		end)
-	-- 	end)
-	-- end
-	end
-end
-
-function Crossbow:FireRemote(eventName, ...)
-	if IS_SERVER then
-		self.remoteEvent:FireAllClients(eventName, ...)
-	else
-		self.remoteEvent:FireServer(eventName, ...)
 	end
 end
 
 function Crossbow:RegisterDefaultTools()
 	-- self:RegisterTool("Superball", Prefabs.superballTool, Packs.superballTool)
 	-- self:RegisterTool("Sword", Prefabs.swordTool, Packs.swordTool)
-	self:RegisterTool("Rocket", Prefabs.RocketTool, Packs.RocketTool)
+	self:RegisterTool("Rocket", Prefabs.RocketTool, self.Packs.RocketTool)
 	-- self:RegisterTool("Bomb", Prefabs.bombTool, Packs.bombTool)
 	-- self:RegisterTool("Trowel", Prefabs.trowelTool, Packs.trowelTool)
 	-- self:RegisterTool("Slingshot", Prefabs.slingshotTool, Packs.slingshotTool)
@@ -146,7 +136,7 @@ function Crossbow:AddToolsToCharacter(character)
 		local tool = entry.prefab:Clone()
 		tool.Parent = backpack
 		
-		self.World:spawn(entry.pack(Components, tool, character))
+		self.World:spawn(entry.pack(tool, character))
 	end
 end
 
@@ -180,25 +170,6 @@ function Crossbow:AutoAddTools()
 	end)
 end
 
--- function Crossbow:AddToDebris(object, time)
--- 	local typeOf = typeof(object)
-
--- 	if typeOf == "Instance" then
--- 		self.Manager.Binding:Delay(time, function()
--- 			self.Manager:RemoveRef(object)
--- 			object.Parent = nil
--- 		end)
--- 	elseif typeOf == "table" then
--- 		object.maid:Add(self.Manager.Binding:Delay(time, function()
--- 			self.Manager:RemoveRef(object.ref)
--- 			object.Parent = nil
--- 		end))
--- 	else
--- 		error("Invalid type: " .. typeOf, 2)
--- 	end
-	
--- end
-
 -- remove all projectiles & all else required between meta / rep-mode switches
 function Crossbow:Reset()
 
@@ -207,7 +178,7 @@ end
 function Crossbow:_registerSystems(target)
 	local newSystems = {}
 
-	self:ForEachModulescript(function(module)
+	forEachModulescript(target, function(module)
 		if module.name:find(".spec$") then return end
 
 		local source = require(module)
@@ -224,17 +195,31 @@ function Crossbow:_registerSystems(target)
 			self._systemsSet[source] = true
 			table.insert(newSystems, source)
 		end
-	end, target)
+	end)
 
 	self.Loop:scheduleSystems(newSystems)
 end
 
-function Crossbow:ForEachModulescript(handler, folder)
-	for _, child in pairs(folder:GetChildren()) do
+function Crossbow:_getComponents(target)
+	local components = {}
+
+	forEachModulescript(target, function(module)
+		local getComponent = require(module)
+		local component = getComponent(self.Settings) or error("No component returned by module: " .. module.Name)
+		components[module.Name] = component
+	end)
+
+	return setmetatable(components, {__index = function(_, k)
+		error(("No component named %q!"):format(k), 2)
+	end})
+end
+
+function forEachModulescript(target, handler)
+	for _, child in pairs(target:GetChildren()) do
 		if child:IsA("ModuleScript") then
 			handler(child)
 		elseif child:IsA("Folder") then
-			self:ForEachModulescript(handler, child)
+			forEachModulescript(child, handler)
 		end
 	end
 end

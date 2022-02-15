@@ -1,14 +1,13 @@
 local Players = game:GetService("Players")
 local Mouse = Players.LocalPlayer:GetMouse()
 
-local Components = require(script.Parent.Parent.Parent.Components)
 local updateTools = require(script.Parent.updateTools)
 
-local function updateCrosshair(world)
+local function updateCrosshair(world, components)
 	local equippingTool
 	local updated = false
 
-	for _id, toolRecord in world:queryChanged(Components.Tool, Components.Local) do
+	for _id, toolRecord in world:queryChanged(components.Tool, components.Local) do
 		updated = true
 		if toolRecord.new and toolRecord.new.isEquipped then
 			equippingTool = toolRecord.new
