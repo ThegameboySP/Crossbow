@@ -48,7 +48,7 @@ return function(crossbow, onInit)
 			lifetime = Value.new(15, t.number);
 			explodeFilter = Value.new(function(selfPart, part)
 				return
-					not Filters.isProjectile(part)
+					not crossbow:GetProjectile(part)
 					and Filters.canCollide(selfPart, part)
 			end, t.callback);
 		});
@@ -107,7 +107,7 @@ return function(crossbow, onInit)
 				return 
 					Filters.canCollide(part)
 					and not Filters.isLocalCharacter(part)
-					and not Filters.isProjectile(part)
+					and not crossbow:GetProjectile(part)
 			end, t.callback);
 		
 			connectTouched = Value.new(function(part, handler)

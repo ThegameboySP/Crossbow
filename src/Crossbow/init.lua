@@ -115,6 +115,19 @@ function Crossbow:RegisterDefaultTools()
 	-- self:RegisterTool("Slingshot", Prefabs.slingshotTool, Packs.slingshotTool)
 end
 
+function Crossbow:GetProjectile(part)
+	local id = part:GetAttribute(self.Params.entityKey)
+
+	if id and self.World:contains(id) then
+		local projectile = self.World:get(id, self.Components.Projectile)
+		if projectile then
+			return id, projectile, self.World:get(id, projectile.component)
+		end
+	end
+
+	return nil
+end
+
 function Crossbow:RegisterTool(name, prefab, pack)
 	local entry = {
 		prefab = prefab;

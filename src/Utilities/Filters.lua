@@ -63,10 +63,6 @@ function Filters.isLocalCharacter(part)
 		or false
 end
 
-function Filters.isProjectile(part)
-	return CollectionService:HasTag(part, "Projectile")
-end
-
 function Filters.isGrounded(part)
 	local CF = part.CFrame
 	return not not Raycaster.withFilter(
