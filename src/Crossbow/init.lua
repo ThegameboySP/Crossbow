@@ -147,9 +147,16 @@ function Crossbow:AddToolsToCharacter(character)
 		if not entry.shouldAdd(character) then continue end
 
 		local tool = entry.prefab:Clone()
-		tool.Parent = backpack
+
+		local id = self.World:spawn(
+			self.Components.Instance({
+				instance = tool;
+			}),
+			entry.pack(character)
+		)
 		
-		self.World:spawn(entry.pack(tool, character))
+		tool:SetAttribute(self.Params.entityKey, id)
+		tool.Parent = backpack
 	end
 end
 

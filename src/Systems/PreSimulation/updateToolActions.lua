@@ -89,11 +89,12 @@ local function useToolActions(world, components, params)
 		world:spawn(specificTool.pack(id, tool, specificTool, part))
 	end
 	
-	for id, projectile in world:query(components.Projectile):without(components.Part, components.Instance) do
+	for id, projectile in world:query(components.Projectile):without(components.Instance) do
 		local tool = world:get(projectile.spawnerId, components.Tool)
 		local specificTool = world:get(projectile.spawnerId, tool.component)
-		local part = specificTool.prefab:Clone()
 		
+		local part = specificTool.prefab:Clone()
+		part:SetAttribute(params.entityKey, id)
 		part.Parent = workspace
 		if IS_SERVER then
 			part:SetNetworkOwner(nil)

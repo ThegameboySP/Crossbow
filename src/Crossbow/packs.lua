@@ -1,8 +1,6 @@
-local Filters = require(script.Parent.Parent.Utilities.Filters)
-
 local function generateToolPack(crossbow)
 	return function(generate)
-		return function(tool, character, params)
+		return function(character, params)
 			local components = crossbow.Components
 			local userComponents = {generate(crossbow, params or {})}
 
@@ -11,9 +9,6 @@ local function generateToolPack(crossbow)
 				components.Tool({
 					character = character;
 					component = getmetatable(userComponents[1]);
-				}),
-				components.Instance({
-					instance = tool;
 				}),
 				components.Local(),
 				unpack(userComponents)
