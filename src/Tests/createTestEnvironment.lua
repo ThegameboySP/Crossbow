@@ -24,10 +24,14 @@ end
 
 local SIGNAL_ORDER = {"PreRender", "PreSimulation", "PostSimulation"}
 
-return function(systems)
+return function(systems, isServer)
 	local crossbow = Crossbow.new()
+	if isServer ~= nil then
+		crossbow.IsServer = isServer
+	end
 	crossbow.IsTesting = true
 	crossbow:PopulateParams()
+	
 	crossbow.Params.remoteEvent = RemoteEventMock.new()
 	crossbow.Loop:scheduleSystems(systems)
 

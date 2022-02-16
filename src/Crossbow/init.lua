@@ -139,6 +139,34 @@ function Crossbow:RegisterTool(name, prefab, pack)
 	return entry
 end
 
+function Crossbow:_errorIfBound(instance, newId)
+	local id = instance:GetAttribute(self.Params.entityKey)
+
+	if id and id ~= newId and self.World:contains(id) then
+		local component = self.World:get(id, self.Components.Instance)
+
+		if component and component.instance == instance then
+			error(("%s is already bound to a Matter entity. Did you forget to remove the Instance component?"):format(instance:GetFullName()), 3)
+		end
+	end
+end
+
+function Crossbow:SpawnBind(instance, ...)
+	self:_errorIfBound(instance)
+
+	local id = self.World:spawn()
+	instance:SetAttribute(self.Params.entityKey, id)
+	
+	return id, self.World:insert(id, self.Components.Instance({
+		instance = instance;
+	}), ...)
+end
+
+function Crossbow:Bind(instance, id)
+	self:_errorIfBound(instance, id)
+	instance:SetAttribute(self.Params.entityKey, id)
+end
+
 function Crossbow:AddToolsToCharacter(character)
 	local player = Players:GetPlayerFromCharacter(character)
 	local backpack = player.Backpack
@@ -148,14 +176,7 @@ function Crossbow:AddToolsToCharacter(character)
 
 		local tool = entry.prefab:Clone()
 
-		local id = self.World:spawn(
-			self.Components.Instance({
-				instance = tool;
-			}),
-			entry.pack(character)
-		)
-		
-		tool:SetAttribute(self.Params.entityKey, id)
+		self:SpawnBind(tool, entry.pack(character))
 		tool.Parent = backpack
 	end
 end

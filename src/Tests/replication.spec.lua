@@ -1,4 +1,3 @@
-local Components = require(script.Parent.Parent.Components)
 local createNetworkEnvironment = require(script.Parent.createNetworkEnvironment)
 
 local clientReplication = require(script.Parent.Parent.Systems.PreSimulation.clientReplication)
@@ -15,34 +14,31 @@ return function()
 		runServer()
 		runClient()
 
-		crossbowServer.World:spawn(
-			Components.Exists(),
-			Components.Instance({
-				instance = Instance.new("Folder");
-			})
-		)
+		local folder = Instance.new("Folder")
+		local id = crossbowClient:SpawnBind(folder)
+		
+		crossbowServer:SpawnBind(folder, crossbowServer.Components.Exists())
 
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(0, Components.Exists)).to.be.ok()
+		expect(crossbowClient.World:get(id, crossbowClient.Components.Exists)).to.be.ok()
+		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(id)
 	end)
 
 	it("should replicate current state to client who is just connecting", function()
 		local runServer, crossbowServer, newClient = createNetworkEnvironment({serverReplication, fireRemotes})
 		runServer()
 
-		crossbowServer.World:spawn(
-			Components.Exists(),
-			Components.Instance({
-				instance = Instance.new("Folder");
-			})
-		)
+		local folder = Instance.new("Folder")
+		crossbowServer:SpawnBind(folder, crossbowServer.Components.Exists())
 
 		local runClient, crossbowClient = newClient({getRemotes, clientReplication})
-		
+		local id = crossbowClient:SpawnBind(folder)
+
 		runClient()
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(0, Components.Exists)).to.be.ok()
+		expect(crossbowClient.World:get(id, crossbowClient.Components.Exists)).to.be.ok()
+		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(id)
 	end)
 end

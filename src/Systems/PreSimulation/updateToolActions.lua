@@ -94,7 +94,7 @@ local function useToolActions(world, components, params)
 		local specificTool = world:get(projectile.spawnerId, tool.component)
 		
 		local part = specificTool.prefab:Clone()
-		part:SetAttribute(params.entityKey, id)
+		params.Crossbow:Bind(part, id)
 		part.Parent = workspace
 		if IS_SERVER then
 			part:SetNetworkOwner(nil)

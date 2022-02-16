@@ -2,7 +2,7 @@ local Signal = require(script.Parent.Signal)
 local createTestEnvironment = require(script.Parent.createTestEnvironment)
 
 return function(serverSystems)
-	local serverRun, serverCrossbow = createTestEnvironment(serverSystems)
+	local serverRun, serverCrossbow = createTestEnvironment(serverSystems, true)
 
 	local clients = {}
 	serverCrossbow.Params.getPlayers = function()
@@ -13,8 +13,7 @@ return function(serverSystems)
 	serverCrossbow.Params.playerAdded = playerAdded
 
 	return serverRun, serverCrossbow, function(clientSystems)
-		local clientRun, clientCrossbow = createTestEnvironment(clientSystems)
-		clientCrossbow.IsServer = false
+		local clientRun, clientCrossbow = createTestEnvironment(clientSystems, false)
 		local client = newproxy()
 		local disconnect = serverCrossbow.Params.remoteEvent:connectClient(clientCrossbow.Params.remoteEvent, client)
 

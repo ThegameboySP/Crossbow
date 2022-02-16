@@ -1,8 +1,15 @@
 local function patchComponents(components, world, id, remoteComponents)
 	local toUnpack = {}
+	
 	for name, body in pairs(remoteComponents) do
-		table.insert(toUnpack, world:get(id, components[name]):patch(body))
+		local instance = world:get(id, components[name])
+		if instance then
+			table.insert(toUnpack, instance:patch(body))
+		else
+			table.insert(toUnpack, components[name].new(body))
+		end
 	end
+
 	return unpack(toUnpack)
 end
 
@@ -32,7 +39,8 @@ local function clientReplication(world, components, params)
 				if entityId then
 					world:insert(entityId, patchComponents(components, world, entityId, remoteComponents))
 				else
-					world:spawn(createNewComponents(components, remoteComponents))
+					entityId = world:spawn(createNewComponents(components, remoteComponents))
+					params.Crossbow:Bind(instance, entityId)
 				end
 			else
 				warn("Can't replicate entity: it has no attached Instance.")
