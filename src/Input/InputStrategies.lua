@@ -2,7 +2,7 @@ local Input = require(script.Parent.Input)
 
 local function pressActivate(tool, state)
 	if state == Enum.UserInputState.Begin then
-		return {Input:Raycast(tool.RaycastFilter)}
+		return {Input:Raycast(tool.raycastFilter)}
 	end
 end
 

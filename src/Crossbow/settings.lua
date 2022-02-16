@@ -24,12 +24,20 @@ local function mergeToolInherits(tbl)
 end
 
 return function(crossbow, onInit)
+	local function defaultRaycastFilter(part)
+		return 
+			Filters.canCollide(part)
+			and not Filters.isLocalCharacter(part)
+			and not crossbow:GetProjectile(part)
+	end
+
 	return General.lockTable("Settings", {
 		Superball = General.lockTable("Superball", {
 			colorEnabled = Value.new(true, t.boolean);
 		});
 	
 		RocketTool = General.lockTable("RocketTool", mergeToolInherits({
+			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
 			velocity = Value.new(60, t.number);
 			reloadTime = Value.new(7, t.number);
 			spawnDistance = Value.new(6, t.number);
@@ -103,12 +111,7 @@ return function(crossbow, onInit)
 	
 			hitPartFilter = Value.new(Filters.always, t.callback);
 		
-			raycastFilter = Value.new(function(part)
-				return 
-					Filters.canCollide(part)
-					and not Filters.isLocalCharacter(part)
-					and not crossbow:GetProjectile(part)
-			end, t.callback);
+			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
 		
 			connectTouched = Value.new(function(part, handler)
 				local con = part.Touched:Connect(handler)

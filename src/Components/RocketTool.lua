@@ -6,6 +6,7 @@ return function(settings)
 		getProjectileCFrame = General.getProjectileCFrame;
 
 		index = {
+			raycastFilter = settings.RocketTool.raycastFilter;
 			reloadTime = settings.RocketTool.reloadTime;
 			velocity = settings.RocketTool.velocity;
 			spawnDistance = settings.RocketTool.spawnDistance;
