@@ -5,6 +5,7 @@ local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local InputStrategies = require(script.Parent.Parent.Parent.Input.InputStrategies)
 local Input = require(script.Parent.Parent.Parent.Input.Input)
 
+local Priorities = require(script.Parent.Parent.Priorities)
 local updateTools = require(script.Parent.updateTools)
 
 local IS_SERVER = RunService:IsServer()
@@ -63,17 +64,18 @@ local function useToolActions(world, components, params)
 	end
 	
 	for index, activation in ipairs(activations) do
+		activations[index] = nil
 		if activation.name == "Fire"
 			and
 				(not world:get(activation.id, components.Tool):canFire()
 				or (activation.event[1] == nil
 					and activation.tool.onlyActivateOnPartHit))
 		then 
+			
 			continue 
 		end
 		
 		params.events:fire("on" .. activation.name, activation.id, unpack(activation.event))
-		activations[index] = nil
 	end
 	
 	-- Assign components to projectiles according to tool's pack.
@@ -94,21 +96,11 @@ local function useToolActions(world, components, params)
 		local specificTool = world:get(projectile.spawnerId, tool.component)
 		
 		local part = specificTool.prefab:Clone()
-		params.Crossbow:Bind(part, id)
+		params.Crossbow:InsertBind(part, id)
 		part.Parent = workspace
 		if IS_SERVER then
 			part:SetNetworkOwner(nil)
 		end
-
-		world:insert(
-			id,
-			components.Instance({
-				instance = part,
-			}),
-			components.Part({
-				part = part
-			})
-		)
 	end
 end
 
@@ -116,4 +108,5 @@ return {
 	system = useToolActions;
 	event = "PreSimulation";
 	after = { updateTools };
+	priority = Priorities.Tools;
 }

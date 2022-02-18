@@ -1,3 +1,5 @@
+local Priorities = require(script.Parent.Parent.Priorities)
+
 local function updateTransforms(world, components)
 	for id, part, transform in world:query(components.Part, components.Transform) do
 		local existingCFrame = transform.cframe
@@ -18,4 +20,5 @@ end
 return {
 	system = updateTransforms;
 	event = "PostSimulation";
+	priority = Priorities.CoreBefore;
 }

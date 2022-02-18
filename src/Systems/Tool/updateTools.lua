@@ -1,3 +1,5 @@
+local Priorities = require(script.Parent.Parent.Priorities)
+
 local delta = {}
 
 local function updateTools(world, components, params)
@@ -27,4 +29,5 @@ end
 return {
 	system = updateTools;
 	event = "PreSimulation";
+	priority = Priorities.Tools;
 }

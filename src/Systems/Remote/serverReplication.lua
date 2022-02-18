@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 
 local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
+local Priorities = require(script.Parent.Parent.Priorities)
 
 local newPlayers = {}
 
@@ -55,5 +56,5 @@ return {
 	realm = "server";
 	system = serverReplication;
 	event = "PostSimulation";
-	priority = 100;
+	priority = Priorities.RemoteAfter;
 }

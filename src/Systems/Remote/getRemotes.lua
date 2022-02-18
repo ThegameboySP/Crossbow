@@ -1,4 +1,5 @@
 local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
+local Priorities = require(script.Parent.Parent.Priorities)
 
 local function getRemotes(_, _, params)
 	if params.Crossbow.IsServer then
@@ -19,5 +20,5 @@ end
 return {
 	system = getRemotes;
 	event = "PreSimulation";
-	priority = -101;
+	priority = Priorities.RemoteBefore;
 }

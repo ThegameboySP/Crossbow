@@ -1,3 +1,5 @@
+local Priorities = require(script.Parent.Parent.Priorities)
+
 local function fireRemotes(_, _, params)
 	if params.events.remote then
 		if params.Crossbow.IsServer then
@@ -25,5 +27,5 @@ end
 return {
 	system = fireRemotes;
 	event = "PostSimulation";
-	priority = 101;
+	priority = Priorities.RemoteAfter + 1;
 }

@@ -8,13 +8,13 @@ return function()
 		local parent = Instance.new("Folder")
 		local instance = Instance.new("Folder")
 		instance.Parent = parent
-		local id = crossbow:SpawnBind(instance, crossbow.Components.Exists())
+		local id = crossbow:SpawnBind(instance)
 	
 		run()
 		expect(crossbow.World:contains(id)).to.equal(true)
 		expect(instance.Parent).to.equal(parent)
 
-		crossbow.World:remove(id, crossbow.Components.Exists)
+		crossbow.Params.events:fire("queueRemove", id)
 		run()
 		expect(crossbow.World:contains(id)).to.equal(false)
 		expect(instance.Parent).to.equal(nil)

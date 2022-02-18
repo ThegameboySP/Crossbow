@@ -1,3 +1,5 @@
+local Priorities = require(script.Parent.Parent.Priorities)
+
 local function patchComponents(components, world, id, remoteComponents)
 	local toUnpack = {}
 	
@@ -53,5 +55,5 @@ return {
 	realm = "client";
 	system = clientReplication;
 	event = "PreSimulation";
-	priority = -100;
+	priority = Priorities.RemoteBefore + 1;
 }

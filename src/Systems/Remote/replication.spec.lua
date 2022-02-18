@@ -1,10 +1,10 @@
-local createNetworkEnvironment = require(script.Parent.createNetworkEnvironment)
+local createNetworkEnvironment = require(script.Parent.Parent.Parent.Tests.createNetworkEnvironment)
 
-local clientReplication = require(script.Parent.Parent.Systems.PreSimulation.clientReplication)
-local getRemotes = require(script.Parent.Parent.Systems.PreSimulation.getRemotes)
+local clientReplication = require(script.Parent.clientReplication)
+local getRemotes = require(script.Parent.getRemotes)
 
-local serverReplication = require(script.Parent.Parent.Systems.PostSimulation.serverReplication)
-local fireRemotes = require(script.Parent.Parent.Systems.PostSimulation.fireRemotes)
+local serverReplication = require(script.Parent.serverReplication)
+local fireRemotes = require(script.Parent.fireRemotes)
 
 return function()
 	it("should replicate to client while client is already connected", function()
@@ -17,11 +17,11 @@ return function()
 		local folder = Instance.new("Folder")
 		local id = crossbowClient:SpawnBind(folder)
 		
-		crossbowServer:SpawnBind(folder, crossbowServer.Components.Exists())
+		crossbowServer:SpawnBind(folder)
 
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(id, crossbowClient.Components.Exists)).to.be.ok()
+		expect(crossbowClient.World:get(id, crossbowClient.Components.Instance)).to.be.ok()
 		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(id)
 	end)
 
@@ -30,7 +30,7 @@ return function()
 		runServer()
 
 		local folder = Instance.new("Folder")
-		crossbowServer:SpawnBind(folder, crossbowServer.Components.Exists())
+		crossbowServer:SpawnBind(folder)
 
 		local runClient, crossbowClient = newClient({getRemotes, clientReplication})
 		local id = crossbowClient:SpawnBind(folder)
@@ -38,7 +38,7 @@ return function()
 		runClient()
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(id, crossbowClient.Components.Exists)).to.be.ok()
+		expect(crossbowClient.World:get(id, crossbowClient.Components.Instance)).to.be.ok()
 		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(id)
 	end)
 end

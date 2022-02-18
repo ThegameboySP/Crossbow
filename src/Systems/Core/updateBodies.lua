@@ -1,4 +1,4 @@
-local updateToolActions = require(script.Parent.updateToolActions)
+local Priorities = require(script.Parent.Parent.Priorities)
 
 local function updateBodies(world, components)
 	-- If a Part + Transform was just added/changed, set its CFrame and setup physics bodies.
@@ -55,6 +55,6 @@ end
 
 return {
 	system = updateBodies;
-	after = { updateToolActions };
 	event = "PreSimulation";
+	priority = Priorities.CoreAfter;
 }
