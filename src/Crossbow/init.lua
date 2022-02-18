@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local CollectionService = game:GetService("CollectionService")
 
 local Prefabs = script.Parent.Assets.Prefabs
 
@@ -74,6 +75,13 @@ function Crossbow:Init()
 	
 	self:PopulateParams()
 	self:_registerSystems(script.Parent.Systems)
+
+	CollectionService:GetInstanceRemovedSignal("CrossbowInstance"):Connect(function(instance)
+		local id = instance:GetAttribute(self.Params.entityKey)
+		if id and self.World:contains(id) then
+			self.World:despawn(id)
+		end
+	end)
 
 	local params = self.Params
 	self.Loop:begin(bindSignals(function(nextFn, signalName)
@@ -153,18 +161,33 @@ end
 
 function Crossbow:SpawnBind(instance, ...)
 	self:_errorIfBound(instance)
+	return self:InsertBind(instance, self.World:spawn(), ...)
+end
 
-	local id = self.World:spawn()
-	instance:SetAttribute(self.Params.entityKey, id)
-	
-	return id, self.World:insert(id, self.Components.Instance({
-		instance = instance;
-	}), ...)
+function Crossbow:InsertBind(instance, id, ...)
+	self:Bind(instance, id)
+
+	if instance:IsA("BasePart") then
+		return id, self.World:insert(id,
+			self.Components.Part({
+				part = instance;
+			}),
+			self.Components.Instance({
+				instance = instance;
+			}),
+			...
+		)
+	else
+		return id, self.World:insert(id, self.Components.Instance({
+			instance = instance;
+		}), ...)
+	end
 end
 
 function Crossbow:Bind(instance, id)
 	self:_errorIfBound(instance, id)
 	instance:SetAttribute(self.Params.entityKey, id)
+	CollectionService:AddTag(instance, "CrossbowInstance")
 end
 
 function Crossbow:AddToolsToCharacter(character)
@@ -223,6 +246,8 @@ function Crossbow:_registerSystems(target)
 		if module.name:find(".spec$") then return end
 
 		local source = require(module)
+		if table.isfrozen(source) then return end
+		
 		assert(Definitions.system(source))
 
 		if

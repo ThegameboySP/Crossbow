@@ -5,7 +5,6 @@ local function generateToolPack(crossbow)
 			local userComponents = {generate(crossbow, params or {})}
 
 			return
-				components.Exists(),
 				components.Tool({
 					character = character;
 					component = getmetatable(userComponents[1]);
@@ -24,7 +23,6 @@ local function generateProjectilePack(crossbow)
 
 			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, spawnPos)
 			return
-				components.Exists(),
 				components.Projectile({
 					spawnerId = spawnerId;
 					component = getmetatable(userComponents[1]);
