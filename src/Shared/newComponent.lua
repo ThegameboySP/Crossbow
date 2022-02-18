@@ -37,7 +37,7 @@ return function(name, tbl)
 
 	local schema = component.schema or {}
 	if tbl and tbl.index then
-		component.defaults = {}
+		component.defaults = component.defaults or {}
 		tbl.schema = tbl.schema or {}
 
 		for key, value in pairs(tbl.index) do

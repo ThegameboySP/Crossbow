@@ -1,5 +1,4 @@
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local CollectionService = game:GetService("CollectionService")
@@ -64,6 +63,8 @@ end
 
 function Crossbow:PopulateParams()
 	self.Params.Crossbow = self
+	self.Params.Settings = self.Settings
+	self.Params.Packs = self.Packs
 	self.Params.events = Events.new()
 	self.Params.remoteEvent = Instance.new("RemoteEvent")
 	self.Params.entityKey = self.IsServer and "serverEntityId" or "clientEntityId"
@@ -107,7 +108,7 @@ function Crossbow:Init()
 		end
 	end))
 
-	if IS_SERVER and not self.IsTesting then
+	if not IS_SERVER and not self.IsTesting then
 		local soundGroup = Instance.new("SoundGroup")
 		soundGroup.Name = "CrossbowSounds"
 		soundGroup.Parent = SoundService

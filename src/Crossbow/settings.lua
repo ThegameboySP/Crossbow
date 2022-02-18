@@ -31,15 +31,19 @@ return function(crossbow, onInit)
 			and not crossbow:GetProjectile(part)
 	end
 
-	return General.lockTable("Settings", {
-		Superball = General.lockTable("Superball", {
-			colorEnabled = Value.new(true, t.boolean);
-		});
+	local function defaultCanDamage(char1, char2, damageType)
+		return 
+			(if damageType == "Hit" then char1 ~= char2 else true)
+			and char1 and char2 and Filters.isValidCharacter(char1) and Filters.isValidCharacter(char2)
+			and not char1:FindFirstChildWhichIsA("ForceField")
+			and not char2:FindFirstChildWhichIsA("ForceField")
+	end
 	
+	return General.lockTable("Settings", {	
 		RocketTool = General.lockTable("RocketTool", mergeToolInherits({
 			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
 			velocity = Value.new(60, t.number);
-			reloadTime = Value.new(7, t.number);
+			reloadTime = Value.new(0, t.number);
 			spawnDistance = Value.new(6, t.number);
 	
 			prefab = Value.new(Prefabs.Rocket, t.instanceIsA("Part"));
@@ -48,23 +52,59 @@ return function(crossbow, onInit)
 				value:Set(crossbow.Packs.Rocket)
 			end);
 		}));
+
+		SuperballTool = General.lockTable("SuperballTool", mergeToolInherits({
+			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
+			velocity = Value.new(200, t.number);
+			reloadTime = Value.new(2, t.number);
+			spawnDistance = Value.new(6, t.number);
 	
+			prefab = Value.new(Prefabs.Superball, t.instanceIsA("Part"));
+	
+			pack = onInit(Value.new(nil, t.callback), function(value)
+				value:Set(crossbow.Packs.Superball)
+			end);
+		}));
+
 		Rocket = General.lockTable("Rocket", {
 			velocity = Value.new(60, t.number);
 			explosionRadius = Value.new(6, t.number);
 			explosionDamage = Value.new(Layers.new({101}), Layers.validator(t.number));
 			lifetime = Value.new(15, t.number);
-			explodeFilter = Value.new(function(selfPart, part)
+			explodeFilter = Value.new(function(part)
 				return
 					not crossbow:GetProjectile(part)
-					and Filters.canCollide(selfPart, part)
+					and Filters.canCollide(part)
 			end, t.callback);
 		});
 	
+		Superball = General.lockTable("Superball", {
+			damageAmount = Value.new(1, t.number);
+			damageCooldown = Value.new(1, t.number);
+			damage = Value.new(55, t.number);
+			canDamageFilter = Value.new(defaultCanDamage, t.callback);
+
+			lifetime = Value.new(10, t.number);
+			maxBounces = Value.new(8, t.number);
+			bouncePauseTime = Value.new(0.1, t.number);
+
+			colorEnabled = Value.new(true, t.boolean);
+		});
+
 		Trowel = General.lockTable("Trowel", {
 			visualizationEnabled = Value.new(false, t.boolean);
 		});
 	
+		Systems = General.lockTable("Systems", {
+			
+		});
+
+		Interfacing = General.lockTable("Interfacing", {
+			getTouchedSignal = Value.new(function(part)
+				return part.Touched
+			end, t.callback);
+		});
+
 		Explosion = General.lockTable("Explosion", {
 			damage = Value.new(101, t.number);
 			flingBombsEnabled = Value.new(true, t.boolean);
@@ -101,24 +141,9 @@ return function(crossbow, onInit)
 		});
 	
 		Rules = General.lockTable("Rules", {
-			canDamage = Value.new(function(char1, char2, damageType)
-				return 
-					(if damageType == "Hit" then char1 ~= char2 else true)
-					and char1 and char2 and Filters.isValidCharacter(char1) and Filters.isValidCharacter(char2)
-					and not char1:FindFirstChildWhichIsA("ForceField")
-					and not char2:FindFirstChildWhichIsA("ForceField")
-			end, t.callback);
-	
+			canDamage = Value.new(defaultCanDamage, t.callback);
 			hitPartFilter = Value.new(Filters.always, t.callback);
-		
 			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
-		
-			connectTouched = Value.new(function(part, handler)
-				local con = part.Touched:Connect(handler)
-				return function()
-					con:Disconnect()
-				end
-			end, t.callback);
 		});
 	
 		netMode = Value.new(NetMode.NetworkOwnership, t.valueOf(NetMode));

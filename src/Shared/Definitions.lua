@@ -15,6 +15,8 @@ return {
 
 	params = t.strictInterface({
 		Crossbow = t.table;
+		Packs = t.table;
+		Settings = t.table;
 
 		remoteEvent = t.instanceIsA("RemoteEvent");
 		

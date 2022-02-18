@@ -26,6 +26,7 @@ local function generateProjectilePack(crossbow)
 				components.Projectile({
 					spawnerId = spawnerId;
 					component = getmetatable(userComponents[1]);
+					character = tool.character;
 				}),
 				components.Transform({
 					cframe = cframe
@@ -62,14 +63,40 @@ return function(crossbow, onInit)
 			return
 				components.Rocket(),
 				components.ExplodeOnTouch({
-					damage = params.explosionDamage or settings.Rocket.explosionDamage:Get();
-					radius = params.radius or settings.Rocket.explosionRadius:Get();
+					damage = params.explosionDamage or settings.Rocket.explosionDamage:Get():get();
+					radius = params.explosionRadius or settings.Rocket.explosionRadius:Get();
 					filter = params.explodeFilter or settings.Rocket.explodeFilter:Get();
+					transform = function(cf, size)
+						return cf * CFrame.new(-Vector3.zAxis * 2), size
+					end;
 				}),
 				components.Lifetime({
 					duration = params.lifetime or settings.Rocket.lifetime:Get();
-					timestamp = os.clock()--(params.binding or crossbow.Binding):GetTime();
+					timestamp = crossbow.Params.currentFrame;
 				})
 		end);
+		Superball = projectilePack(function(params)
+			return
+				components.Superball({
+					maxBounces = params.maxBounces or settings.Superball.maxBounces:Get();
+				}),
+				components.Damage({
+					filter = params.canDamageFilter or settings.Superball.canDamageFilter:Get();
+					amount = params.damageAmount or settings.Superball.damageAmount:Get();
+					cooldown = params.damageCooldown or settings.Superball.damageCooldown:Get();
+					damage = params.damage or settings.Superball.damage:Get();
+				}),
+				components.Lifetime({
+					duration = params.lifetime or settings.Superball.lifetime:Get();
+				})
+		end);
+		Explosion = function(damage, filter)
+			return
+				components.Damage({
+					damage = damage or settings.Explosion.damage:Get();
+					filter = filter;
+					damageType = "Explosion";
+				})
+		end;
 	}
 end
