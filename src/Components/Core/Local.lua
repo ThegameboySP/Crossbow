@@ -1,4 +1,5 @@
-local newComponent = require(script.Parent.Parent.Shared.newComponent)
+local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
+
 return function()
 	return newComponent("Local", {
 		noReplicate = true;

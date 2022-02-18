@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 
-local t = require(script.Parent.Parent.Parent.t)
-local newComponent = require(script.Parent.Parent.Shared.newComponent)
+local t = require(script.Parent.Parent.Parent.Parent.t)
+local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
 
 return function()
 	local Tool = newComponent("Tool", {
