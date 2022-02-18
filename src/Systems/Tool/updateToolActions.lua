@@ -83,7 +83,6 @@ local function useToolActions(world, components, params)
 		local specificTool = world:get(id, components[tool.componentName])
 
 		world:insert(id, tool:patch({
-			reloading = true;
 			reloadTimeLeft = specificTool.reloadTime;
 		}))
 

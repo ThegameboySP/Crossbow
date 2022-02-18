@@ -5,24 +5,23 @@ local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
 
 return function()
 	local Tool = newComponent("Tool", {
+		defaults = {
+			fireEnabled = true;
+			isEquipped = false;
+			reloadTimeLeft = 0;
+		};
+
 		schema = {
 			componentName = t.string;
-			
-			isEquipped = t.boolean;
-			reloading = t.boolean;
+			fireEnabled = t.boolean;
 			reloadTimeLeft = t.number;
+			isEquipped = t.boolean;
 			character = t.optional(t.Instance);
-		};
-		
-		defaults = {
-			isEquipped = false;
-			reloading = false;
-			reloadTimeLeft = 0;
 		};
 	})
 
 	function Tool:canFire()
-		return self.isEquipped and not self.reloading and not self.firePending
+		return self.isEquipped and self.fireEnabled and self.reloadTimeLeft <= 0
 	end
 
 	function Tool:getPlayer()

@@ -11,12 +11,8 @@ local function updateTools(world, components, params)
 			delta.isEquipped = isEquipped
 		end
 
-		if tool.reloading and tool.reloadTimeLeft - params.deltaTime <= 0 then
-			delta.reloadTimeLeft = 0
-			delta.reloading = false
-		elseif tool.reloading then
-			delta.reloadTimeLeft = tool.reloadTimeLeft - params.deltaTime
-			-- print(params.deltaTime)
+		if tool.reloadTimeLeft > 0 then
+			delta.reloadTimeLeft = math.max(0, tool.reloadTimeLeft - params.deltaTime)
 		end
 
 		if next(delta) then
