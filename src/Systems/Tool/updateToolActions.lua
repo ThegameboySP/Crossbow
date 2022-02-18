@@ -59,7 +59,7 @@ local function useToolActions(world, components, params)
 		if not tool.isEquipped then continue end
 		
 		debug.profilebegin("input")
-		useInput(world, id, world:get(id, tool.component))
+		useInput(world, id, world:get(id, components[tool.componentName]))
 		debug.profileend()
 	end
 	
@@ -71,7 +71,6 @@ local function useToolActions(world, components, params)
 				or (activation.event[1] == nil
 					and activation.tool.onlyActivateOnPartHit))
 		then 
-			
 			continue 
 		end
 		
@@ -81,7 +80,7 @@ local function useToolActions(world, components, params)
 	-- Assign components to projectiles according to tool's pack.
 	for id, part in params.events:iterate("onFire") do
 		local tool = world:get(id, components.Tool)
-		local specificTool = world:get(id, tool.component)
+		local specificTool = world:get(id, components[tool.componentName])
 
 		world:insert(id, tool:patch({
 			reloading = true;
@@ -93,7 +92,7 @@ local function useToolActions(world, components, params)
 	
 	for id, projectile in world:query(components.Projectile):without(components.Instance) do
 		local tool = world:get(projectile.spawnerId, components.Tool)
-		local specificTool = world:get(projectile.spawnerId, tool.component)
+		local specificTool = world:get(projectile.spawnerId, components[tool.componentName])
 		
 		local part = specificTool.prefab:Clone()
 		params.Crossbow:InsertBind(part, id)

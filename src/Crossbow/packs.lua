@@ -3,11 +3,12 @@ local function generateToolPack(crossbow)
 		return function(character, params)
 			local components = crossbow.Components
 			local userComponents = {generate(crossbow, params or {})}
+			local toolComponent = userComponents[1]
 
 			return
 				components.Tool({
 					character = character;
-					component = getmetatable(userComponents[1]);
+					componentName = toolComponent:getDefinition().componentName;
 				}),
 				components.Local(),
 				unpack(userComponents)
@@ -20,12 +21,13 @@ local function generateProjectilePack(crossbow)
 		return function(spawnerId, tool, specificTool, spawnPos, params)
 			local components = crossbow.Components
 			local userComponents = {generate(crossbow, params or {})}
+			local projectileComponent = userComponents[1]
 
 			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, spawnPos)
 			return
 				components.Projectile({
 					spawnerId = spawnerId;
-					component = getmetatable(userComponents[1]);
+					componentName = projectileComponent:getDefinition().componentName;
 					character = tool.character;
 				}),
 				components.Transform({

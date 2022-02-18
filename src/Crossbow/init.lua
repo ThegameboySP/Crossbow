@@ -130,7 +130,7 @@ function Crossbow:GetProjectile(part)
 	if id and self.World:contains(id) then
 		local projectile = self.World:get(id, self.Components.Projectile)
 		if projectile then
-			return id, projectile, self.World:get(id, projectile.component)
+			return id, projectile, self.World:get(id, self.Components[projectile.componentName])
 		end
 	end
 

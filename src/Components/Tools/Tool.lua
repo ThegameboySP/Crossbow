@@ -6,9 +6,7 @@ local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
 return function()
 	local Tool = newComponent("Tool", {
 		schema = {
-			component = t.interface({
-				patch = t.callback;
-			});
+			componentName = t.string;
 			
 			isEquipped = t.boolean;
 			reloading = t.boolean;

@@ -5,7 +5,8 @@ local newComponent = Matter.component
 
 return function(name, tbl)
 	local component = newComponent(name)
-	
+	component.componentName = name
+
 	function component.new(data)
 		local comp
 		if component.defaults then
@@ -28,7 +29,11 @@ return function(name, tbl)
 		debug.profileend()
 		return patch
 	end
-	
+
+	function component:getDefinition()
+		return component
+	end
+
 	if tbl then
 		for k, v in pairs(tbl) do
 			component[k] = v

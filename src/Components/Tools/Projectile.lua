@@ -4,9 +4,7 @@ local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
 return function()
 	return newComponent("Projectile", {
 		schema = {
-			component = t.interface({
-				patch = t.callback;
-			});
+			componentName = t.string;
 			character = t.optional(t.Instance);
 			spawnerId = t.number;
 		};
