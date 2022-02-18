@@ -137,7 +137,7 @@ function Layers:get()
 	end
 	
 	if not isTransform(finalLayer) then
-		cache[self] = if resolved == nil then NONE else finalLayer.value
+		cache[self] = if finalLayer.value == nil then NONE else finalLayer.value
 		return finalLayer.value
 	end
 	
