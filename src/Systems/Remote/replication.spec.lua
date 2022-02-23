@@ -15,14 +15,12 @@ return function()
 		runClient()
 
 		local folder = Instance.new("Folder")
-		local id = crossbowClient:SpawnBind(folder)
-		
 		crossbowServer:SpawnBind(folder)
 
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(id, crossbowClient.Components.Instance)).to.be.ok()
-		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(id)
+		expect(crossbowClient.World:get(0, crossbowClient.Components.Instance)).to.be.ok()
+		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(0)
 	end)
 
 	it("should replicate current state to client who is just connecting", function()
@@ -33,12 +31,11 @@ return function()
 		crossbowServer:SpawnBind(folder)
 
 		local runClient, crossbowClient = newClient({getRemotes, clientReplication})
-		local id = crossbowClient:SpawnBind(folder)
 
 		runClient()
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(id, crossbowClient.Components.Instance)).to.be.ok()
-		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(id)
+		expect(crossbowClient.World:get(0, crossbowClient.Components.Instance)).to.be.ok()
+		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(0)
 	end)
 end

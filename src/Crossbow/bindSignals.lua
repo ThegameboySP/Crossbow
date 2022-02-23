@@ -14,6 +14,10 @@ return function(middleware)
 	}
 
 	for signalName, signal in pairs(signals) do
+		if signalName == "RenderStepped" and RunService:IsServer() then
+			continue
+		end
+		
 		RunService[signalName]:Connect(middleware(function()
 			signal:Fire()
 		end, legacyNameMap[signalName]))

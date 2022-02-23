@@ -1,51 +1,99 @@
+local Players = game:GetService("Players")
+
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local function patchComponents(components, world, id, remoteComponents)
-	local toUnpack = {}
-	
-	for name, body in pairs(remoteComponents) do
-		local instance = world:get(id, components[name])
-		if instance then
-			table.insert(toUnpack, instance:patch(body))
-		else
-			table.insert(toUnpack, components[name].new(body))
+local NULL = string.char(0)
+local LOCAL_PLAYER = Players.LocalPlayer
+
+local function transformToNil(t)
+	for k, v in pairs(t) do
+		if v == NULL then
+			t[k] = nil
 		end
 	end
 
-	return unpack(toUnpack)
+	return t
 end
 
-local function createNewComponents(components, remoteComponents)
-	local toUnpack = {}
+local function getNewComponents(world, components, id, remoteComponents)
+	debug.profilebegin("replication: reconcile components")
+
+	local newComponents = {}
 	for name, body in pairs(remoteComponents) do
-		table.insert(toUnpack, components[name](body))
+		local component = id and world:get(id, components[name])
+		local replicateFn = components[name].replicate or function(...)
+			return ...
+		end
+
+		if component then
+			table.insert(newComponents, component:patch(replicateFn(transformToNil(body))))
+		else
+			table.insert(newComponents, components[name].new(replicateFn(transformToNil(body))))
+		end
 	end
-	return unpack(toUnpack)
+
+	debug.profileend()
+
+	return newComponents
 end
 
 local function clientReplication(world, components, params)
+	local serverToClientId = params.serverToClientId
+	local clientToServerId = params.clientToServerId
+
 	for newComponents, removedComponents in params.events:iterate("remote-replication") do
-		for id, name in pairs(removedComponents) do
-			world:remove(serverToClientId[id], components[name])
+		for _, entry in pairs(removedComponents) do
+			local serverId, name = entry[1], entry[2]
+			local clientId = serverToClientId[serverId]
+
+			if clientId and world:contains(clientId) then
+				if name == "Owner" then
+					world:remove(clientId, components.Local)
+				end
+				world:remove(clientId, components[name])
+
+				clientToServerId[clientId] = nil
+			end
+
+			serverToClientId[serverId] = nil
 		end
 
-		for id, remoteComponents in pairs(newComponents) do
-			if remoteComponents.Instance then
-				local instance = remoteComponents.Instance.instance
-				if instance == nil then
-					warn(string.format("%d.Instance: instance doesn't exist in this realm.", id))
-					continue
-				end
-				
-				local entityId = instance:GetAttribute(params.entityKey)
-				if entityId then
-					world:insert(entityId, patchComponents(components, world, entityId, remoteComponents))
+		for serverId, remoteComponents in pairs(newComponents) do
+			local clientId = serverToClientId[serverId]
+			local instanceComponent = remoteComponents.Instance
+			if instanceComponent == nil and clientId then
+				instanceComponent = world:get(clientId, components.Instance)
+			end
+
+			if instanceComponent == nil then
+				warn(string.format("Can't replicate server entity %d: it has no attached Instance.", serverId))
+				continue
+			end
+
+			if instanceComponent.instance == nil then
+				warn(string.format("Can't replicate server entity %d: Instance doesn't exist in this realm.", serverId))
+				continue
+			end
+
+			if clientId == nil then
+				clientId = params.Crossbow:SpawnBind(instanceComponent.instance)
+
+				serverToClientId[serverId] = clientId
+				clientToServerId[clientId] = serverId
+			end
+		end
+
+		for serverId, remoteComponents in pairs(newComponents) do
+			local clientId = serverToClientId[serverId]
+			local componentsToInsert = getNewComponents(world, components, clientId, remoteComponents)
+			world:insert(clientId, unpack(componentsToInsert))
+
+			if remoteComponents.Owner then
+				if remoteComponents.Owner.client == LOCAL_PLAYER then
+					world:insert(clientId, components.Local())
 				else
-					entityId = world:spawn(createNewComponents(components, remoteComponents))
-					params.Crossbow:Bind(instance, entityId)
+					world:remove(clientId, components.Local)
 				end
-			else
-				warn("Can't replicate entity: it has no attached Instance.")
 			end
 		end
 	end

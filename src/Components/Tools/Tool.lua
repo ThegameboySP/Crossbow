@@ -5,6 +5,11 @@ local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
 
 return function()
 	local Tool = newComponent("Tool", {
+		replicateKeys = {
+			componentName = true;
+			character = true;
+		};
+
 		defaults = {
 			fireEnabled = true;
 			isEquipped = false;

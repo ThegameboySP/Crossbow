@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Prefabs = script.Parent.Assets.Prefabs
 
@@ -66,8 +67,9 @@ function Crossbow:PopulateParams()
 	self.Params.Settings = self.Settings
 	self.Params.Packs = self.Packs
 	self.Params.events = Events.new()
-	self.Params.remoteEvent = Instance.new("RemoteEvent")
 	self.Params.entityKey = self.IsServer and "serverEntityId" or "clientEntityId"
+	self.Params.serverToClientId = {}
+	self.Params.clientToServerId = {}
 end
 
 function Crossbow:Init()
@@ -84,6 +86,21 @@ function Crossbow:Init()
 		end
 	end)
 
+	if not self.IsTesting then
+		if IS_SERVER then
+			local remoteEvent = Instance.new("RemoteEvent")
+			remoteEvent.Name = "CrossbowRemoteEvent"
+			remoteEvent.Parent = ReplicatedStorage
+			self.Params.remoteEvent = remoteEvent
+		else
+			self.Params.remoteEvent = ReplicatedStorage:WaitForChild("CrossbowRemoteEvent")
+
+			local soundGroup = Instance.new("SoundGroup")
+			soundGroup.Name = "CrossbowSounds"
+			soundGroup.Parent = SoundService
+		end
+	end
+
 	local params = self.Params
 	self.Loop:begin(bindSignals(function(nextFn, signalName)
 		return function()
@@ -93,7 +110,7 @@ function Crossbow:Init()
 				(IS_SERVER and signalName == "PreSimulation")
 				or (not IS_SERVER and signalName == "PreRender")
 			then
-				local timestamp = os.clock()
+				local timestamp = workspace:GetServerTimeNow()
 				params.deltaTime = params.previousFrame and (timestamp - params.previousFrame) or 0
 				params.currentFrame, params.previousFrame = timestamp, params.currentFrame or timestamp
 			end
@@ -107,12 +124,6 @@ function Crossbow:Init()
 			debug.profileend()
 		end
 	end))
-
-	if not IS_SERVER and not self.IsTesting then
-		local soundGroup = Instance.new("SoundGroup")
-		soundGroup.Name = "CrossbowSounds"
-		soundGroup.Parent = SoundService
-	end
 end
 
 function Crossbow:RegisterDefaultTools()
@@ -200,7 +211,7 @@ function Crossbow:AddToolsToCharacter(character)
 
 		local tool = entry.prefab:Clone()
 
-		self:SpawnBind(tool, entry.pack(character))
+		self:SpawnBind(tool, self.Components.Owner({client = player}), entry.pack(character))
 		tool.Parent = backpack
 	end
 end

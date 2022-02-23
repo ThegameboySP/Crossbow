@@ -18,6 +18,9 @@ return {
 		Packs = t.table;
 		Settings = t.table;
 
+		serverToClientId = t.table;
+		clientToServerId = t.table;
+
 		remoteEvent = t.instanceIsA("RemoteEvent");
 		
 		events = t.table;
