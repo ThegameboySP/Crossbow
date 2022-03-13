@@ -95,6 +95,11 @@ return function(crossbow, onInit)
 			visualizationEnabled = Value.new(false, t.boolean);
 		});
 	
+		Network = General.lockTable("Network", {
+			netMode = Value.new("Extrapolation", t.valueOf(NetMode));
+			extrapolationFrequency = Value.new(1/6, t.number);
+		});
+
 		Systems = General.lockTable("Systems", {
 			
 		});
@@ -145,7 +150,5 @@ return function(crossbow, onInit)
 			hitPartFilter = Value.new(Filters.always, t.callback);
 			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
 		});
-	
-		netMode = Value.new(NetMode.NetworkOwnership, t.valueOf(NetMode));
 	})
 end

@@ -10,7 +10,6 @@ local function generateToolPack(crossbow)
 					character = character;
 					componentName = toolComponent:getDefinition().componentName;
 				}),
-				components.Local(),
 				unpack(userComponents)
 		end
 	end
@@ -18,25 +17,23 @@ end
 
 local function generateProjectilePack(crossbow)
 	return function(generate)
-		return function(spawnerId, tool, specificTool, spawnPos, params)
+		return function(spawnerId, character, velocity, cframe, params)
 			local components = crossbow.Components
 			local userComponents = {generate(crossbow, params or {})}
 			local projectileComponent = userComponents[1]
 
-			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, spawnPos)
 			return
 				components.Projectile({
 					spawnerId = spawnerId;
 					componentName = projectileComponent:getDefinition().componentName;
-					character = tool.character;
+					character = character;
 				}),
 				components.Transform({
 					cframe = cframe
 				}),
 				components.Velocity({
-					velocity = cframe.LookVector * specificTool.velocity;
+					velocity = cframe.LookVector * velocity;
 				}),
-				components.Local(),
 				unpack(userComponents)
 		end
 	end
@@ -68,8 +65,8 @@ return function(crossbow, onInit)
 					damage = params.explosionDamage or settings.Rocket.explosionDamage:Get():get();
 					radius = params.explosionRadius or settings.Rocket.explosionRadius:Get();
 					filter = params.explodeFilter or settings.Rocket.explodeFilter:Get();
-					transform = function(cf, size)
-						return cf * CFrame.new(-Vector3.zAxis * 2), size
+					transform = function(part)
+						return (part.CFrame * CFrame.new(-Vector3.zAxis * part.Size.Z / 2)).Position
 					end;
 				}),
 				components.Lifetime({

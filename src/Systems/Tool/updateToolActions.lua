@@ -78,7 +78,7 @@ local function useToolActions(world, components, params)
 	end
 	
 	-- Assign components to projectiles according to tool's pack.
-	for id, part in params.events:iterate("onFire") do
+	for id, pos in params.events:iterate("onFire") do
 		local tool = world:get(id, components.Tool)
 		local specificTool = world:get(id, components[tool.componentName])
 
@@ -86,7 +86,11 @@ local function useToolActions(world, components, params)
 			reloadTimeLeft = specificTool.reloadTime;
 		}))
 
-		world:spawn(specificTool.pack(id, tool, specificTool, part))
+		local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos)
+		world:spawn(
+			components.Local(),
+			specificTool.pack(id, tool.character, specificTool.velocity, cframe)
+		)
 	end
 	
 	for id, projectile in world:query(components.Projectile):without(components.Instance) do

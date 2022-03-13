@@ -3,9 +3,14 @@ local Priorities = require(script.Parent.Parent.Priorities)
 
 local function getRemotes(_, _, params)
 	if params.Crossbow.IsServer then
-		for client, bodies in Matter.useEvent(params.remoteEvent, "OnServerEvent") do
-			for name, body in pairs(bodies) do
-				params.events:fire("remote-" .. name, client, unpack(body))
+		for _, client, bodies in Matter.useEvent(params.remoteEvent, "OnServerEvent") do
+			-- TODO: is this necessary?
+			if client == nil or not client:IsDescendantOf(game) then
+				continue
+			end
+
+			for _, body in pairs(bodies) do
+				params.events:fire("remote-" .. body[1], client, unpack(body, 2))
 			end
 		end
 	else

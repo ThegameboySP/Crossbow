@@ -4,35 +4,43 @@ local Priorities = require(script.Parent.Parent.Priorities)
 local function applyExplosion(world, components, params)
 	for id, explodeOnTouch, part in world:query(components.ExplodeOnTouch, components.Part, components.Local) do
 		for _, hit in Matter.useEvent(part.part, explodeOnTouch.getTouchedSignal(part.part)) do
-			if not explodeOnTouch.filter(hit) then continue end
+			if not explodeOnTouch.filter(hit) then
+				continue
+			end
 
-			local collision = Instance.new("Part")
-			collision.CFrame, collision.Size = explodeOnTouch.transform(
-				part.part.CFrame, Vector3.one * explodeOnTouch.radius
-			)
-
-			collision.Transparency = 1
-			collision.Anchored = true
-			collision.CanCollide = false
-			collision.Shape = Enum.PartType.Ball
-			collision.Parent = workspace
-
-			local newId = params.Crossbow:SpawnBind(
-				collision,
-				components.Local(),
-				components.Lifetime({
-					duration = 0;
-					timestamp = params.currentFrame;
-				}),
-				params.Packs.Explosion(explodeOnTouch.damage)
-			)
-
-			local pos = collision.CFrame.Position
+			local pos = explodeOnTouch.transform(part.part)
+			params.events:fire("explosion", pos, explodeOnTouch.radius, explodeOnTouch.damage, true, id)
 			params.events:fire("queueRemove", id)
-			params.events:fire("playSound", "rocketExplode", pos)
-			params.events:fire("exploded", newId, id, pos)
-			return
+			break
 		end
+	end
+
+	for pos, radius, damage, isLocal, spawnerId in params.events:iterate("explosion") do
+		local collision = Instance.new("Part")
+		collision.CFrame = CFrame.new(pos)
+		collision.Size = Vector3.one * radius
+
+		collision.Transparency = 1
+		collision.CanQuery = false
+		collision.Anchored = true
+		collision.CanCollide = false
+		collision.Shape = Enum.PartType.Ball
+		collision.Parent = workspace
+
+		local newId = params.Crossbow:SpawnBind(
+			collision,
+			components.Lifetime({
+				duration = 0;
+				timestamp = params.currentFrame;
+			})
+		)
+
+		if isLocal then
+			world:insert(newId, components.Local(), params.Packs.Explosion(damage))
+		end
+
+		params.events:fire("playSound", "rocketExplode", pos)
+		params.events:fire("exploded", newId, pos, radius, damage, isLocal, spawnerId)
 	end
 end
 

@@ -2,7 +2,9 @@ local Priorities = require(script.Parent.Parent.Priorities)
 
 local function removedQueued(world, components, params)
 	for id in params.events:iterate("queueRemove") do
-		world:despawn(id)
+		if world:contains(id) then
+			world:despawn(id)
+		end
 	end
 
 	for id, lifetime in world:query(components.Lifetime) do
@@ -28,5 +30,5 @@ end
 return {
 	system = removedQueued;
 	event = "PostSimulation";
-	priority = Priorities.CoreAfter;
+	priority = Priorities.CoreAfter + 9;
 }

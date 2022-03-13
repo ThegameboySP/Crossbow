@@ -59,6 +59,8 @@ local function clientReplication(world, components, params)
 		end
 
 		for serverId, remoteComponents in pairs(newComponents) do
+			serverId = tonumber(serverId)
+
 			local clientId = serverToClientId[serverId]
 			local instanceComponent = remoteComponents.Instance
 			if instanceComponent == nil and clientId then
@@ -84,6 +86,8 @@ local function clientReplication(world, components, params)
 		end
 
 		for serverId, remoteComponents in pairs(newComponents) do
+			serverId = tonumber(serverId)
+			
 			local clientId = serverToClientId[serverId]
 			local componentsToInsert = getNewComponents(world, components, clientId, remoteComponents)
 			world:insert(clientId, unpack(componentsToInsert))

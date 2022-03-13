@@ -9,8 +9,8 @@ return function(settings)
 
 		defaults = {
 			filter = function() return true end;
-			transform = function(...)
-				return ...
+			transform = function(part)
+				return part.Position
 			end;
 		};
 
