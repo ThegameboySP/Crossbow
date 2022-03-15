@@ -78,7 +78,7 @@ local function useToolActions(world, components, params)
 	end
 	
 	-- Assign components to projectiles according to tool's pack.
-	for id, pos in params.events:iterate("onFire") do
+	for _, id, pos in params.events:iterate("onFire") do
 		local tool = world:get(id, components.Tool)
 		local specificTool = world:get(id, components[tool.componentName])
 

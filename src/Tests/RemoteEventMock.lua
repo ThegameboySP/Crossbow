@@ -6,33 +6,33 @@ function RemoteEventMock.new()
 	local clientEvent = Instance.new("BindableEvent")
 
 	return setmetatable({
+		OnServerEvent = serverEvent.Event;
+		OnClientEvent = clientEvent.Event;
+		
 		_connectedClients = {};
 		_serverRemoteEvent = nil;
 		_localClient = nil;
 
-		serverEvent = serverEvent;
-		clientEvent = clientEvent;
-
-		OnServerEvent = serverEvent.Event;
-		OnClientEvent = clientEvent.Event;
+		_serverEvent = serverEvent;
+		_clientEvent = clientEvent;
 	}, RemoteEventMock)
 end
 
 function RemoteEventMock:FireClient(client, ...)
 	local remoteEvent = self._connectedClients[client]
 	if remoteEvent then
-		remoteEvent.clientEvent:Fire(...)
+		remoteEvent._clientEvent:Fire(...)
 	end
 end
 
 function RemoteEventMock:FireAllClients(...)
 	for _, remoteEvent in pairs(self._connectedClients) do
-		remoteEvent.clientEvent:Fire(...)
+		remoteEvent._clientEvent:Fire(...)
 	end
 end
 
 function RemoteEventMock:FireServer(...)
-	self._serverRemoteEvent.serverEvent:Fire(self._localClient, ...)
+	self._serverRemoteEvent._serverEvent:Fire(self._localClient, ...)
 end
 
 function RemoteEventMock:connectClient(remoteEvent, client)

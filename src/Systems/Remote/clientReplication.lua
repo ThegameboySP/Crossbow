@@ -41,7 +41,7 @@ local function clientReplication(world, components, params)
 	local serverToClientId = params.serverToClientId
 	local clientToServerId = params.clientToServerId
 
-	for newComponents, removedComponents in params.events:iterate("remote-replication") do
+	for _, newComponents, removedComponents in params.remoteEvents:iterate("in-replication") do
 		for _, entry in pairs(removedComponents) do
 			local serverId, name = entry[1], entry[2]
 			local clientId = serverToClientId[serverId]

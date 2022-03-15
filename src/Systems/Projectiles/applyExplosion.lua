@@ -15,7 +15,7 @@ local function applyExplosion(world, components, params)
 		end
 	end
 
-	for pos, radius, damage, isLocal, spawnerId in params.events:iterate("explosion") do
+	for _, pos, radius, damage, isLocal, spawnerId in params.events:iterate("explosion") do
 		local collision = Instance.new("Part")
 		collision.CFrame = CFrame.new(pos)
 		collision.Size = Vector3.one * radius
@@ -40,7 +40,14 @@ local function applyExplosion(world, components, params)
 		end
 
 		params.events:fire("playSound", "rocketExplode", pos)
-		params.events:fire("exploded", newId, pos, radius, damage, isLocal, spawnerId)
+		params.events:fire("exploded", table.freeze({
+			spawnerId = spawnerId;
+			newId = newId;
+			position = pos;
+			radius = radius;
+			damage = damage;
+			isLocal = isLocal;
+		}))
 	end
 end
 

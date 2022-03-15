@@ -1,12 +1,12 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local function showExplosions(world, components, params)
-	for id, pos, _, _, _, spawnerId in params.events:iterate("exploded") do
-		local part = world:get(id, components.Part).part
+	for _, event in params.events:iterate("exploded") do
+		local part = world:get(event.newId, components.Part).part
 
 		local explosion = Instance.new("Part")
 		explosion.Name = "Explosion"
-		explosion.CFrame = CFrame.new(pos)
+		explosion.CFrame = CFrame.new(event.position)
 		explosion.Size = part.Size
 		explosion.Transparency = 0.55
 		explosion.Anchored = true
@@ -22,10 +22,10 @@ local function showExplosions(world, components, params)
 			timestamp = params.currentFrame;
 		}))
 
-		if world:contains(spawnerId) then
-			local skin = world:get(spawnerId, components.Skin)
+		if world:contains(event.spawnerId) then
+			local skin = world:get(event.spawnerId, components.Skin)
 			if skin then
-				local projectile = world:get(spawnerId, components.Projectile)
+				local projectile = world:get(event.spawnerId, components.Projectile)
 				if projectile and skin.explosionDecorator then
 					skin.explosionDecorator(explosion, projectile.character, newId)
 				else

@@ -9,6 +9,7 @@ local Prefabs = script.Parent.Assets.Prefabs
 local Matter = require(script.Parent.Parent.Matter)
 local Definitions = require(script.Parent.Shared.Definitions)
 local Filters = require(script.Parent.Utilities.Filters)
+local Signal = require(script.Parent.Utilities.Signal)
 
 local Events = require(script.Events)
 local Observers = require(script.Observers)
@@ -38,7 +39,9 @@ function Crossbow.new()
 		World = world;
 		Loop = nil;
 		_systemsSet = {};
-	
+		
+		_signals = {};
+
 		Tools = {};
 		Observers = Observers.new();
 	}, Crossbow)
@@ -67,6 +70,7 @@ function Crossbow:PopulateParams()
 	self.Params.Settings = self.Settings
 	self.Params.Packs = self.Packs
 	self.Params.events = Events.new()
+	self.Params.remoteEvents = Events.new()
 	self.Params.entityKey = self.IsServer and "serverEntityId" or "clientEntityId"
 	self.Params.serverToClientId = {}
 	self.Params.clientToServerId = {}
@@ -118,7 +122,15 @@ function Crossbow:Init()
 			nextFn()
 
 			if signalName == "PostSimulation" then
-				table.clear(params.events)
+				for name, event in params.events:iterateAll() do
+					local signal = self._signals[name]
+					if signal then
+						signal:Fire(unpack(event, 1, event.n))
+					end
+				end
+
+				params.events:clear()
+				params.remoteEvents:clear()
 			end
 
 			debug.profileend()
@@ -133,6 +145,16 @@ function Crossbow:RegisterDefaultTools()
 	-- self:RegisterTool("Bomb", Prefabs.bombTool, Packs.bombTool)
 	-- self:RegisterTool("Trowel", Prefabs.trowelTool, Packs.trowelTool)
 	-- self:RegisterTool("Slingshot", Prefabs.slingshotTool, Packs.slingshotTool)
+end
+
+function Crossbow:On(signalName, handler)
+	local signal = self._signals[signalName]
+	if signal == nil then
+		signal = Signal.new()
+		self._signals[signalName] = signal
+	end
+
+	return signal:Connect(handler)
 end
 
 function Crossbow:GetProjectile(part)

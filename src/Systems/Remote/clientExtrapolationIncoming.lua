@@ -8,19 +8,19 @@ local function clientExtrapolationIncoming(world, components, params)
 
 	local proxyToClientId = useHookStorage()
 
-	for spawnerId in params.events:iterate("remote-extrap-projectileFailed") do
+	for _, spawnerId in params.remoteEvents:iterate("in-extrap-projectileFailed") do
 		params.events:fire("queueRemove", spawnerId)
 	end
 
 	-- TODO
-	for packets in params.events:iterate("remote-extrap-update") do
+	for _, packets in params.remoteEvents:iterate("in-extrap-update") do
 		for _, packet in pairs(packets) do
 			local serverId, position = unpack(packet)
 			
 		end
 	end
 
-	for spawnerId, proxyId, timestamp, name, velocity, cframe in params.events:iterate("remote-extrap-projectileSpawned") do
+	for _, spawnerId, proxyId, timestamp, name, velocity, cframe in params.remoteEvents:iterate("in-extrap-projectileSpawned") do
 		local spawnerClientId = params.serverToClientId[spawnerId]
 		local tool = world:get(spawnerClientId, components.Tool)
 
@@ -38,11 +38,11 @@ local function clientExtrapolationIncoming(world, components, params)
 		end
 	end
 
-	for pos, radius, spawnerId in params.events:iterate("remote-extrap-exploded") do
+	for _, pos, radius, spawnerId in params.remoteEvents:iterate("in-extrap-exploded") do
 		params.events:fire("explosion", pos, radius, 0, false, proxyToClientId[spawnerId])
 	end
 
-	for id in params.events:iterate("remote-extrap-projectileRemoved") do
+	for _, id in params.remoteEvents:iterate("in-extrap-projectileRemoved") do
 		params.events:fire("queueRemove", proxyToClientId[id])
 		proxyToClientId[id] = nil
 	end

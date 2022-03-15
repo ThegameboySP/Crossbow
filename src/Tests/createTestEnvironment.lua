@@ -1,6 +1,9 @@
 local Crossbow = require(script.Parent.Parent.Crossbow)
 local RemoteEventMock = require(script.Parent.RemoteEventMock)
-local Signal = require(script.Parent.Signal)
+local Signal = require(script.Parent.Parent.Utilities.Signal)
+
+-- Override task.spawn for breakpoint inspection.
+Signal.RunHandler = coroutine.resume
 
 local function createSignals()
 	-- Use a custom signal for breakpoint inspection.
@@ -41,7 +44,8 @@ return function(systems, isServer)
 			nextFn()
 
 			if signalName == "PostSimulation" then
-				table.clear(crossbow.Params.events)
+				crossbow.Params.events:clear()
+				crossbow.Params.remoteEvents:clear()
 			end
 		end
 	end)

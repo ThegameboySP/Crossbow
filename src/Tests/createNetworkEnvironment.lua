@@ -1,4 +1,4 @@
-local Signal = require(script.Parent.Signal)
+local Signal = require(script.Parent.Parent.Utilities.Signal)
 local createTestEnvironment = require(script.Parent.createTestEnvironment)
 
 return function(serverSystems)
@@ -6,7 +6,7 @@ return function(serverSystems)
 
 	local clients = {}
 	serverCrossbow.Params.getPlayers = function()
-		return clients
+		return {unpack(clients)}
 	end
 
 	local playerAdded = Signal.new()
@@ -14,6 +14,7 @@ return function(serverSystems)
 
 	return serverRun, serverCrossbow, function(clientSystems)
 		local clientRun, clientCrossbow = createTestEnvironment(clientSystems, false)
+		-- Use userdata as a symbol so BindableEvents preserve identity.
 		local client = newproxy()
 		local disconnect = serverCrossbow.Params.remoteEvent:connectClient(clientCrossbow.Params.remoteEvent, client)
 

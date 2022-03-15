@@ -11,7 +11,7 @@ local function serverExtrapolation(world, components, params)
 	local clientToProxyId = useHookStorage()
 
 	-- TODO
-	-- for client, packets in params.events:iterate("remote-extrap-update") do
+	-- for _, client, packets in params.remoteEvents:iterate("in-extrap-update") do
 	-- 	if type(packets) ~= "table" then
 	-- 		continue
 	-- 	end
@@ -39,8 +39,7 @@ local function serverExtrapolation(world, components, params)
 
 	-- 		for _, player in pairs(Players:GetPlayers()) do
 	-- 			if player ~= client then
-	-- 				params.events:fire(
-	-- 					"remote",
+	-- 				params.remoteEvents:fire(
 	-- 					"extrap-update",
 	-- 					player,
 	-- 					serverId,
@@ -51,7 +50,7 @@ local function serverExtrapolation(world, components, params)
 	-- 	end
 	-- end
 
-	for client, spawnerId, projId, timestamp, name, cframe in params.events:iterate("remote-extrap-projectileSpawned") do
+	for _, client, spawnerId, projId, timestamp, name, cframe in params.remoteEvents:iterate("in-extrap-projectileSpawned") do
 		local tool = world:contains(spawnerId) and world:get(spawnerId, components.Tool)
 
 		if
@@ -59,7 +58,7 @@ local function serverExtrapolation(world, components, params)
 			or client ~= Players:GetPlayerFromCharacter(tool.character)
 			or not tool:canFire()
 		then
-			params.events:fire("remote", "extrap-projectileFailed", client, projId)
+			params.remoteEvents:fire("out", "extrap-projectileFailed", client, projId)
 			continue
 		end
 
@@ -70,8 +69,8 @@ local function serverExtrapolation(world, components, params)
 		local specificTool = world:get(spawnerId, components[tool.componentName])
 		for _, player in pairs(Players:GetPlayers()) do
 			if player ~= client then
-				params.events:fire(
-					"remote",
+				params.remoteEvents:fire(
+					"out",
 					"extrap-projectileSpawned",
 					player,
 					spawnerId,
@@ -85,7 +84,20 @@ local function serverExtrapolation(world, components, params)
 		end
 	end
 
-	for client, id in params.events:iterate("remote-extrap-projectileRemoved") do
+	for _, client, pos, radius, spawnerId in params.remoteEvents:iterate("in-extrap-exploded") do
+		if clientToProxyId[client] == nil then
+			continue
+		end
+
+		local proxyId = clientToProxyId[client][spawnerId]
+		for _, player in pairs(Players:GetPlayers()) do
+			if player ~= client then
+				params.remoteEvents:fire("out", "extrap-exploded", player, pos, radius, proxyId)
+			end
+		end
+	end
+
+	for _, client, id in params.remoteEvents:iterate("in-extrap-projectileRemoved") do
 		if clientToProxyId[client] == nil then
 			continue
 		end
@@ -97,20 +109,7 @@ local function serverExtrapolation(world, components, params)
 
 		for _, player in pairs(Players:GetPlayers()) do
 			if player ~= client then
-				params.events:fire("remote", "extrap-projectileRemoved", player, proxyId)
-			end
-		end
-	end
-
-	for client, pos, radius, spawnerId in params.events:iterate("remote-extrap-exploded") do
-		if clientToProxyId[client] == nil then
-			continue
-		end
-
-		local proxyId = clientToProxyId[client][spawnerId]
-		for _, player in pairs(Players:GetPlayers()) do
-			if player ~= client then
-				params.events:fire("remote", "extrap-exploded", player, pos, radius, proxyId)
+				params.remoteEvents:fire("out", "extrap-projectileRemoved", player, proxyId)
 			end
 		end
 	end

@@ -18,7 +18,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 		end
 
 		if packets[1] then
-			params.events:fire("remote", "extrap-update", packets)
+			params.remoteEvents:fire("out", "extrap-update", packets)
 		end
 	end
 
@@ -26,8 +26,8 @@ local function clientExtrapolationOutgoing(world, components, params)
 		if projectileRecord.new and not projectileRecord.old then
 			localIds[id] = true
 
-			params.events:fire(
-				"remote",
+			params.remoteEvents:fire(
+				"out",
 				"extrap-projectileSpawned",
 				params.clientToServerId[projectileRecord.new.spawnerId],
 				id,
@@ -36,7 +36,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 				part.part.CFrame
 			)
 		elseif not projectileRecord.new and projectileRecord.old then
-			params.events:fire("remote", "extrap-projectileRemoved", id)
+			params.remoteEvents:fire("out", "extrap-projectileRemoved", id)
 		end
 	end
 
@@ -45,21 +45,25 @@ local function clientExtrapolationOutgoing(world, components, params)
 			not projectileRecord.new and projectileRecord.old
 			and localIds[id]
 		then
-			params.events:fire("remote", "extrap-projectileRemoved", id)
+			params.remoteEvents:fire("out", "extrap-projectileRemoved", id)
 			localIds[id] = nil
 		end
 	end
 
-	for character, damage in params.events:iterate("damaged") do
-		params.events:fire("remote", "extrap-damaged", character, damage.damage)
+	for _, character, damage in params.events:iterate("damaged") do
+		params.remoteEvents:fire("out", "extrap-damaged", character, damage.damage)
 	end
 
-	for _, pos, radius, _, isLocal, spawnerId in params.events:iterate("exploded") do
-		if not isLocal or not world:get(spawnerId, components.Projectile) then
+	for _, event in params.events:iterate("exploded") do
+		if
+			not event.isLocal
+			or not world:contains(event.spawnerId)
+			or not world:get(event.spawnerId, components.Projectile)
+		then
 			continue
 		end
 		
-		params.events:fire("remote", "extrap-exploded", pos, radius, spawnerId)
+		params.remoteEvents:fire("out", "extrap-exploded", event.position, event.radius, event.spawnerId)
 	end
 end
 

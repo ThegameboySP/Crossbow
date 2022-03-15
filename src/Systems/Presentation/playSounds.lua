@@ -4,7 +4,7 @@ local Priorities = require(script.Parent.Parent.Priorities)
 local function playSounds(_, _, params)
 	local Sounds = params.Settings.Sounds
 
-	for soundName, pos in params.events:iterate("playSound") do
+	for _, soundName, pos in params.events:iterate("playSound") do
 		local sound = rawget(Sounds, soundName)
 		if sound == nil then
 			task.spawn(error, ("%q is not a valid sound name!"):format(soundName))

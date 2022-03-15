@@ -1,7 +1,7 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local function removedQueued(world, components, params)
-	for id in params.events:iterate("queueRemove") do
+	for _, id in params.events:iterate("queueRemove") do
 		if world:contains(id) then
 			world:despawn(id)
 		end

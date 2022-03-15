@@ -88,7 +88,7 @@ local function serverReplication(world, components, params)
 	if next(newComponents) or removedComponents[1] then
 		for _, player in pairs(params.getPlayers and params.getPlayers() or Players:GetPlayers()) do
 			if not newPlayers[player] then
-				params.events:fire("remote", "replication", player, newComponents, removedComponents)
+				params.remoteEvents:fire("out", "replication", player, newComponents, removedComponents)
 			end
 		end
 	end
@@ -106,7 +106,7 @@ local function serverReplication(world, components, params)
 		end
 
 		for player in pairs(newPlayers) do
-			params.events:fire("remote", "replication", player, new, EMPTY_TBL)
+			params.remoteEvents:fire("out", "replication", player, new, EMPTY_TBL)
 			newPlayers[player] = nil
 		end
 	end

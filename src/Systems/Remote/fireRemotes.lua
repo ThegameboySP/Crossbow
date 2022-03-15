@@ -1,25 +1,25 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local function fireRemotes(_, _, params)
-	if params.events.remote then
+	if not params.remoteEvents:isEmpty() then
 		if params.Crossbow.IsServer then
-			local packedClientBodies = {}
+			local clientEvents = {}
 
-			for index, body in ipairs(params.events.remote) do
-				local clientBodies = packedClientBodies[body[2]]
-				if clientBodies == nil then
-					clientBodies = {}
-					packedClientBodies[body[2]] = clientBodies
+			for _, event in ipairs(params.remoteEvents:get("out")) do
+				local events = clientEvents[event[2]]
+				if events == nil then
+					events = {}
+					clientEvents[event[2]] = events
 				end
 
-				clientBodies[index] = {body[1], unpack(body, 3)}
+				table.insert(events, {event[1], unpack(event, 3)})
 			end
 
-			for client, bodies in pairs(packedClientBodies) do
-				params.remoteEvent:FireClient(client, bodies)
+			for client, events in pairs(clientEvents) do
+				params.remoteEvent:FireClient(client, events)
 			end
 		else
-			params.remoteEvent:FireServer(params.events.remote)
+			params.remoteEvent:FireServer(params.remoteEvents:get("out"))
 		end
 	end
 end
