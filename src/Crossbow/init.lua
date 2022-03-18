@@ -141,6 +141,7 @@ end
 function Crossbow:RegisterDefaultTools()
 	-- self:RegisterTool("Superball", Prefabs.superballTool, Packs.superballTool)
 	-- self:RegisterTool("Sword", Prefabs.swordTool, Packs.swordTool)
+	self:RegisterTool("Superball", Prefabs.SuperballTool, self.Packs.SuperballTool)
 	self:RegisterTool("Rocket", Prefabs.RocketTool, self.Packs.RocketTool)
 	-- self:RegisterTool("Bomb", Prefabs.bombTool, Packs.bombTool)
 	-- self:RegisterTool("Trowel", Prefabs.trowelTool, Packs.trowelTool)

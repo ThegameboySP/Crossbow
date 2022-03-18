@@ -2,6 +2,8 @@ local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local function applyExplosion(world, components, params)
+	local Sounds = params.Settings.Sounds
+	
 	for id, explodeOnTouch, part in world:query(components.ExplodeOnTouch, components.Part, components.Local) do
 		for _, hit in Matter.useEvent(part.part, explodeOnTouch.getTouchedSignal(part.part)) do
 			if not explodeOnTouch.filter(hit) then
@@ -18,7 +20,7 @@ local function applyExplosion(world, components, params)
 	for _, pos, radius, damage, isLocal, spawnerId in params.events:iterate("explosion") do
 		local collision = Instance.new("Part")
 		collision.CFrame = CFrame.new(pos)
-		collision.Size = Vector3.one * radius
+		collision.Size = Vector3.one * radius * 2
 
 		collision.Transparency = 1
 		collision.CanQuery = false
@@ -39,7 +41,7 @@ local function applyExplosion(world, components, params)
 			world:insert(newId, components.Local(), params.Packs.Explosion(damage))
 		end
 
-		params.events:fire("playSound", "rocketExplode", pos)
+		params.events:fire("playSound", Sounds.rocketExplode, pos)
 		params.events:fire("exploded", table.freeze({
 			spawnerId = spawnerId;
 			newId = newId;

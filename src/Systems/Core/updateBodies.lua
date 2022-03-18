@@ -1,54 +1,45 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local function updateBodies(world, components)
-	-- If a Part + Transform was just added/changed, set its CFrame and setup physics bodies.
-	for id, partRecord, transform in world:queryChanged(components.Part, components.Transform) do
+	-- If a Part + FixedVelocity was just added/changed, setup physics bodies.
+	for _id, partRecord, fixedVelocity in world:queryChanged(components.Part, components.FixedVelocity) do
 		if partRecord.new then
 			local part = partRecord.new.part
 			part.Anchored = false
 			part.Massless = true
 			
-			local velocity = world:get(id, components.Velocity)
-			if velocity then
-				local bodyVelocity = Instance.new("BodyVelocity")
-				bodyVelocity.Name = "BodyVelocity"
-				bodyVelocity.Velocity = velocity.velocity
-				bodyVelocity.Parent = part
-			else
-				local bodyPosition = Instance.new("BodyPosition")
-				bodyPosition.Name = "BodyPosition"
-				bodyPosition.Parent = part
-			end
+			local bodyVelocity = Instance.new("BodyVelocity")
+			bodyVelocity.Name = "BodyVelocity"
+			bodyVelocity.Velocity = fixedVelocity.velocity
+			bodyVelocity.Parent = part
 			
 			local bodyGyro = Instance.new("BodyGyro")
 			bodyGyro.Name = "BodyGyro"
 			bodyGyro.Parent = part
 			
-			if not transform.doNotReconcile then
-				part.CFrame = transform.cframe
-				if velocity == nil then
-					part.BodyPosition.Position = transform.cframe.Position
-				end
-				bodyGyro.CFrame = transform.cframe
-			end
-		end
-	end
-	
-	-- Handle Transform added/changed to existing entity with Part
-	for id, transformRecord, part in world:queryChanged(components.Transform, components.Part) do
-		if transformRecord.new and not transformRecord.new.doNotReconcile then
-			local velocity = world:get(id, components.Velocity)
-			if velocity == nil then
-				part.part.BodyPosition.Position = transformRecord.new.cframe.Position
-			end
-			
-			part.part.BodyGyro.CFrame = transformRecord.new.cframe
+			bodyVelocity.Velocity = fixedVelocity.velocity
+			bodyGyro.CFrame = CFrame.lookAt(Vector3.zero, fixedVelocity.velocity)
 		end
 	end
 	
 	for _id, velocityRecord, part in world:queryChanged(components.Velocity, components.Part) do
 		if velocityRecord.new then
-			part.part.BodyVelocity.Velocity = velocityRecord.new.velocity
+			part.part.AssemblyLinearVelocity = velocityRecord.new.velocity
+		end
+	end
+
+	-- If a Part + Transform was just added/changed, set the part's CFrame.
+	for _id, transformRecord, part in world:queryChanged(components.Transform, components.Part) do
+		if transformRecord.new then
+			part.part.CFrame = transformRecord.new.cframe
+		end
+	end
+	
+	-- If a FixedVelocity + Part was just added/changed, update its physics bodies.
+	for _id, fixedVelocityRecord, part in world:queryChanged(components.FixedVelocity, components.Part) do
+		if fixedVelocityRecord.new then
+			part.part.BodyVelocity.Velocity = fixedVelocityRecord.new.velocity
+			part.part.BodyGyro.CFrame = CFrame.lookAt(Vector3.zero, fixedVelocityRecord.new.velocity)
 		end
 	end
 end

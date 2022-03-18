@@ -50,8 +50,8 @@ local function clientExtrapolationOutgoing(world, components, params)
 		end
 	end
 
-	for _, character, damage in params.events:iterate("damaged") do
-		params.remoteEvents:fire("out", "extrap-damaged", character, damage.damage)
+	for _, record in params.events:iterate("damaged") do
+		params.remoteEvents:fire("out", "extrap-damaged", record.humanoid, record.damageComponent.damage, record.damageComponent.damageType)
 	end
 
 	for _, event in params.events:iterate("exploded") do

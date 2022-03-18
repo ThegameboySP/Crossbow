@@ -67,6 +67,8 @@ local function serverReplication(world, components, params)
 		if definition.noReplicate then continue end
 		
 		for id, record in world:queryChanged(definition) do
+			id = tostring(id)
+
 			if record.new then
 				local diff = resolveDiff(definition.replicateKeys, record.new, oldValues[definition][id] or EMPTY_TBL)
 				if next(diff) == nil then
@@ -100,6 +102,7 @@ local function serverReplication(world, components, params)
 			if definition.noReplicate then continue end
 
 			for id, component in world:query(definition) do
+				id = tostring(id)
 				new[id] = new[id] or {}
 				new[id][definition.componentName] = resolveDiff(definition.replicateKeys, component, EMPTY_TBL)
 			end

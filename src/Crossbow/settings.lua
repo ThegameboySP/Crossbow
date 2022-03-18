@@ -88,6 +88,10 @@ return function(crossbow, onInit)
 			maxBounces = Value.new(8, t.number);
 			bouncePauseTime = Value.new(0.1, t.number);
 
+			hitFilter = Value.new(function(part)
+				return Filters.canCollide(part)
+			end, t.callback);
+
 			colorEnabled = Value.new(true, t.boolean);
 		});
 
@@ -108,6 +112,14 @@ return function(crossbow, onInit)
 			getTouchedSignal = Value.new(function(part)
 				return part.Touched
 			end, t.callback);
+
+			dealDamage = Value.new(function(humanoid, damage, _, canKill)
+				if canKill then
+					humanoid.Health -= damage
+				else
+					humanoid.Health = math.max(0.01, humanoid.Health - damage)
+				end
+			end)
 		});
 
 		Explosion = General.lockTable("Explosion", {
@@ -120,7 +132,7 @@ return function(crossbow, onInit)
 		});
 	
 		Sounds = General.lockTable("Sounds", {
-			fireSuperball = Value.new(find(Audio, "SuperballBounce"), t.instanceIsA("Sound"));
+			superballBounce = Value.new(find(Audio, "SuperballBounce"), t.instanceIsA("Sound"));
 			swordLunge = Value.new(find(Audio, "SwordLunge"), t.instanceIsA("Sound"));
 			swordEquip = Value.new(find(Audio, "SwordEquip"), t.instanceIsA("Sound"));
 			swordSlash = Value.new(find(Audio, "SwordSlash"), t.instanceIsA("Sound"));

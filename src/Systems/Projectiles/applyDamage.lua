@@ -5,6 +5,8 @@ local Priorities = require(script.Parent.Parent.Priorities)
 local applyExplosion = require(script.Parent.applyExplosion)
 
 local function applyDamage(world, components, params)
+	local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
+	local dealDamage = params.Settings.Interfacing.dealDamage:Get()
 	local currentTime = params.currentFrame
 	local damaged = {}
 
@@ -13,16 +15,23 @@ local function applyDamage(world, components, params)
 			continue
 		end
 
-		for _, hit in Matter.useEvent(part.part, "Touched") do
+		for _, hit in Matter.useEvent(part.part, getTouchedSignal(part.part)) do
 			local character = General.getCharacterFromHitbox(hit)
 			if character == nil then continue end
 			if damaged[part] and damaged[part][character] then continue end
 
 			local projectile = world:get(id, components.Projectile)
-			if not damage.filter(character, projectile and projectile.character) then continue end
+			if not damage.filter(character, projectile and projectile.character, damage.damageType) then continue end
 
-			character.Humanoid:TakeDamage(damage.damage)
-			params.events:fire("damaged", character, damage)
+			if params.Crossbow.IsServer then
+				dealDamage(character.Humanoid, damage.damage, damage.damageType, true)
+			end
+
+			params.events:fire("damaged", table.freeze({
+				humanoid = character.Humanoid;
+				damageComponent = damage;
+				sourceId = id;
+			}))
 
 			damaged[part] = damaged[part] or {}
 			damaged[part][character] = true

@@ -113,6 +113,9 @@ local function serverExtrapolation(world, components, params)
 			end
 		end
 	end
+	for _, _, humanoid, damage, damageType in params.remoteEvents:iterate("in-extrap-damaged") do
+		dealDamage(humanoid, damage, damageType, true)
+	end
 end
 
 return {
