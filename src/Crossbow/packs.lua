@@ -98,6 +98,17 @@ return function(crossbow, onInit)
 					timestamp = crossbow.Params.currentFrame;
 				})
 		end);
+		BombTool = toolPack(bind(crossbow, "BombTool"));
+		Bomb = projectilePack(function(params)
+			return
+				components.Bomb(),
+				components.ExplodeCountdown({
+					tickColors = params.tickColors or settings.Bomb.tickColors:Get();
+					startingInterval = params.startingInterval or settings.Bomb.startingInterval:Get();
+					multiplier = params.multiplier or settings.Bomb.multiplier:Get();
+					radius = params.explosionRadius or settings.Bomb.explosionRadius:Get();
+				})
+		end);
 		Explosion = function(damage, filter)
 			return
 				components.Damage({

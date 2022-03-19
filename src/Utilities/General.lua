@@ -11,6 +11,12 @@ function General.getProjectileCFrame(tool, spawnDistance, spawnPos)
 	return CFrame.lookAt(at, at + dir)
 end
 
+function General.getProjectileCFrameTop(tool, spawnDistance)
+	local pos = tool:getPosition("Head") + Vector3.yAxis * spawnDistance
+
+	return CFrame.lookAt(pos, pos + Vector3.yAxis)
+end
+
 do
 	local soundPlayer = Instance.new("Part")
 	soundPlayer.Name = "CrossbowSoundPlayer"
@@ -78,7 +84,7 @@ end
 function General.lockTable(name, tbl)
 	return table.freeze(setmetatable(tbl, {
 		__index = function(_, k)
-			error(("%s is not a valid member of %q"):format(k, name))
+			error(("%s is not a valid member of %q"):format(k, tostring(name)))
 		end;
 	}))
 end

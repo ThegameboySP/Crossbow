@@ -53,7 +53,22 @@ return function(crossbow, onInit)
 			end);
 		}));
 
+		Rocket = General.lockTable("Rocket", {
+			velocity = Value.new(60, t.number);
+			explosionRadius = Value.new(4, t.number);
+			explosionDamage = Value.new(Layers.new({101}), Layers.validator(t.number));
+			lifetime = Value.new(15, t.number);
+			explodeFilter = Value.new(function(part)
+				return
+					not crossbow:GetProjectile(part)
+					and Filters.canCollide(part)
+			end, t.callback);
+		});
+
 		SuperballTool = General.lockTable("SuperballTool", mergeToolInherits({
+			fireSound = onInit(Value.new(nil, Value.is), function(value)
+				value:Set(crossbow.Settings.Sounds.superballBounce)
+			end);
 			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
 			velocity = Value.new(200, t.number);
 			reloadTime = Value.new(2, t.number);
@@ -66,18 +81,6 @@ return function(crossbow, onInit)
 			end);
 		}));
 
-		Rocket = General.lockTable("Rocket", {
-			velocity = Value.new(60, t.number);
-			explosionRadius = Value.new(6, t.number);
-			explosionDamage = Value.new(Layers.new({101}), Layers.validator(t.number));
-			lifetime = Value.new(15, t.number);
-			explodeFilter = Value.new(function(part)
-				return
-					not crossbow:GetProjectile(part)
-					and Filters.canCollide(part)
-			end, t.callback);
-		});
-	
 		Superball = General.lockTable("Superball", {
 			damageAmount = Value.new(1, t.number);
 			damageCooldown = Value.new(1, t.number);
@@ -93,6 +96,31 @@ return function(crossbow, onInit)
 			end, t.callback);
 
 			colorEnabled = Value.new(true, t.boolean);
+		});
+
+		BombTool = General.lockTable("BombTool", mergeToolInherits({
+			reloadTime = Value.new(0, t.number);
+			spawnDistance = Value.new(2, t.number);
+	
+			prefab = Value.new(Prefabs.Bomb, t.instanceIsA("Part"));
+	
+			pack = onInit(Value.new(nil, t.callback), function(value)
+				value:Set(crossbow.Packs.Bomb)
+			end);
+		}));
+
+		Bomb = General.lockTable("Bomb", {
+			damage = Value.new(101, t.number);
+			canDamageFilter = Value.new(defaultCanDamage, t.callback);
+			explosionRadius = Value.new(12, t.number);
+
+			startingInterval = Value.new(0.4, t.number);
+			multiplier = Value.new(0.9, t.number);
+
+			tickColors = Value.new({
+				Color3.fromRGB(170, 0, 0),
+				Color3.fromRGB(27, 42, 53),
+			}, t.array(t.Color3));
 		});
 
 		Trowel = General.lockTable("Trowel", {

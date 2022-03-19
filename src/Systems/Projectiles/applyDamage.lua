@@ -56,5 +56,5 @@ return {
 	system = applyDamage;
 	event = "PreSimulation";
 	after = { applyExplosion };
-	priority = Priorities.Projectiles;
+	priority = Priorities.Projectiles + 9;
 }
