@@ -113,8 +113,6 @@ function Crossbow:Init()
 	local params = self.Params
 	self.Loop:begin(bindSignals(function(nextFn, signalName)
 		return function()
-			debug.profilebegin("Crossbow")
-
 			if 
 				(IS_SERVER and signalName == "PreSimulation")
 				or (not IS_SERVER and signalName == "PreRender")
@@ -137,8 +135,6 @@ function Crossbow:Init()
 				params.events:clear()
 				params.remoteEvents:clear()
 			end
-
-			debug.profileend()
 		end
 	end))
 end

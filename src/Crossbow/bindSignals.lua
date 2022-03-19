@@ -1,5 +1,7 @@
 local RunService = game:GetService("RunService")
 
+local Signal = require(script.Parent.Parent.Utilities.Signal)
+
 local legacyNameMap = {
 	RenderStepped = "PreRender";
 	Stepped = "PreSimulation";
@@ -8,9 +10,9 @@ local legacyNameMap = {
 
 return function(middleware)
 	local signals = {
-		RenderStepped = Instance.new("BindableEvent");
-		Stepped = Instance.new("BindableEvent");
-		Heartbeat = Instance.new("BindableEvent");
+		RenderStepped = Signal.new();
+		Stepped = Signal.new();
+		Heartbeat = Signal.new();
 	}
 
 	for signalName, signal in pairs(signals) do
@@ -24,8 +26,8 @@ return function(middleware)
 	end
 
 	return {
-		PreRender = signals.RenderStepped.Event;
-		PreSimulation = signals.Stepped.Event;
-		PostSimulation = signals.Heartbeat.Event;
+		PreRender = signals.RenderStepped;
+		PreSimulation = signals.Stepped;
+		PostSimulation = signals.Heartbeat;
 	}
 end
