@@ -117,6 +117,15 @@
 					"SoundId": "rbxasset://sounds/collide.wav",
 					"Volume": 0.3
 				}
+			},
+
+			"HitTyzone": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxassetid://1053296915",
+					"Volume": 1.3,
+					"PlaybackSpeed": 0.7
+				}
 			}
 		},
 		"Prefabs": {

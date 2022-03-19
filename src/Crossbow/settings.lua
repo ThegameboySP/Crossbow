@@ -11,10 +11,6 @@ local Assets = script.Parent.Parent.Assets
 local Audio = Assets.Audio
 local Prefabs = Assets.Prefabs
 
-local function find(instance, name)
-	return instance:FindFirstChild(name) or error(("No child named %q under %s"):format(name, instance:GetFullName()), 2)
-end
-
 local function mergeToolInherits(tbl)
 	return Matter.merge({
 		onlyActivateOnPartHit = Value.new(false, t.boolean);
@@ -165,29 +161,30 @@ return function(crossbow, onInit)
 		end);
 
 		Sounds = General.lockTable("Sounds", {
-			superballBounce = Value.new(find(Audio, "SuperballBounce"), t.instanceIsA("Sound"));
-			swordLunge = Value.new(find(Audio, "SwordLunge"), t.instanceIsA("Sound"));
-			swordEquip = Value.new(find(Audio, "SwordEquip"), t.instanceIsA("Sound"));
-			swordSlash = Value.new(find(Audio, "SwordSlash"), t.instanceIsA("Sound"));
-			rocketExplode = Value.new(find(Audio, "RocketExplode"), t.instanceIsA("Sound"));
-			bombExplode = Value.new(find(Audio, "BombExplodeModern"), t.instanceIsA("Sound"));
-			bombTick = Value.new(find(Audio, "BombTick"), t.instanceIsA("Sound"));
-			fireSlingshot = Value.new(find(Audio, "SlingshotModern"), t.instanceIsA("Sound"));
-			build = Value.new(find(Audio, "TrowelBuild"), t.instanceIsA("Sound"));
+			superballBounce = Value.new(Audio.SuperballBounce, t.instanceIsA("Sound"));
+			swordLunge = Value.new(Audio.SwordLunge, t.instanceIsA("Sound"));
+			swordEquip = Value.new(Audio.SwordEquip, t.instanceIsA("Sound"));
+			swordSlash = Value.new(Audio.SwordSlash, t.instanceIsA("Sound"));
+			rocketExplode = Value.new(Audio.RocketExplode, t.instanceIsA("Sound"));
+			bombExplode = Value.new(Audio.BombExplodeModern, t.instanceIsA("Sound"));
+			bombTick = Value.new(Audio.BombTick, t.instanceIsA("Sound"));
+			fireSlingshot = Value.new(Audio.SlingshotModern, t.instanceIsA("Sound"));
+			build = Value.new(Audio.TrowelBuild, t.instanceIsA("Sound"));
+			successfulHit = Value.new(Audio.HitTyzone, t.instanceIsA("Sound"));
 		});
 	
 		Prefabs = General.lockTable("Prefabs", {
-			superballTool = Value.new(find(Prefabs, "SuperballTool"), t.instanceIsA("Tool"));
-			rocketTool = Value.new(find(Prefabs, "RocketTool"), t.instanceIsA("Tool"));
-			bombTool = Value.new(find(Prefabs, "BombTool"), t.instanceIsA("Tool"));
-			trowelTool = Value.new(find(Prefabs, "TrowelTool"), t.instanceIsA("Tool"));
-			slingshotTool = Value.new(find(Prefabs, "SlingshotTool"), t.instanceIsA("Tool"));
-			swordTool = Value.new(find(Prefabs, "SwordTool"), t.instanceIsA("Tool"));
+			superballTool = Value.new(Prefabs.SuperballTool, t.instanceIsA("Tool"));
+			rocketTool = Value.new(Prefabs.RocketTool, t.instanceIsA("Tool"));
+			bombTool = Value.new(Prefabs.BombTool, t.instanceIsA("Tool"));
+			trowelTool = Value.new(Prefabs.TrowelTool, t.instanceIsA("Tool"));
+			slingshotTool = Value.new(Prefabs.SlingshotTool, t.instanceIsA("Tool"));
+			swordTool = Value.new(Prefabs.SwordTool, t.instanceIsA("Tool"));
 	
-			superball = Value.new(find(Prefabs, "Superball"), t.instanceIsA("Tool"));
-			rocket = Value.new(find(Prefabs, "Rocket"), t.instanceIsA("Tool"));
-			bomb = Value.new(find(Prefabs, "Bomb"), t.instanceIsA("Tool"));
-			pellet = Value.new(find(Prefabs, "Pellet"), t.instanceIsA("Tool"));
+			superball = Value.new(Prefabs.Superball, t.instanceIsA("Tool"));
+			rocket = Value.new(Prefabs.Rocket, t.instanceIsA("Tool"));
+			bomb = Value.new(Prefabs.Bomb, t.instanceIsA("Tool"));
+			pellet = Value.new(Prefabs.Pellet, t.instanceIsA("Tool"));
 		});
 	
 		Rules = General.lockTable("Rules", {
