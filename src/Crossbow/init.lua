@@ -120,8 +120,8 @@ function Crossbow:Init()
 				or (not IS_SERVER and signalName == "PreRender")
 			then
 				local timestamp = workspace:GetServerTimeNow()
-				params.deltaTime = params.previousFrame and (timestamp - params.previousFrame) or 0
 				params.currentFrame, params.previousFrame = timestamp, params.currentFrame or timestamp
+				params.deltaTime = params.previousFrame and (timestamp - params.previousFrame) or 0
 			end
 
 			nextFn()
