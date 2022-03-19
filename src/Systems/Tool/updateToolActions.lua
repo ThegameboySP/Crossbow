@@ -74,11 +74,11 @@ local function useToolActions(world, components, params)
 			continue 
 		end
 		
-		params.events:fire("on" .. activation.name, activation.id, unpack(activation.event))
+		params.events:fire("activated-tool-" .. string.lower(activation.name), activation.id, unpack(activation.event))
 	end
 	
 	-- Assign components to projectiles according to tool's pack.
-	for _, id, pos in params.events:iterate("onFire") do
+	for _, id, pos in params.events:iterate("activated-tool-fire") do
 		local tool = world:get(id, components.Tool)
 		local specificTool = world:get(id, components[tool.componentName])
 
@@ -91,6 +91,11 @@ local function useToolActions(world, components, params)
 			components.Local(),
 			specificTool.pack(id, tool.character, specificTool.velocity, cframe)
 		)
+
+		local fireSound = params.Settings[tool.componentName].fireSound:Get()
+		if fireSound then
+			params.events:fire("playSound", fireSound, cframe.Position, id)
+		end
 	end
 	
 	for id, projectile in world:query(components.Projectile):without(components.Instance) do

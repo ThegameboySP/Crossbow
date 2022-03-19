@@ -5,7 +5,7 @@ local function updateSuperballs(world, components, params)
     local hitFilter = params.Settings.Superball.hitFilter:Get()
     local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
 
-    for id, part, superball in world:query(components.Part, components.Superball, components.Local) do
+    for id, part, superball, projectile in world:query(components.Part, components.Superball, components.Projectile, components.Local) do
         for _, hit in Matter.useEvent(part.part, getTouchedSignal(part.part)) do
             if not hitFilter(hit) then
                 continue
@@ -15,6 +15,7 @@ local function updateSuperballs(world, components, params)
                 if params.currentFrame - (superball.lastHitTimestamp or 0) >= superball.bouncePauseTime then
                     local bounces = (superball.bounces or 0) + 1
                     params.events:fire("superballBounce", id)
+                    params.events:fire("queueSound", params.Settings.Sounds.superballBounce, projectile.spawnerId, part.part.Position)
 
                     if bounces > superball.maxBounces then
                         params.events:fire("queueRemove", id)

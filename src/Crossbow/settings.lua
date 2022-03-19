@@ -159,6 +159,11 @@ return function(crossbow, onInit)
 			breakJointsFilter = Value.new(Filters.always, t.callback);
 		});
 	
+		ThrottledSounds = onInit({}, function(throttled)
+			throttled[crossbow.Settings.Sounds.swordEquip] = 1
+			throttled[crossbow.Settings.Sounds.superballBounce] = 1
+		end);
+
 		Sounds = General.lockTable("Sounds", {
 			superballBounce = Value.new(find(Audio, "SuperballBounce"), t.instanceIsA("Sound"));
 			swordLunge = Value.new(find(Audio, "SwordLunge"), t.instanceIsA("Sound"));

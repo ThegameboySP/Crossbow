@@ -17,7 +17,7 @@ local function applyExplosion(world, components, params)
 		end
 	end
 
-	for _, pos, radius, damage, isLocal, spawnerId in params.events:iterate("explosion") do
+	for _, pos, radius, damage, isLocal, spawnerId, soundValue in params.events:iterate("explosion") do
 		local collision = Instance.new("Part")
 		collision.CFrame = CFrame.new(pos)
 		collision.Size = Vector3.one * radius * 2
@@ -28,6 +28,18 @@ local function applyExplosion(world, components, params)
 		collision.CanCollide = false
 		collision.Shape = Enum.PartType.Ball
 		collision.Parent = workspace
+
+		if soundValue == nil and world:contains(spawnerId) then
+			if world:get(spawnerId, components.Rocket) then
+				soundValue = Sounds.rocketExplode
+			elseif world:get(spawnerId, components.Bomb) then
+				soundValue = Sounds.bombExplode
+			end
+		end
+
+		if soundValue then
+			params.events:fire("queueSound", soundValue, spawnerId, pos)
+		end
 
 		local newId = params.Crossbow:SpawnBind(
 			collision,
@@ -41,7 +53,6 @@ local function applyExplosion(world, components, params)
 			world:insert(newId, components.Local(), params.Packs.Explosion(damage))
 		end
 
-		params.events:fire("playSound", Sounds.rocketExplode, pos)
 		params.events:fire("exploded", table.freeze({
 			spawnerId = spawnerId;
 			newId = newId;
