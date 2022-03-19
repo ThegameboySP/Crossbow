@@ -24,6 +24,7 @@ return {
 		remoteEvent = t.instanceIsA("RemoteEvent");
 		
 		events = t.table;
+		remoteEvents = t.table;
 		entityKey = t.string;
 
 		currentFrame = t.number;

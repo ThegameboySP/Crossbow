@@ -74,6 +74,9 @@ function Crossbow:PopulateParams()
 	self.Params.entityKey = self.IsServer and "serverEntityId" or "clientEntityId"
 	self.Params.serverToClientId = {}
 	self.Params.clientToServerId = {}
+	self.Params.currentFrame = 0
+	self.Params.previousFrame = 0
+	self.Params.deltaTime = 0
 end
 
 function Crossbow:Init()
@@ -104,6 +107,8 @@ function Crossbow:Init()
 			soundGroup.Parent = SoundService
 		end
 	end
+
+	assert(Definitions.params(self.Params))
 
 	local params = self.Params
 	self.Loop:begin(bindSignals(function(nextFn, signalName)
