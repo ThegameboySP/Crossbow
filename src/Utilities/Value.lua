@@ -1,11 +1,13 @@
+local Signal = require(script.Parent.Signal)
+
 local Value = {}
 Value.__index = Value
 
 function Value.new(default, validator)
 	return setmetatable({
 		_value = default;
-		_event = Instance.new("BindableEvent");
-		validator = validator
+		_signal = Signal.new();
+		validator = validator;
 	}, Value)
 end
 
@@ -15,11 +17,11 @@ function Value:OnChanged(handler)
 		handler(value)
 	end
 
-	return self._event.Event:Connect(handler)
+	return self._signal:Connect(handler)
 end
 
 function Value:Connect(handler)
-	return self._event.Event:Connect(handler)
+	return self._signal:Connect(handler)
 end
 
 function Value:Set(value)
@@ -30,7 +32,7 @@ function Value:Set(value)
 	local old = self._value
 	if old ~= value then
 		self._value = value
-		self._event:Fire(value, old)
+		self._signal:Fire(value, old)
 	end
 end
 
