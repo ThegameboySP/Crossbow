@@ -25,6 +25,6 @@ end
 return {
 	realm = "client";
 	system = updateCrosshair;
-	event = "PreSimulation";
+	event = "PostSimulation";
 	priority = Priorities.Presentation;
 }

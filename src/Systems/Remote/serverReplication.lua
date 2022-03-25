@@ -67,6 +67,11 @@ local function serverReplication(world, components, params)
 		if definition.noReplicate then continue end
 		
 		for id, record in world:queryChanged(definition) do
+			if not world:contains(id) then
+				oldValues[definition][id] = nil
+				continue
+			end
+
 			id = tostring(id)
 
 			if record.new then

@@ -8,15 +8,14 @@ return function()
 			amount = math.huge;
 			cooldown = 0;
 			damage = 0;
-			filter = function() return true end;
-			damagedTimestamp = math.huge;
+			damagedTimestamp = 0;
 		};
 
 		schema = {
 			amount = t.number;
 			cooldown = t.number;
 			damage = t.number;
-			filter = t.callback;
+			filter = t.string;
 			damageType = Definitions.damageType;
 			damagedTimestamp = t.number;
 		};

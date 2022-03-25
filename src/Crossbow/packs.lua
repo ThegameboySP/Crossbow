@@ -65,9 +65,7 @@ return function(crossbow, onInit)
 					damage = params.explosionDamage or settings.Rocket.explosionDamage:Get():get();
 					radius = params.explosionRadius or settings.Rocket.explosionRadius:Get();
 					filter = params.explodeFilter or settings.Rocket.explodeFilter:Get();
-					transform = function(part)
-						return (part.CFrame * CFrame.new(-Vector3.zAxis * part.Size.Z / 2)).Position
-					end;
+					transform = "getPartPosAtTip";
 				}),
 				components.Lifetime({
 					duration = params.lifetime or settings.Rocket.lifetime:Get();
@@ -109,11 +107,29 @@ return function(crossbow, onInit)
 					radius = params.explosionRadius or settings.Bomb.explosionRadius:Get();
 				})
 		end);
+		SwordTool = toolPack(function(params)
+			return
+				components.SwordTool({
+					state = "Idle";
+					idleDamage = params.idleDamage or settings.SwordTool.idleDamage:Get();
+					slashDamage = params.slashDamage or settings.SwordTool.slashDamage:Get();
+					lungeDamage = params.lungeDamage or settings.SwordTool.lungeDamage:Get();
+
+					floatAmount = params.floatAmount or settings.SwordTool.floatAmount:Get();
+					floatHeight = params.floatHeight or settings.SwordTool.floatHeight:Get();
+				}),
+				components.Damage({
+					damage = params.idleDamage or settings.SwordTool.idleDamage:Get();
+					cooldown = params.damageCooldown or settings.SwordTool.damageCooldown:Get();
+					filter = params.damageFilter or settings.SwordTool.canDamageFilter:Get();
+					damageType = "Melee";
+				})
+		end);
 		Explosion = function(damage, filter)
 			return
 				components.Damage({
 					damage = damage or settings.Explosion.damage:Get();
-					filter = filter;
+					filter = filter or "always";
 					damageType = "Explosion";
 				})
 		end;

@@ -5,36 +5,38 @@ local Priorities = require(script.Parent.Parent.Priorities)
 local applyExplosion = require(script.Parent.applyExplosion)
 
 local function applyDamage(world, components, params)
-	local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
-	local dealDamage = params.Settings.Interfacing.dealDamage:Get()
+	local settings = params.Settings
+	local getTouchedSignal = settings.Interfacing.getTouchedSignal:Get()
+	local dealDamage = settings.Interfacing.dealDamage:Get()
 	local currentTime = params.currentFrame
 	local damaged = {}
 
 	for id, part, damage in world:query(components.Part, components.Damage, components.Local) do
-		if damage.damagedTimestamp - currentTime < damage.cooldown then
+		if currentTime - damage.damagedTimestamp < damage.cooldown then
 			continue
 		end
 
 		for _, hit in Matter.useEvent(part.part, getTouchedSignal(part.part)) do
-			local character = General.getCharacterFromHitbox(hit)
-			if character == nil then continue end
-			if damaged[part] and damaged[part][character] then continue end
+			local victim, humanoid = General.getCharacterFromHitbox(hit)
+			if victim == nil then continue end
+			if humanoid.Health <= 0 then continue end
+			if damaged[part] and damaged[part][victim] then continue end
 
 			local projectile = world:get(id, components.Projectile)
-			if not damage.filter(character, projectile and projectile.character, damage.damageType) then continue end
+			if not settings.Callbacks[damage.filter](victim, projectile and projectile.character, damage.damageType) then continue end
 
 			if params.Crossbow.IsServer then
-				dealDamage(character.Humanoid, damage.damage, damage.damageType, true)
+				dealDamage(humanoid, damage.damage, damage.damageType, true)
 			end
 
 			params.events:fire("damaged", table.freeze({
-				humanoid = character.Humanoid;
+				humanoid = humanoid;
 				damageComponent = damage;
 				sourceId = id;
 			}))
 
 			damaged[part] = damaged[part] or {}
-			damaged[part][character] = true
+			damaged[part][victim] = true
 
 			world:insert(id, damage:patch({
 				amount = damage.amount - 1;

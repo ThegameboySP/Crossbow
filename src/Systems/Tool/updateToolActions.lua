@@ -5,6 +5,7 @@ local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local InputStrategies = require(script.Parent.Parent.Parent.Input.InputStrategies)
 local Input = require(script.Parent.Parent.Parent.Input.Input)
 
+local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local Priorities = require(script.Parent.Parent.Priorities)
 local updateTools = require(script.Parent.updateTools)
 
@@ -23,16 +24,17 @@ local function resolveState(isHeld, wasHeld)
 end
 
 local activations = {}
-local function useInput(world, id, tool)
-	local actions = InputStrategies[tostring(tool)] or InputStrategies.default
+local function handleInput(world, id, tool, crossbow)
+	local actions = InputStrategies[tool:getDefinition().componentName] or InputStrategies.default
 	if actions == nil then
 		return
 	end
 	
-	local storage = Matter.useHookState(actions)
+	local storage = useHookStorage(actions)
 	storage.customStorage = storage.customStorage or {}
 	
 	for actionName, strategy in pairs(actions) do
+		
 		local customStorage = storage.customStorage[actionName]
 		if customStorage == nil then
 			customStorage = {}
@@ -40,7 +42,7 @@ local function useInput(world, id, tool)
 		end
 		
 		local isHeld = Input:IsActionHeld(actionName)
-		local event, patch = strategy(tool, resolveState(isHeld, customStorage.wasHeld), customStorage)
+		local event, patch = strategy(tool, resolveState(isHeld, customStorage.wasHeld), customStorage, crossbow)
 		customStorage.wasHeld = isHeld
 		
 		if event then
@@ -55,11 +57,15 @@ end
 
 local function useToolActions(world, components, params)
 	-- Run input checks for tool actions.
-	for id, tool in world:query(components.Tool, components.Local) do
-		if not tool.isEquipped then continue end
-		
+	if not params.Crossbow.IsServer then
 		debug.profilebegin("input")
-		useInput(world, id, world:get(id, components[tool.componentName]))
+
+		for id, tool in world:query(components.Tool, components.Local) do
+			if tool.isEquipped then
+				handleInput(world, id, world:get(id, components[tool.componentName]), params.Crossbow)
+			end
+		end
+		
 		debug.profileend()
 	end
 	
@@ -74,27 +80,30 @@ local function useToolActions(world, components, params)
 			continue 
 		end
 		
-		params.events:fire("activated-tool-" .. string.lower(activation.name), activation.id, unpack(activation.event))
+		params.events:fire("tool-activated-" .. string.lower(activation.name), activation.id, unpack(activation.event))
 	end
 	
 	-- Assign components to projectiles according to tool's pack.
-	for _, id, pos in params.events:iterate("activated-tool-fire") do
+	for _, id, pos in params.events:iterate("tool-activated-fire") do
 		local tool = world:get(id, components.Tool)
 		local specificTool = world:get(id, components[tool.componentName])
 
-		world:insert(id, tool:patch({
-			reloadTimeLeft = specificTool.reloadTime;
-		}))
+		local toolType = specificTool:getDefinition().toolType
+		if toolType == "Projectile" then
+			world:insert(id, tool:patch({
+				reloadTimeLeft = specificTool.reloadTime;
+			}))
 
-		local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos)
-		world:spawn(
-			components.Local(),
-			specificTool.pack(id, tool.character, specificTool.velocity, cframe)
-		)
+			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos)
+			world:spawn(
+				components.Local(),
+				params.Crossbow.Packs[specificTool.pack](id, tool.character, specificTool.velocity, cframe)
+			)
 
-		local fireSound = params.Settings[tool.componentName].fireSound:Get()
-		if fireSound then
-			params.events:fire("playSound", fireSound, cframe.Position, id)
+			local fireSound = params.Settings[tool.componentName].fireSound:Get()
+			if fireSound then
+				params.events:fire("playSound", fireSound, cframe.Position, id)
+			end
 		end
 	end
 	

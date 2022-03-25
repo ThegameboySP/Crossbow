@@ -3,6 +3,7 @@ local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
 
 return function(settings)
 	return newComponent("BombTool", {
+		toolType = "Projectile";
 		getProjectileCFrame = General.getProjectileCFrameTop;
 
 		index = {

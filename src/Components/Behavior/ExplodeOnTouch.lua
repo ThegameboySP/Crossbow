@@ -7,18 +7,11 @@ return function(settings)
 			getTouchedSignal = settings.Interfacing.getTouchedSignal;
 		};
 
-		defaults = {
-			filter = function() return true end;
-			transform = function(part)
-				return part.Position
-			end;
-		};
-
 		schema = {
-			filter = t.callback;
+			filter = t.string;
 			radius = t.number;
 			damage = t.number;
-			transform = t.callback;
+			transform = t.string;
 		};
 	})
 end

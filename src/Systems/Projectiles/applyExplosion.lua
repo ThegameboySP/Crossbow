@@ -6,11 +6,11 @@ local function applyExplosion(world, components, params)
 	
 	for id, explodeOnTouch, part in world:query(components.ExplodeOnTouch, components.Part, components.Local) do
 		for _, hit in Matter.useEvent(part.part, explodeOnTouch.getTouchedSignal(part.part)) do
-			if not explodeOnTouch.filter(hit) then
+			if not params.Settings.Callbacks[explodeOnTouch.filter](hit) then
 				continue
 			end
 
-			local pos = explodeOnTouch.transform(part.part)
+			local pos = params.Settings.Callbacks[explodeOnTouch.transform](part.part)
 			params.events:fire("explosion", pos, explodeOnTouch.radius, explodeOnTouch.damage, true, id)
 			params.events:fire("queueRemove", id)
 			break

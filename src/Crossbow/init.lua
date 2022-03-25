@@ -140,7 +140,7 @@ function Crossbow:Init()
 end
 
 function Crossbow:RegisterDefaultTools()
-	-- self:RegisterTool("Sword", Prefabs.swordTool, Packs.swordTool)
+	self:RegisterTool("Sword", Prefabs.SwordTool, self.Packs.SwordTool)
 	self:RegisterTool("Superball", Prefabs.SuperballTool, self.Packs.SuperballTool)
 	self:RegisterTool("Rocket", Prefabs.RocketTool, self.Packs.RocketTool)
 	self:RegisterTool("Bomb", Prefabs.BombTool, self.Packs.BombTool)
@@ -202,16 +202,23 @@ end
 function Crossbow:InsertBind(instance, id, ...)
 	self:Bind(instance, id)
 
+	local part
 	if instance:IsA("BasePart") then
+		part = instance
+	elseif instance:IsA("Tool") and instance:FindFirstChild("Handle") then
+		part = instance:FindFirstChild("Handle")
+	end
+	
+	if part then 
 		return id, self.World:insert(id,
 			self.Components.Part({
-				part = instance;
+				part = part;
 			}),
 			self.Components.Instance({
 				instance = instance;
 			}),
 			...
-		)
+		)	
 	else
 		return id, self.World:insert(id, self.Components.Instance({
 			instance = instance;

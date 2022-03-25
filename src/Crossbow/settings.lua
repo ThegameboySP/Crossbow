@@ -1,5 +1,4 @@
 local t = require(script.Parent.Parent.Parent.t)
-local Matter = require(script.Parent.Parent.Parent.Matter)
 
 local Filters = require(script.Parent.Parent.Utilities.Filters)
 local Value = require(script.Parent.Parent.Utilities.Value)
@@ -11,77 +10,99 @@ local Assets = script.Parent.Parent.Assets
 local Audio = Assets.Audio
 local Prefabs = Assets.Prefabs
 
-local function mergeToolInherits(tbl)
-	return Matter.merge({
-		onlyActivateOnPartHit = Value.new(false, t.boolean);
-		fireSound = Value.new(nil, t.optional(t.instanceIsA("Sound")));
-		pack = Value.new(nil, t.callback);
-	}, tbl)
-end
-
 return function(crossbow, onInit)
-	local function defaultRaycastFilter(part)
-		return 
-			Filters.canCollide(part)
-			and not Filters.isLocalCharacter(part)
-			and not crossbow:GetProjectile(part)
-	end
+	local callbackValidator = function(value)
+		local ok, err = t.string(value)
+		if not ok then
+			return false, err
+		end
+		
+		if not crossbow.Settings.Callbacks[value] then
+			return false, string.format("Callback ID %s has no entry", value)
+		end
 
-	local function defaultCanDamage(char1, char2, damageType)
-		return 
-			(if damageType == "Hit" then char1 ~= char2 else true)
-			and char1 and char2 and Filters.isValidCharacter(char1) and Filters.isValidCharacter(char2)
-			and not char1:FindFirstChildWhichIsA("ForceField")
-			and not char2:FindFirstChildWhichIsA("ForceField")
+		return true
 	end
 	
-	return General.lockTable("Settings", {	
-		RocketTool = General.lockTable("RocketTool", mergeToolInherits({
-			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
+	local packValidator = function(value)
+		local ok, err = t.string(value)
+		if not ok then
+			return false, err
+		end
+		
+		if not crossbow.Packs[value] then
+			return false, string.format("Pack ID %s has no entry", value)
+		end
+
+		return true
+	end
+
+	return General.lockTable("Settings", {
+		Callbacks = {
+			defaultCanDamage = function(victim, attacker, damageType)
+				return 
+					(if damageType == "Hit" or damageType == "Melee" then victim ~= attacker else true)
+					and victim and Filters.isValidCharacter(victim) and (not attacker or Filters.isValidCharacter(attacker))
+					and not victim:FindFirstChildWhichIsA("ForceField")
+					and (not attacker or not attacker:FindFirstChildWhichIsA("ForceField"))
+			end;
+			defaultRaycastFilter = function(part)
+				return 
+					Filters.canCollide(part)
+					and not Filters.isLocalCharacter(part)
+					and not crossbow:GetProjectile(part)
+			end;
+			getPartPosAtTip = function(part)
+				return (part.CFrame * CFrame.new(-Vector3.zAxis * part.Size.Z / 2)).Position
+			end;
+			rocketExplodeFilter = function(part)
+				return
+					not crossbow:GetProjectile(part)
+					and Filters.canCollide(part)
+			end;
+			always = Filters.always;
+			never = Filters.never;
+		};
+
+		RocketTool = General.lockTable("RocketTool", {
+			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
 			velocity = Value.new(60, t.number);
 			reloadTime = Value.new(0, t.number);
 			spawnDistance = Value.new(6, t.number);
 	
 			prefab = Value.new(Prefabs.Rocket, t.instanceIsA("Part"));
 	
-			pack = onInit(Value.new(nil, t.callback), function(value)
-				value:Set(crossbow.Packs.Rocket)
-			end);
-		}));
+			fireSound = Value.new(nil, Value.is);
+			pack = Value.new("Rocket", packValidator);
+		});
 
 		Rocket = General.lockTable("Rocket", {
 			velocity = Value.new(60, t.number);
 			explosionRadius = Value.new(4, t.number);
 			explosionDamage = Value.new(Layers.new({101}), Layers.validator(t.number));
 			lifetime = Value.new(15, t.number);
-			explodeFilter = Value.new(function(part)
-				return
-					not crossbow:GetProjectile(part)
-					and Filters.canCollide(part)
-			end, t.callback);
+			explodeFilter = Value.new("rocketExplodeFilter", callbackValidator);
 		});
 
-		SuperballTool = General.lockTable("SuperballTool", mergeToolInherits({
+		SuperballTool = General.lockTable("SuperballTool", {
 			fireSound = onInit(Value.new(nil, Value.is), function(value)
 				value:Set(crossbow.Settings.Sounds.superballBounce)
 			end);
-			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
+			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
 			velocity = Value.new(200, t.number);
 			reloadTime = Value.new(2, t.number);
 			spawnDistance = Value.new(6, t.number);
 	
 			prefab = Value.new(Prefabs.Superball, t.instanceIsA("Part"));
 	
-			pack = onInit(Value.new(nil, t.callback), function(value)
-				value:Set(crossbow.Packs.Superball)
-			end);
-		}));
+			pack = Value.new("Superball", packValidator);
+		});
 
 		Superball = General.lockTable("Superball", {
 			damageAmount = Value.new(1, t.number);
 			damageCooldown = Value.new(1, t.number);
 			damage = Value.new(55, t.number);
-			canDamageFilter = Value.new(defaultCanDamage, t.callback);
+			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 
 			lifetime = Value.new(10, t.number);
 			maxBounces = Value.new(8, t.number);
@@ -94,20 +115,19 @@ return function(crossbow, onInit)
 			colorEnabled = Value.new(true, t.boolean);
 		});
 
-		BombTool = General.lockTable("BombTool", mergeToolInherits({
+		BombTool = General.lockTable("BombTool", {
+			fireSound = Value.new(nil, Value.is);
 			reloadTime = Value.new(0, t.number);
 			spawnDistance = Value.new(2, t.number);
 	
 			prefab = Value.new(Prefabs.Bomb, t.instanceIsA("Part"));
 	
-			pack = onInit(Value.new(nil, t.callback), function(value)
-				value:Set(crossbow.Packs.Bomb)
-			end);
-		}));
+			pack = Value.new("Bomb", packValidator);
+		});
 
 		Bomb = General.lockTable("Bomb", {
 			damage = Value.new(101, t.number);
-			canDamageFilter = Value.new(defaultCanDamage, t.callback);
+			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 			explosionRadius = Value.new(12, t.number);
 
 			startingInterval = Value.new(0.4, t.number);
@@ -117,6 +137,18 @@ return function(crossbow, onInit)
 				Color3.fromRGB(170, 0, 0),
 				Color3.fromRGB(27, 42, 53),
 			}, t.array(t.Color3));
+		});
+
+		SwordTool = General.lockTable("SwordTool", {
+			idleDamage = Value.new(10, t.number);
+			slashDamage = Value.new(20, t.number);
+			lungeDamage = Value.new(35, t.number);
+			
+			floatAmount = Value.new(5000, t.number);
+			floatHeight = Value.new(13, t.number);
+
+			damageCooldown = Value.new(0.2, t.number);
+			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 		});
 
 		Trowel = General.lockTable("Trowel", {
@@ -188,9 +220,9 @@ return function(crossbow, onInit)
 		});
 	
 		Rules = General.lockTable("Rules", {
-			canDamage = Value.new(defaultCanDamage, t.callback);
+			canDamage = Value.new("defaultCanDamage", callbackValidator);
 			hitPartFilter = Value.new(Filters.always, t.callback);
-			raycastFilter = Value.new(defaultRaycastFilter, t.callback);
+			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
 		});
 	})
 end

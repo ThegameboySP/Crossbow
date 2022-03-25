@@ -1,8 +1,8 @@
 local Input = require(script.Parent.Input)
 
-local function pressActivate(tool, state)
+local function pressActivate(tool, state, _, crossbow)
 	if state == Enum.UserInputState.Begin then
-		return {Input:Raycast(tool.raycastFilter)}
+		return {Input:Raycast(crossbow.Settings.Callbacks[tool.raycastFilter])}
 	end
 end
 
@@ -56,19 +56,21 @@ return {
 		end;
 	};
 
-	Sword = {
-		Fire = function(tool, storage, checkState, fire)
+	SwordTool = {
+		Fire = function(_, state, storage, crossbow)
 			storage.lastFired = storage.lastFired or 0
 
-			if checkState(Enum.UserInputState.Begin) then
-				local currentTime = Binding:GetTime()
-				if (currentTime - storage.lastFired) > 0.2 then
-					fire("Slashed")
-				else
-					fire("Lunged")
-				end
+			if state == Enum.UserInputState.Begin then
+				return {"Lunging"}
+				-- local currentTime = crossbow.Params.currentFrame
+				-- local lastFired = storage.lastFired
+				-- storage.lastFired = currentTime
 
-				storage.lastFired = currentTime
+				-- if (currentTime - lastFired) > 0.2 then
+				-- 	return {"Slashing"}
+				-- else
+				-- 	return {"Lunging"}
+				-- end
 			end
 		end;
 	}

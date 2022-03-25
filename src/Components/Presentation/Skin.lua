@@ -4,8 +4,8 @@ local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
 return function()
 	return newComponent("Skin", {
 		schema = {
-			explosionDecorator = t.optional(t.callback);
-			projectileDecorator = t.optional(t.callback);
+			explosionDecorator = t.optional(t.string);
+			projectileDecorator = t.optional(t.string);
 		};
 	})
 end
