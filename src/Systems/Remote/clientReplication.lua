@@ -48,7 +48,7 @@ local function clientReplication(world, components, params)
 
 			if clientId and world:contains(clientId) then
 				if name == "Owner" then
-					world:remove(clientId, components.Local)
+					world:remove(clientId, components.Owned)
 				end
 				world:remove(clientId, components[name])
 
@@ -94,9 +94,9 @@ local function clientReplication(world, components, params)
 
 			if remoteComponents.Owner then
 				if remoteComponents.Owner.client == LOCAL_PLAYER then
-					world:insert(clientId, components.Local())
+					world:insert(clientId, components.Owned())
 				else
-					world:remove(clientId, components.Local)
+					world:remove(clientId, components.Owned)
 				end
 			end
 		end

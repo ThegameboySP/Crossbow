@@ -6,7 +6,7 @@ local Priorities = require(script.Parent.Parent.Priorities)
 local function updateCrosshair(world, components)
 	local equippingTool
 
-	for _id, tool in world:query(components.Tool, components.Local) do
+	for _id, tool in world:query(components.Tool, components.Owned) do
 		if tool.isEquipped then
 			equippingTool = tool
 			break

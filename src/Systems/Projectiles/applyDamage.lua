@@ -11,7 +11,7 @@ local function applyDamage(world, components, params)
 	local currentTime = params.currentFrame
 	local damaged = {}
 
-	for id, part, damage in world:query(components.Part, components.Damage, components.Local) do
+	for id, part, damage in world:query(components.Part, components.Damage, components.Owned) do
 		if currentTime - damage.damagedTimestamp < damage.cooldown then
 			continue
 		end

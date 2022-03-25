@@ -60,7 +60,7 @@ local function useToolActions(world, components, params)
 	if not params.Crossbow.IsServer then
 		debug.profilebegin("input")
 
-		for id, tool in world:query(components.Tool, components.Local) do
+		for id, tool in world:query(components.Tool, components.Owned) do
 			if tool.isEquipped then
 				handleInput(world, id, world:get(id, components[tool.componentName]), params.Crossbow)
 			end
@@ -96,7 +96,7 @@ local function useToolActions(world, components, params)
 
 			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos)
 			world:spawn(
-				components.Local(),
+				components.Owned(),
 				params.Crossbow.Packs[specificTool.pack](id, tool.character, specificTool.velocity, cframe)
 			)
 

@@ -12,7 +12,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 	if Matter.useThrottle(params.Settings.Network.extrapolationFrequency:Get()) then
 		local packets = {}
 
-		for id, part in world:query(components.Part, components.Projectile, components.Local):without(components.Rocket) do
+		for id, part in world:query(components.Part, components.Projectile, components.Owned):without(components.Rocket) do
 			local position = part.part.Position
 			table.insert(packets, {id, position})
 		end
@@ -22,7 +22,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 		end
 	end
 
-	for id, projectileRecord, part in world:queryChanged(components.Projectile, components.Part, components.Local) do
+	for id, projectileRecord, part in world:queryChanged(components.Projectile, components.Part, components.Owned) do
 		if projectileRecord.new and not projectileRecord.old then
 			localIds[id] = true
 

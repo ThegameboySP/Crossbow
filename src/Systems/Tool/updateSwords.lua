@@ -42,7 +42,7 @@ local slashAnimation = makeAnimationSetter("Slash")
 local function updateSwords(world, components, params)
     local query =
         if params.Crossbow.IsServer then world:query(components.SwordTool, components.Tool)
-        else world:query(components.SwordTool, components.Tool, components.Local)
+        else world:query(components.SwordTool, components.Tool, components.Owned)
     
     for id, sword, tool in query do
         if sword.state == "Idle" or tool.reloadTimeLeft > 0 then

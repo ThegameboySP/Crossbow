@@ -4,7 +4,7 @@ local Priorities = require(script.Parent.Parent.Priorities)
 local function applyExplosion(world, components, params)
 	local Sounds = params.Settings.Sounds
 	
-	for id, explodeOnTouch, part in world:query(components.ExplodeOnTouch, components.Part, components.Local) do
+	for id, explodeOnTouch, part in world:query(components.ExplodeOnTouch, components.Part, components.Owned) do
 		for _, hit in Matter.useEvent(part.part, explodeOnTouch.getTouchedSignal(part.part)) do
 			if not params.Settings.Callbacks[explodeOnTouch.filter](hit) then
 				continue
@@ -50,7 +50,7 @@ local function applyExplosion(world, components, params)
 		)
 
 		if isLocal then
-			world:insert(newId, components.Local(), params.Packs.Explosion(damage))
+			world:insert(newId, components.Owned(), params.Packs.Explosion(damage))
 		end
 
 		params.events:fire("exploded", table.freeze({

@@ -5,13 +5,13 @@ local function updateSuperballs(world, components, params)
     local hitFilter = params.Settings.Superball.hitFilter:Get()
     local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
 
-    for id, part, superball, projectile in world:query(components.Part, components.Superball, components.Projectile, components.Local) do
+    for id, part, superball, projectile in world:query(components.Part, components.Superball, components.Projectile, components.Owned) do
         for _, hit in Matter.useEvent(part.part, getTouchedSignal(part.part)) do
             if not hitFilter(hit) then
                 continue
             end
             
-            if world:get(id, components.Local) then
+            if world:get(id, components.Owned) then
                 if params.currentFrame - (superball.lastHitTimestamp or 0) >= superball.bouncePauseTime then
                     local bounces = (superball.bounces or 0) + 1
                     params.events:fire("superballBounce", id)

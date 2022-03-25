@@ -34,7 +34,7 @@ local function updateExplodeCountdown(world, components, params)
         
         if not isRunning then
             params.events:fire("queueRemove", id)
-            params.events:fire("explosion", part.part.Position, explodeCountdown.radius, 100, world:get(id, components.Local) ~= nil, id)
+            params.events:fire("explosion", part.part.Position, explodeCountdown.radius, 100, world:get(id, components.Owned) ~= nil, id)
         end
     end
 end
