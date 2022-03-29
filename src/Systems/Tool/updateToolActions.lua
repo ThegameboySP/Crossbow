@@ -24,8 +24,8 @@ local function resolveState(isHeld, wasHeld)
 end
 
 local activations = {}
-local function handleInput(world, id, tool, crossbow)
-	local actions = InputStrategies[tool:getDefinition().componentName] or InputStrategies.default
+local function handleInput(world, id, specificTool, tool, crossbow)
+	local actions = InputStrategies[specificTool:getDefinition().componentName] or InputStrategies.default
 	if actions == nil then
 		return
 	end
@@ -34,7 +34,6 @@ local function handleInput(world, id, tool, crossbow)
 	storage.customStorage = storage.customStorage or {}
 	
 	for actionName, strategy in pairs(actions) do
-		
 		local customStorage = storage.customStorage[actionName]
 		if customStorage == nil then
 			customStorage = {}
@@ -42,15 +41,15 @@ local function handleInput(world, id, tool, crossbow)
 		end
 		
 		local isHeld = Input:IsActionHeld(actionName)
-		local event, patch = strategy(tool, resolveState(isHeld, customStorage.wasHeld), customStorage, crossbow)
+		local event, patch = strategy(specificTool, tool, resolveState(isHeld, customStorage.wasHeld), customStorage, crossbow)
 		customStorage.wasHeld = isHeld
 		
 		if event then
-			table.insert(activations, {name = actionName, tool = tool, id = id, event = event})
+			table.insert(activations, {name = actionName, tool = specificTool, id = id, event = event})
 		end
 		
 		if patch then
-			world:insert(id, tool:patch(patch))
+			world:insert(id, specificTool:patch(patch))
 		end
 	end
 end
@@ -62,7 +61,8 @@ local function useToolActions(world, components, params)
 
 		for id, tool in world:query(components.Tool, components.Owned) do
 			if tool.isEquipped then
-				handleInput(world, id, world:get(id, components[tool.componentName]), params.Crossbow)
+				handleInput(world, id, world:get(id, components[tool.componentName]), tool, params.Crossbow)
+				break
 			end
 		end
 		
@@ -100,9 +100,8 @@ local function useToolActions(world, components, params)
 				params.Crossbow.Packs[specificTool.pack](id, tool.character, specificTool.velocity, cframe)
 			)
 
-			local fireSound = params.Settings[tool.componentName].fireSound:Get()
-			if fireSound then
-				params.events:fire("playSound", fireSound, cframe.Position, id)
+			if tool.fireSound then
+				params.events:fire("playSound", tool.fireSound, cframe.Position, id)
 			end
 		end
 	end

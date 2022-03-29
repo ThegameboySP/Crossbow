@@ -5,31 +5,31 @@ local function throttleSounds(_, _, params)
     local lastPlayed = useHookStorage()
     local throttledSounds = params.Settings.ThrottledSounds
 
-    for _, soundValue, discriminator, pos in params.events:iterate("queueSound") do
-        local limit = throttledSounds[soundValue]
+    for _, sound, discriminator, pos in params.events:iterate("queueSound") do
+        local limit = throttledSounds[sound]
         if not limit then
-            params.events:fire("playSound", soundValue, pos)
+            params.events:fire("playSound", sound, pos)
             continue
         end
 
-        discriminator = discriminator or soundValue
+        discriminator = discriminator or sound
         lastPlayed[discriminator] = lastPlayed[discriminator] or {}
 
-        local timestamp = lastPlayed[discriminator][soundValue]
+        local timestamp = lastPlayed[discriminator][sound]
         if timestamp == nil then
             timestamp = 0
-            lastPlayed[discriminator][soundValue] = timestamp
+            lastPlayed[discriminator][sound] = timestamp
         end
 
         if params.currentFrame - timestamp > limit then
-            params.events:fire("playSound", soundValue, pos, discriminator)
+            params.events:fire("playSound", sound, pos, discriminator)
         end
     end
 
-    for _, soundValue, _, discriminator in params.events:iterate("playSound") do
+    for _, sound, _, discriminator in params.events:iterate("playSound") do
         if discriminator then
             lastPlayed[discriminator] = lastPlayed[discriminator] or {}
-            lastPlayed[discriminator][soundValue] = params.currentFrame
+            lastPlayed[discriminator][sound] = params.currentFrame
         end
     end
 

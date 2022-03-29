@@ -8,6 +8,8 @@ return function()
 		replicateKeys = {
 			componentName = true;
 			character = true;
+			equipSound = true;
+			fireSound = true;
 		};
 
 		defaults = {
@@ -22,6 +24,8 @@ return function()
 			reloadTimeLeft = t.number;
 			isEquipped = t.boolean;
 			character = t.optional(t.Instance);
+			equipSound = t.optional(t.Instance);
+			fireSound = t.optional(t.Instance);
 		};
 	})
 

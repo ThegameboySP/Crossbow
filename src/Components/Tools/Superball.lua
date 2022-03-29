@@ -11,6 +11,7 @@ return function(settings)
             bouncePauseTime = t.number;
             bounces = t.number;
             lastHitTimestamp = t.number;
+            bounceSound = t.optional(t.Instance);
         };
     })
 end

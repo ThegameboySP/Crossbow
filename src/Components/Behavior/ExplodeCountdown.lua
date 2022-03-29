@@ -8,6 +8,8 @@ return function()
             startingInterval = t.number;
             multiplier = t.union(t.numberMinExclusive(0), t.numberMaxExclusive(1));
             radius = t.number;
+            explodeSound = t.optional(t.Instance);
+            tickSound = t.optional(t.Instance);
         }
     })
 end

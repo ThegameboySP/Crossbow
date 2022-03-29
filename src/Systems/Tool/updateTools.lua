@@ -9,6 +9,12 @@ local function updateTools(world, components, params)
 		local isEquipped = instance.instance.Parent == tool.character
 		if tool.isEquipped ~= isEquipped then
 			delta.isEquipped = isEquipped
+			
+			if isEquipped and not params.Crossbow.IsServer then
+				if tool.equipSound then
+					params.events:fire("queueSound", tool.equipSound, id, world:get(id, components.Part).part.Position)
+				end
+			end
 		end
 
 		if tool.reloadTimeLeft > 0 then

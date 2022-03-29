@@ -6,7 +6,7 @@ local function hitsPlayDing(world, components, params)
             continue
         end
 
-        params.events:fire("playSound", params.Settings.Sounds.successfulHit)
+        params.events:fire("playSound", params.Settings.Sounds.successfulHit:Get())
     end
 end
 

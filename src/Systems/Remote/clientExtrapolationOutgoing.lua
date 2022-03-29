@@ -56,7 +56,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 
 	for _, event in params.events:iterate("exploded") do
 		if
-			not event.isLocal
+			not event.isOwned
 			or not world:contains(event.spawnerId)
 			or not world:get(event.spawnerId, components.Projectile)
 		then

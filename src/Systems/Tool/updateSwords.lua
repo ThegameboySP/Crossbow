@@ -8,8 +8,8 @@ local SLASH_TIME = 0.2
 
 local function makeAnimationSetter(name)
     return function(world, components, params, id)
-        local instance, part = world:get(id, components.Instance, components.Part)
-        if instance and part then
+        local instance, part, swordTool = world:get(id, components.Instance, components.Part, components.SwordTool)
+        if instance and part and swordTool then
             local tool = instance.instance
 
             local toolAnim = Instance.new("StringValue")
@@ -17,10 +17,12 @@ local function makeAnimationSetter(name)
             toolAnim.Value = name
             toolAnim.Parent = tool
 
-            if name == "Slash" then
-                params.events:fire("playSound", params.Settings.Sounds.swordSlash, part.part.Position)
+            if name == "Slash" and swordTool.slashSound then
+                params.events:fire("playSound", swordTool.slashSound, part.part.Position)
             elseif name == "Lunge" then
-                params.events:fire("playSound", params.Settings.Sounds.swordLunge, part.part.Position)
+                if swordTool.lungeSound then
+                    params.events:fire("playSound", swordTool.lungeSound, part.part.Position)
+                end
 
                 tool.GripForward = Vector3.new(0, 0, 1)
                 tool.GripRight = Vector3.new(0, -1, 0)

@@ -37,6 +37,9 @@ return function(crossbow, onInit)
 		return true
 	end
 
+	local optionalSound = t.optional(t.instanceIsA("Sound"))
+	local isTool = t.instanceIsA("Tool")
+	
 	return General.lockTable("Settings", {
 		Callbacks = {
 			defaultCanDamage = function(victim, attacker, damageType)
@@ -52,6 +55,11 @@ return function(crossbow, onInit)
 					and not Filters.isLocalCharacter(part)
 					and not crossbow:GetProjectile(part)
 			end;
+			trowelRaycastFilter = function(part)
+				return
+					Filters.canCollide(part)
+					and not Filters.isLocalCharacter(part)
+			end;
 			getPartPosAtTip = function(part)
 				return (part.CFrame * CFrame.new(-Vector3.zAxis * part.Size.Z / 2)).Position
 			end;
@@ -60,11 +68,25 @@ return function(crossbow, onInit)
 					not crossbow:GetProjectile(part)
 					and Filters.canCollide(part)
 			end;
+			defaultTrowelShouldWeld = function(part, normalId)
+				if General.getCharacter(part) then
+					return false
+				end
+	
+				local surface = part[normalId.Name .. "Surface"]
+		
+				return
+					surface == Enum.SurfaceType.Studs
+					or surface == Enum.SurfaceType.Weld
+					or surface == Enum.SurfaceType.Glue
+			end;
 			always = Filters.always;
 			never = Filters.never;
 		};
 
 		RocketTool = General.lockTable("RocketTool", {
+			fireSound = Value.new(nil, optionalSound);
+
 			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
 			velocity = Value.new(60, t.number);
 			reloadTime = Value.new(0, t.number);
@@ -72,11 +94,12 @@ return function(crossbow, onInit)
 	
 			prefab = Value.new(Prefabs.Rocket, t.instanceIsA("Part"));
 	
-			fireSound = Value.new(nil, Value.is);
 			pack = Value.new("Rocket", packValidator);
 		});
 
 		Rocket = General.lockTable("Rocket", {
+			explodeSound = Value.new(Audio.RocketExplode, optionalSound);
+
 			velocity = Value.new(60, t.number);
 			explosionRadius = Value.new(4, t.number);
 			explosionDamage = Value.new(Layers.new({101}), Layers.validator(t.number));
@@ -85,13 +108,12 @@ return function(crossbow, onInit)
 		});
 
 		SuperballTool = General.lockTable("SuperballTool", {
-			fireSound = onInit(Value.new(nil, Value.is), function(value)
-				value:Set(crossbow.Settings.Sounds.superballBounce)
-			end);
+			fireSound = Value.new(Audio.SuperballBounce, optionalSound);
+
 			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
 			velocity = Value.new(200, t.number);
 			reloadTime = Value.new(2, t.number);
-			spawnDistance = Value.new(6, t.number);
+			spawnDistance = Value.new(2, t.number);
 	
 			prefab = Value.new(Prefabs.Superball, t.instanceIsA("Part"));
 	
@@ -99,6 +121,8 @@ return function(crossbow, onInit)
 		});
 
 		Superball = General.lockTable("Superball", {
+			bounceSound = Value.new(Audio.SuperballBounce, optionalSound);
+
 			damageAmount = Value.new(1, t.number);
 			damageCooldown = Value.new(1, t.number);
 			damage = Value.new(55, t.number);
@@ -116,9 +140,10 @@ return function(crossbow, onInit)
 		});
 
 		BombTool = General.lockTable("BombTool", {
-			fireSound = Value.new(nil, Value.is);
-			reloadTime = Value.new(0, t.number);
-			spawnDistance = Value.new(2, t.number);
+			fireSound = Value.new(nil, optionalSound);
+
+			reloadTime = Value.new(4, t.number);
+			spawnDistance = Value.new(4, t.number);
 	
 			prefab = Value.new(Prefabs.Bomb, t.instanceIsA("Part"));
 	
@@ -126,6 +151,9 @@ return function(crossbow, onInit)
 		});
 
 		Bomb = General.lockTable("Bomb", {
+			explodeSound = Value.new(Audio.BombExplodeModern, optionalSound);
+			tickSound = Value.new(Audio.BombTick, optionalSound);
+
 			damage = Value.new(101, t.number);
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 			explosionRadius = Value.new(12, t.number);
@@ -140,6 +168,10 @@ return function(crossbow, onInit)
 		});
 
 		SwordTool = General.lockTable("SwordTool", {
+			equipSound = Value.new(Audio.SwordEquip, optionalSound);
+			slashSound = Value.new(Audio.SwordSlash, optionalSound);
+			lungeSound = Value.new(Audio.SwordLunge, optionalSound);
+
 			idleDamage = Value.new(10, t.number);
 			slashDamage = Value.new(20, t.number);
 			lungeDamage = Value.new(35, t.number);
@@ -151,7 +183,22 @@ return function(crossbow, onInit)
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 		});
 
-		Trowel = General.lockTable("Trowel", {
+		TrowelTool = General.lockTable("TrowelTool", {
+			equipSound = Value.new(nil, optionalSound);
+			buildSound = Value.new(Audio.TrowelBuild, optionalSound);
+
+			raycastFilter = Value.new("trowelRaycastFilter", callbackValidator);
+			reloadTime = Value.new(0, t.number);
+	
+			prefab = Value.new(Prefabs.TrowelBrick, t.instanceIsA("Part"));
+			pack = Value.new("Bomb", packValidator);
+
+			rotationStep = Value.new(90, t.number);
+			bricksPerRow = Value.new(3, t.number);
+			bricksPerColumn = Value.new(4, t.number);
+			brickSpeed = Value.new(0.04, t.number);
+			shouldWeld = Value.new("defaultTrowelShouldWeld", callbackValidator);
+
 			visualizationEnabled = Value.new(false, t.boolean);
 		});
 	
@@ -188,35 +235,28 @@ return function(crossbow, onInit)
 		});
 	
 		ThrottledSounds = onInit({}, function(throttled)
-			throttled[crossbow.Settings.Sounds.swordEquip] = 1
-			throttled[crossbow.Settings.Sounds.superballBounce] = 1
+			-- TODO: doesn't work with changing settings mid-game
+			throttled[crossbow.Settings.SwordTool.equipSound:Get()] = 1
+			throttled[crossbow.Settings.Superball.bounceSound:Get()] = 1
 		end);
 
 		Sounds = General.lockTable("Sounds", {
-			superballBounce = Value.new(Audio.SuperballBounce, t.instanceIsA("Sound"));
-			swordLunge = Value.new(Audio.SwordLunge, t.instanceIsA("Sound"));
-			swordEquip = Value.new(Audio.SwordEquip, t.instanceIsA("Sound"));
-			swordSlash = Value.new(Audio.SwordSlash, t.instanceIsA("Sound"));
-			rocketExplode = Value.new(Audio.RocketExplode, t.instanceIsA("Sound"));
-			bombExplode = Value.new(Audio.BombExplodeModern, t.instanceIsA("Sound"));
-			bombTick = Value.new(Audio.BombTick, t.instanceIsA("Sound"));
-			fireSlingshot = Value.new(Audio.SlingshotModern, t.instanceIsA("Sound"));
-			build = Value.new(Audio.TrowelBuild, t.instanceIsA("Sound"));
-			successfulHit = Value.new(Audio.HitTyzone, t.instanceIsA("Sound"));
+			fireSlingshot = Value.new(Audio.SlingshotModern, optionalSound);
+			successfulHit = Value.new(Audio.HitTyzone, optionalSound);
 		});
 	
 		Prefabs = General.lockTable("Prefabs", {
-			superballTool = Value.new(Prefabs.SuperballTool, t.instanceIsA("Tool"));
-			rocketTool = Value.new(Prefabs.RocketTool, t.instanceIsA("Tool"));
-			bombTool = Value.new(Prefabs.BombTool, t.instanceIsA("Tool"));
-			trowelTool = Value.new(Prefabs.TrowelTool, t.instanceIsA("Tool"));
-			slingshotTool = Value.new(Prefabs.SlingshotTool, t.instanceIsA("Tool"));
-			swordTool = Value.new(Prefabs.SwordTool, t.instanceIsA("Tool"));
+			superballTool = Value.new(Prefabs.SuperballTool, isTool);
+			rocketTool = Value.new(Prefabs.RocketTool, isTool);
+			bombTool = Value.new(Prefabs.BombTool, isTool);
+			trowelTool = Value.new(Prefabs.TrowelTool, isTool);
+			slingshotTool = Value.new(Prefabs.SlingshotTool, isTool);
+			swordTool = Value.new(Prefabs.SwordTool, isTool);
 	
-			superball = Value.new(Prefabs.Superball, t.instanceIsA("Tool"));
-			rocket = Value.new(Prefabs.Rocket, t.instanceIsA("Tool"));
-			bomb = Value.new(Prefabs.Bomb, t.instanceIsA("Tool"));
-			pellet = Value.new(Prefabs.Pellet, t.instanceIsA("Tool"));
+			superball = Value.new(Prefabs.Superball, isTool);
+			rocket = Value.new(Prefabs.Rocket, isTool);
+			bomb = Value.new(Prefabs.Bomb, isTool);
+			pellet = Value.new(Prefabs.Pellet, isTool);
 		});
 	
 		Rules = General.lockTable("Rules", {

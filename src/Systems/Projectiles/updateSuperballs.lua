@@ -11,20 +11,21 @@ local function updateSuperballs(world, components, params)
                 continue
             end
             
-            if world:get(id, components.Owned) then
-                if params.currentFrame - (superball.lastHitTimestamp or 0) >= superball.bouncePauseTime then
-                    local bounces = (superball.bounces or 0) + 1
-                    params.events:fire("superballBounce", id)
-                    params.events:fire("queueSound", params.Settings.Sounds.superballBounce, projectile.spawnerId, part.part.Position)
+            if params.currentFrame - (superball.lastHitTimestamp or 0) >= superball.bouncePauseTime then
+                local bounces = (superball.bounces or 0) + 1
+                params.events:fire("superballBounce", id)
+                
+                if superball.bounceSound then
+                    params.events:fire("queueSound", superball.bounceSound, projectile.spawnerId, part.part.Position)
+                end
 
-                    if bounces > superball.maxBounces then
-                        params.events:fire("queueRemove", id)
-                    else
-                        world:insert(id, superball:patch({
-                            bounces = (superball.bounces or 0) + 1;
-                            lastHitTimestamp = params.currentFrame;
-                        }))
-                    end
+                if bounces > superball.maxBounces then
+                    params.events:fire("queueRemove", id)
+                else
+                    world:insert(id, superball:patch({
+                        bounces = (superball.bounces or 0) + 1;
+                        lastHitTimestamp = params.currentFrame;
+                    }))
                 end
             end
         end

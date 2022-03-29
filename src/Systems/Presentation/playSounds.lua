@@ -2,12 +2,7 @@ local General = require(script.Parent.Parent.Parent.Utilities.General)
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local function playSounds(_, _, params)
-	for _, value, pos in params.events:iterate("playSound") do
-		local sound = value:Get()
-		if sound == nil then
-			continue
-		end
-
+	for _, sound, pos in params.events:iterate("playSound") do
 		if pos then
 			General.play3DSound(sound, pos)
 		else

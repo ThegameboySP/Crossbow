@@ -12,6 +12,7 @@ return function(settings)
 			radius = t.number;
 			damage = t.number;
 			transform = t.string;
+			explodeSound = t.optional(t.Instance);
 		};
 	})
 end

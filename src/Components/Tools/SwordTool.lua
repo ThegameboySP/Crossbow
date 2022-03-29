@@ -6,6 +6,9 @@ return function()
 		schema = {
 			state = t.valueOf({"Idle", "Slashing", "Lunging"});
 			
+			slashSound = t.Instance;
+			lungeSound = t.Instance;
+
 			idleDamage = t.number;
 			slashDamage = t.number;
 			lungeDamage = t.number;

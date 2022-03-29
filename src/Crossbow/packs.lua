@@ -5,10 +5,15 @@ local function generateToolPack(crossbow)
 			local userComponents = {generate(params or {}, character)}
 			local toolComponent = userComponents[1]
 
+			local componentName = toolComponent:getDefinition().componentName
+			local settings = crossbow.Settings[componentName]
+
 			return
 				components.Tool({
 					character = character;
-					componentName = toolComponent:getDefinition().componentName;
+					componentName = componentName;
+					equipSound = rawget(settings, "equipSound") and settings.equipSound:Get();
+					fireSound = rawget(settings, "fireSound") and settings.fireSound:Get();
 				}),
 				unpack(userComponents)
 		end
@@ -66,6 +71,7 @@ return function(crossbow, onInit)
 					radius = params.explosionRadius or settings.Rocket.explosionRadius:Get();
 					filter = params.explodeFilter or settings.Rocket.explodeFilter:Get();
 					transform = "getPartPosAtTip";
+					explodeSound = params.explodeSound or settings.Rocket.explodeSound:Get();
 				}),
 				components.Lifetime({
 					duration = params.lifetime or settings.Rocket.lifetime:Get();
@@ -80,6 +86,7 @@ return function(crossbow, onInit)
 					bouncePauseTime = params.bouncePauseTime or settings.Superball.bouncePauseTime:Get();
 					bounces = 0;
 					lastHitTimestamp = 0;
+					bounceSound = params.bounceSound or settings.Superball.bounceSound:Get();
 				}),
 				components.Velocity({
 					velocity = cframe.LookVector * velocity;
@@ -105,12 +112,18 @@ return function(crossbow, onInit)
 					startingInterval = params.startingInterval or settings.Bomb.startingInterval:Get();
 					multiplier = params.multiplier or settings.Bomb.multiplier:Get();
 					radius = params.explosionRadius or settings.Bomb.explosionRadius:Get();
+					explodeSound = params.explodeSound or settings.Bomb.explodeSound:Get();
+					tickSound = params.tickSound or settings.Bomb.tickSound:Get();
 				})
 		end);
 		SwordTool = toolPack(function(params)
 			return
 				components.SwordTool({
 					state = "Idle";
+
+					slashSound = params.slashSound or settings.SwordTool.slashSound:Get();
+					lungeSound = params.lungeSound or settings.SwordTool.lungeSound:Get();
+
 					idleDamage = params.idleDamage or settings.SwordTool.idleDamage:Get();
 					slashDamage = params.slashDamage or settings.SwordTool.slashDamage:Get();
 					lungeDamage = params.lungeDamage or settings.SwordTool.lungeDamage:Get();
@@ -123,6 +136,14 @@ return function(crossbow, onInit)
 					cooldown = params.damageCooldown or settings.SwordTool.damageCooldown:Get();
 					filter = params.damageFilter or settings.SwordTool.canDamageFilter:Get();
 					damageType = "Melee";
+				})
+		end);
+		TrowelTool = toolPack(function()
+			return
+				components.TrowelTool({
+					rotation = 0;
+					isLocked = false;
+					buildSound = settings.TrowelTool.buildSound:Get();
 				})
 		end);
 		Explosion = function(damage, filter)
