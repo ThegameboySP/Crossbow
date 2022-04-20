@@ -201,6 +201,28 @@ return function(crossbow, onInit)
 
 			visualizationEnabled = Value.new(false, t.boolean);
 		});
+
+		SlingshotTool = General.lockTable("SlingshotTool", {
+			fireSound = Value.new(Audio.SlingshotModern, optionalSound);
+
+			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
+			velocity = Value.new(85, t.number);
+			reloadTime = Value.new(0.2, t.number);
+			spawnDistance = Value.new(3, t.number);
+	
+			prefab = Value.new(Prefabs.SlingshotPellet, t.instanceIsA("Part"));
+	
+			pack = Value.new("SlingshotPellet", packValidator);
+		});
+
+		SlingshotPellet = General.lockTable("SlingshotPellet", {
+			damageAmount = Value.new(1, t.number);
+			damageCooldown = Value.new(0.5, t.number);
+			damage = Value.new(8, t.number);
+			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
+
+			lifetime = Value.new(7, t.number);
+		});
 	
 		Network = General.lockTable("Network", {
 			netMode = Value.new("Extrapolation", t.valueOf(NetMode));
@@ -256,7 +278,7 @@ return function(crossbow, onInit)
 			superball = Value.new(Prefabs.Superball, isTool);
 			rocket = Value.new(Prefabs.Rocket, isTool);
 			bomb = Value.new(Prefabs.Bomb, isTool);
-			pellet = Value.new(Prefabs.Pellet, isTool);
+			slingshotPellet = Value.new(Prefabs.SlingshotPellet, isTool);
 		});
 	
 		Rules = General.lockTable("Rules", {

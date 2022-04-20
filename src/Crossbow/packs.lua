@@ -161,6 +161,27 @@ return function(crossbow, onInit)
 					cframe = CFrame.lookAt(pos, pos - dir);
 				})
 		end;
+		SlingshotTool = toolPack(function()
+			return
+				components.SlingshotTool()
+		end),
+		SlingshotPellet = projectilePack(function(_, _, _, velocity, cframe)
+			return
+				components.SlingshotPellet(),
+				components.Damage({
+					amount = settings.SlingshotPellet.damageAmount:Get();
+					damage = settings.SlingshotPellet.damage:Get();
+					filter = settings.SlingshotPellet.canDamageFilter:Get();
+					damageType = "Hit";
+				}),
+				components.Velocity({
+					velocity = cframe.LookVector * velocity;
+				}),
+				components.Lifetime({
+					duration = settings.SlingshotPellet.lifetime:Get();
+					timestamp = crossbow.Params.currentFrame;
+				})
+		end),
 		Explosion = function(damage, filter)
 			return
 				components.Damage({

@@ -2,14 +2,14 @@
 	<Meta name="ExplicitAutoJoints">true</Meta>
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Folder" referent="RBX33B4B61AE5D94BC094E84A5CF5F7D194">
+	<Item class="Folder" referent="RBX6FDDA97E0AEB4555936B98637449F7D4">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<string name="Name">Prefabs</string>
 			<int64 name="SourceAssetId">-1</int64>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
-		<Item class="Part" referent="RBXF0D16AC7C52C47C19ADE2959C6BD27D0">
+		<Item class="Part" referent="RBXB8552DCF594E4B4198D7A451C110219A">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -60,6 +60,7 @@
 				<bool name="Locked">false</bool>
 				<bool name="Massless">false</bool>
 				<token name="Material">256</token>
+				<string name="MaterialVariantSerialized"></string>
 				<string name="Name">Superball</string>
 				<CoordinateFrame name="PivotOffset">
 					<X>0</X>
@@ -107,7 +108,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBX0C866B5CBF43442BAC4295B5CECC8721">
+		<Item class="Part" referent="RBX1F1736C8DED54E1990D2DAABA4ACF99F">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -153,7 +154,8 @@
 				<bool name="Locked">false</bool>
 				<bool name="Massless">false</bool>
 				<token name="Material">256</token>
-				<string name="Name">Pellet</string>
+				<string name="MaterialVariantSerialized"></string>
+				<string name="Name">SlingshotPellet</string>
 				<CoordinateFrame name="PivotOffset">
 					<X>0</X>
 					<Y>0</Y>
@@ -200,7 +202,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBXCF8CDC14CFAC43F5BDB852C45729FB28">
+		<Item class="Part" referent="RBXEABDFDFD4208463FA905106707B8B92C">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -246,6 +248,7 @@
 				<bool name="Locked">false</bool>
 				<bool name="Massless">true</bool>
 				<token name="Material">256</token>
+				<string name="MaterialVariantSerialized"></string>
 				<string name="Name">Rocket</string>
 				<CoordinateFrame name="PivotOffset">
 					<X>0</X>
@@ -293,7 +296,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBX3E83794443764C4584EAB4240AAB9D13">
+		<Item class="Part" referent="RBXBF680836BB054730A66DC13113DB18CF">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -339,6 +342,7 @@
 				<bool name="Locked">false</bool>
 				<bool name="Massless">false</bool>
 				<token name="Material">256</token>
+				<string name="MaterialVariantSerialized"></string>
 				<string name="Name">TrowelBrick</string>
 				<CoordinateFrame name="PivotOffset">
 					<X>0</X>
@@ -386,7 +390,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBX8F3AD65C3E764E61AA754C6C045EB326">
+		<Item class="Part" referent="RBX82EEAB8659774898AC1E1056F4F12439">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -437,6 +441,7 @@
 				<bool name="Locked">false</bool>
 				<bool name="Massless">false</bool>
 				<token name="Material">256</token>
+				<string name="MaterialVariantSerialized"></string>
 				<string name="Name">Bomb</string>
 				<CoordinateFrame name="PivotOffset">
 					<X>0</X>
@@ -484,7 +489,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Tool" referent="RBX986BD1FF2C9442FC9A1B9EDA8C142E86">
+		<Item class="Tool" referent="RBX0DD057F63F0B4A54B4F2D2225BD2E3B3">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -511,7 +516,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Wall.png</url></Content>
 				<string name="ToolTip">Wall</string>
 			</Properties>
-			<Item class="Part" referent="RBXB4C5614B8A154009A339EFDFECEE09B5">
+			<Item class="Part" referent="RBXEA8CDA4758CA4D0BB62AF6425BCA6E20">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -557,6 +562,7 @@
 					<bool name="Locked">false</bool>
 					<bool name="Massless">true</bool>
 					<token name="Material">256</token>
+					<string name="MaterialVariantSerialized"></string>
 					<string name="Name">Handle</string>
 					<CoordinateFrame name="PivotOffset">
 						<X>0</X>
@@ -603,7 +609,7 @@
 						<Z>1</Z>
 					</Vector3>
 				</Properties>
-				<Item class="SpecialMesh" referent="RBX459C2ECAF39C46099143FB44009826ED">
+				<Item class="SpecialMesh" referent="RBX2E1DD06587F5410496919B7F3577EBE3">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<token name="LODX">2</token>
@@ -633,7 +639,7 @@
 				</Item>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBX2862A09936574BB0AF881C7FE80FDE93">
+		<Item class="Tool" referent="RBXD734C5DD95194CE0A65A17F9722781AC">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -660,7 +666,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Sword128.png</url></Content>
 				<string name="ToolTip">Sword</string>
 			</Properties>
-			<Item class="Part" referent="RBX33E3E6347F394727B405F9A5804B64CE">
+			<Item class="Part" referent="RBXDDD003C4D13847FDACEFD5659E26778A">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -706,6 +712,7 @@
 					<bool name="Locked">false</bool>
 					<bool name="Massless">false</bool>
 					<token name="Material">256</token>
+					<string name="MaterialVariantSerialized"></string>
 					<string name="Name">Handle</string>
 					<CoordinateFrame name="PivotOffset">
 						<X>0</X>
@@ -752,7 +759,7 @@
 						<Z>4</Z>
 					</Vector3>
 				</Properties>
-				<Item class="SpecialMesh" referent="RBXD3D4EA1E759A44F99E10C5181BC909FE">
+				<Item class="SpecialMesh" referent="RBXA58827865BA741CCB16AD5EA95C50DC9">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<token name="LODX">2</token>
@@ -782,7 +789,7 @@
 				</Item>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBX8632EE7A0DE94ADF8EBDEACD95DE88D7">
+		<Item class="Tool" referent="RBX22EB52B98E714F14A006112DD533622D">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -809,7 +816,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Superball.png</url></Content>
 				<string name="ToolTip">Superball</string>
 			</Properties>
-			<Item class="Part" referent="RBX546C86D9A4A84B949B76DD39F1E04F08">
+			<Item class="Part" referent="RBX4F2E8908F8E74D62854226BB95084827">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -855,6 +862,7 @@
 					<bool name="Locked">false</bool>
 					<bool name="Massless">true</bool>
 					<token name="Material">272</token>
+					<string name="MaterialVariantSerialized"></string>
 					<string name="Name">Handle</string>
 					<CoordinateFrame name="PivotOffset">
 						<X>0</X>
@@ -903,7 +911,7 @@
 				</Properties>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBXE52ED0F13A0E42D1805B3EDCE63F8998">
+		<Item class="Tool" referent="RBXD41D214CEDD244BFAFC1208CB878A985">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -930,7 +938,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Slingshot.png</url></Content>
 				<string name="ToolTip">Sling</string>
 			</Properties>
-			<Item class="Part" referent="RBXF06A2920C9854ED89B7AA683B0120BED">
+			<Item class="Part" referent="RBXA8F0D9EDB029481593DD0BB431218A62">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -976,6 +984,7 @@
 					<bool name="Locked">false</bool>
 					<bool name="Massless">true</bool>
 					<token name="Material">256</token>
+					<string name="MaterialVariantSerialized"></string>
 					<string name="Name">Handle</string>
 					<CoordinateFrame name="PivotOffset">
 						<X>0</X>
@@ -1022,7 +1031,7 @@
 						<Z>1</Z>
 					</Vector3>
 				</Properties>
-				<Item class="SpecialMesh" referent="RBXC061079301BF4B63900963D497181D88">
+				<Item class="SpecialMesh" referent="RBXFAD57AA082C347BA9EEE4404ACFFE8BD">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<token name="LODX">2</token>
@@ -1052,7 +1061,7 @@
 				</Item>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBX8BDCCE3EACDD460F86D5058D3F245B7B">
+		<Item class="Tool" referent="RBX4439467642D9458DB60AE27AE8DCDC1F">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -1079,7 +1088,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Rocket.png</url></Content>
 				<string name="ToolTip"></string>
 			</Properties>
-			<Item class="Part" referent="RBX0C7265CFD2E7410581B38494908201BE">
+			<Item class="Part" referent="RBX5B74EE635C9F4DF280CD2829124FD4DA">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1125,6 +1134,7 @@
 					<bool name="Locked">false</bool>
 					<bool name="Massless">true</bool>
 					<token name="Material">256</token>
+					<string name="MaterialVariantSerialized"></string>
 					<string name="Name">Handle</string>
 					<CoordinateFrame name="PivotOffset">
 						<X>0</X>
@@ -1171,7 +1181,7 @@
 						<Z>0.839999974</Z>
 					</Vector3>
 				</Properties>
-				<Item class="SpecialMesh" referent="RBXC8BBFD18C49F491695FA9AA133AD5528">
+				<Item class="SpecialMesh" referent="RBX407C05D7720F4E0D98E8B51DA5507C24">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<token name="LODX">2</token>
@@ -1201,7 +1211,7 @@
 				</Item>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBX675453D0F57449A699E1997BF0A5837A">
+		<Item class="Tool" referent="RBXD0CE9394149946B98D5C6CC698EC9AAA">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -1228,7 +1238,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Bomb.png</url></Content>
 				<string name="ToolTip">Bomb</string>
 			</Properties>
-			<Item class="Part" referent="RBX699CB69554BC41529BF0441DE7DE4C91">
+			<Item class="Part" referent="RBX7EF75FFF25E242958900D463F80647C0">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1274,6 +1284,7 @@
 					<bool name="Locked">false</bool>
 					<bool name="Massless">true</bool>
 					<token name="Material">1088</token>
+					<string name="MaterialVariantSerialized"></string>
 					<string name="Name">Handle</string>
 					<CoordinateFrame name="PivotOffset">
 						<X>0</X>
@@ -1320,7 +1331,7 @@
 						<Z>2</Z>
 					</Vector3>
 				</Properties>
-				<Item class="SpecialMesh" referent="RBXB7BF1B04B069450A9489438E5BFE9A89">
+				<Item class="SpecialMesh" referent="RBX371FB3ED09CF458B838452B2A2B0CEBC">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<token name="LODX">2</token>

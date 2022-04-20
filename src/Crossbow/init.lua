@@ -147,7 +147,7 @@ function Crossbow:RegisterDefaultTools()
 	self:RegisterTool("Rocket", Prefabs.RocketTool, self.Packs.RocketTool)
 	self:RegisterTool("Bomb", Prefabs.BombTool, self.Packs.BombTool)
 	self:RegisterTool("Trowel", Prefabs.TrowelTool, self.Packs.TrowelTool)
-	-- self:RegisterTool("Slingshot", Prefabs.slingshotTool, Packs.slingshotTool)
+	self:RegisterTool("Slingshot", Prefabs.SlingshotTool, self.Packs.SlingshotTool)
 end
 
 function Crossbow:On(signalName, handler)

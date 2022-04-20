@@ -94,7 +94,7 @@ local function useToolActions(world, components, params)
 				nextReloadTimestamp = params.currentFrame + tool.reloadTime;
 			}))
 
-			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos)
+			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos, specificTool)
 			world:spawn(
 				components.Owned(),
 				params.Crossbow.Packs[specificTool.pack](id, tool.character, specificTool.velocity, cframe)

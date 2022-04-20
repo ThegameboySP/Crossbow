@@ -6,9 +6,9 @@ local function pressActivate(tool, _, state, _, crossbow)
 	end
 end
 
-local function holdActivate(tool, _, _, checkState, fire)
-	if checkState("Hold") then
-		fire("toolTriggered", Input:Raycast(tool.RaycastFilter))
+local function holdActivate(tool, _, state, _, crossbow)
+	if state == "Hold" then
+		return {Input:Raycast(crossbow.Settings.Callbacks[tool.raycastFilter])}
 	end
 end
 
@@ -17,7 +17,7 @@ return {
 		Fire = pressActivate;
 	};
 
-	Slingshot = {
+	SlingshotTool = {
 		Fire = holdActivate;
 	};
 
