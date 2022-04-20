@@ -1,3 +1,5 @@
+local CollectionService = game:GetService("CollectionService")
+
 local General = require(script.Parent.General)
 local Raycaster = require(script.Parent.Raycaster)
 
@@ -23,22 +25,22 @@ local function getNormalIdFromVector(v)
 end
 
 local function raycastFilter(part, shouldWeld)
-	-- if CollectionService:HasTag(part, "Visualizer") then
-	-- 	return false
-	-- end
+	if CollectionService:HasTag(part, "Visualizer") then
+		return false
+	end
 
 	local normalId = getNormalIdFromVector(part.CFrame:VectorToWorldSpace(Vector3.yAxis))
 	
 	return normalId and shouldWeld(part, normalId)
 end
 
-local function makeJoint(callbacks, trowelTool, brick, normal)
+local function makeJoint(brick, normal, shouldWeld)
 	local results = Raycaster.withFilter(
 		brick.Position - Vector3.yAxis * brick.Size * 0.4999,
 		-normal * 0.01,
 		raycastParams,
 		raycastFilter,
-		callbacks[trowelTool.shouldWeld]
+		shouldWeld
 	)
 
 	if results then
@@ -48,7 +50,7 @@ end
 
 local Callbacks = {}
 
-function Callbacks.buildTrowel(sleep, callbacks, parent, lookDir, trowelTool, normal, part, pos)
+function Callbacks.buildTrowel(sleep, shouldWeld, model, lookDir, trowelTool, normal, part, pos)
     local brickLength = trowelTool.prefab.Size.X
     local brickHeight = trowelTool.prefab.Size.Y
 
@@ -59,9 +61,6 @@ function Callbacks.buildTrowel(sleep, callbacks, parent, lookDir, trowelTool, no
 
     local CF = CFrame.lookAt(roundedOrigin, roundedOrigin + lookDir)
 
-    local model = Instance.new("Model")
-    model.Name = "TrowelWall"
-
     local primaryPart = Instance.new("Part")
     primaryPart.CFrame = CF * CFrame.new(middleOffset, 0, 0)
     primaryPart.Size = Vector3.zero
@@ -71,8 +70,6 @@ function Callbacks.buildTrowel(sleep, callbacks, parent, lookDir, trowelTool, no
     primaryPart.CanQuery = false
     primaryPart.Parent = model
     model.PrimaryPart = primaryPart
-
-    model.Parent = parent
     
     for y=0, trowelTool.bricksPerColumn - 1 do
         for x=0, trowelTool.bricksPerRow - 1 do
@@ -86,7 +83,7 @@ function Callbacks.buildTrowel(sleep, callbacks, parent, lookDir, trowelTool, no
                 0
             )
 
-            makeJoint(callbacks, trowelTool, nextBrick, normal)
+            makeJoint(nextBrick, normal, shouldWeld)
 
             if y == 0 then
                 nextBrick.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0, 0.5)

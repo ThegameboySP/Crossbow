@@ -1,12 +1,64 @@
-local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local Priorities = require(script.Parent.Parent.Priorities)
+local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+
+local function disconnectTouched(state, id)
+    if state.connections[id] then
+        state.connections[id]:Disconnect()
+        state.connections[id] = nil
+        table.clear(state.touchedQueue[id])
+    end
+end
+
+local function connectTouched(state, id, part)
+	state.touchedQueue[id] = state.touchedQueue[id] or {}
+	state.connections[id] = part.Touched:Connect(function(hit)
+		table.insert(state.touchedQueue[id], hit)
+	end)
+end
+
+local function initState(state)
+    state.connections = {};
+    state.touchedQueue = {};
+    state.ids = {};
+end
 
 local function updateSuperballs(world, components, params)
     local hitFilter = params.Settings.Superball.hitFilter:Get()
-    local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
+    -- local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
 
-    for id, part, superball, projectile in world:query(components.Part, components.Superball, components.Projectile, components.Owned) do
-        for _, hit in Matter.useEvent(part.part, getTouchedSignal(part.part)) do
+    local state = useHookStorage(nil, initState)
+
+    for id, partRecord in world:queryChanged(components.Part) do
+        if partRecord.new and world:get(id, components.Superball, components.Owned) then
+            state.ids[id] = true
+        else
+            state.ids[id] = nil
+        end
+
+        disconnectTouched(state, id)
+    end
+
+    for id, superballRecord in world:queryChanged(components.Superball) do
+        if superballRecord.new and world:get(id, components.Part, components.Owned) then
+            state.ids[id] = true
+        elseif not superballRecord.new then
+            state.ids[id] = nil
+            
+            disconnectTouched(state, id)
+		end
+    end
+
+    for id in pairs(state.ids) do
+        local part, superball, projectile = world:get(id, components.Part, components.Superball, components.Projectile)
+        if not state.connections[id] then
+            connectTouched(state, id, part.part)
+            continue
+        end
+
+        local touchedQueue = state.touchedQueue[id]
+        for i, hit in ipairs(touchedQueue) do
+            touchedQueue[i] = nil
+
             if not hitFilter(hit) then
                 continue
             end

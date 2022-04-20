@@ -73,7 +73,7 @@ local function useToolActions(world, components, params)
 		activations[index] = nil
 		if activation.name == "Fire"
 			and
-				(not world:get(activation.id, components.Tool):canFire()
+				(not world:get(activation.id, components.Tool):canFire(params.currentFrame)
 				or (activation.event[1] == nil
 					and activation.tool.onlyActivateOnPartHit))
 		then 
@@ -91,7 +91,7 @@ local function useToolActions(world, components, params)
 		local toolType = specificTool:getDefinition().toolType
 		if toolType == "Projectile" then
 			world:insert(id, tool:patch({
-				reloadTimeLeft = specificTool.reloadTime;
+				nextReloadTimestamp = params.currentFrame + tool.reloadTime;
 			}))
 
 			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos)
@@ -106,15 +106,17 @@ local function useToolActions(world, components, params)
 		end
 	end
 	
-	for id, projectile in world:query(components.Projectile):without(components.Instance) do
-		local tool = world:get(projectile.spawnerId, components.Tool)
-		local specificTool = world:get(projectile.spawnerId, components[tool.componentName])
+	for id, projectileRecord in world:queryChanged(components.Projectile) do
+		if projectileRecord.old == nil and world:get(id, components.Instance) == nil then
+			local tool = world:get(projectileRecord.new.spawnerId, components.Tool)
+			local specificTool = world:get(projectileRecord.new.spawnerId, components[tool.componentName])
 		
 		local part = specificTool.prefab:Clone()
 		params.Crossbow:InsertBind(part, id)
 		part.Parent = workspace
 		if IS_SERVER then
 			part:SetNetworkOwner(nil)
+			end
 		end
 	end
 end

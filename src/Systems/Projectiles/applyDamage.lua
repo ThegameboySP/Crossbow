@@ -1,22 +1,49 @@
-local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local General = require(script.Parent.Parent.Parent.Utilities.General)
 local Priorities = require(script.Parent.Parent.Priorities)
 
+local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local applyExplosion = require(script.Parent.applyExplosion)
+local EventQueue = require(script.Parent.Parent.Parent.Utilities.EventQueue)
+
+local function initState(state)
+	state.touched = EventQueue.new()
+end
 
 local function applyDamage(world, components, params)
 	local settings = params.Settings
-	local getTouchedSignal = settings.Interfacing.getTouchedSignal:Get()
 	local dealDamage = settings.Interfacing.dealDamage:Get()
+	local getTouchedSignal = settings.Interfacing.getTouchedSignal:Get()
 	local currentTime = params.currentFrame
 	local damaged = {}
 
+	local touched = useHookStorage(nil, initState).touched
+
+	for id in world:queryChanged(components.Part) do
+		touched:disconnect(id)
+	end
+
+	for id, record in world:queryChanged(components.Damage) do
+		if not record.new then
+			touched:disconnect(id)
+		end
+	end
+
 	for id, part, damage in world:query(components.Part, components.Damage, components.Owned) do
+		if damage.amount <= 0 then
+			world:remove(id, components.Damage)
+			touched:disconnect(id)
+			continue
+		end
+
 		if currentTime - damage.damagedTimestamp < damage.cooldown then
 			continue
 		end
 
-		for _, hit in Matter.useEvent(part.part, getTouchedSignal(part.part)) do
+		if not touched:isConnected(id) then
+			touched:connect(id, getTouchedSignal(part.part))
+		end
+
+		for _, hit in touched:iterate(id) do
 			local victim, humanoid = General.getCharacterFromHitbox(hit)
 			if victim == nil then continue end
 			if humanoid.Health <= 0 then continue end
@@ -35,6 +62,10 @@ local function applyDamage(world, components, params)
 				sourceId = id;
 			}))
 
+			if not world:get(id, components.SwordTool) then
+				params.events:fire("playSound", params.Settings.Sounds.successfulHit:Get())
+			end
+
 			damaged[part] = damaged[part] or {}
 			damaged[part][victim] = true
 
@@ -42,14 +73,10 @@ local function applyDamage(world, components, params)
 				amount = damage.amount - 1;
 				damagedTimestamp = currentTime;
 			}))
-		end
-	end
 
-	for id, damageRecord in world:queryChanged(components.Damage) do
-		if not damageRecord.new then continue end
-
-		if damageRecord.new.amount <= 0 then
-			world:remove(id, components.Damage)
+			if (damage.amount - 1) == 0 then
+				break
+			end
 		end
 	end
 end

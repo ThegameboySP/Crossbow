@@ -3,7 +3,7 @@ local Mouse = Players.LocalPlayer and Players.LocalPlayer:GetMouse()
 
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local function updateCrosshair(world, components)
+local function updateCrosshair(world, components, params)
 	local equippingTool
 
 	for _id, tool in world:query(components.Tool, components.Owned) do
@@ -14,7 +14,7 @@ local function updateCrosshair(world, components)
 	end
 
 	if equippingTool then
-		Mouse.Icon = equippingTool:canFire()
+		Mouse.Icon = equippingTool:canFire(params.currentFrame)
 			and "rbxassetid://507449825"
 			or "rbxassetid://507449806"
 	else

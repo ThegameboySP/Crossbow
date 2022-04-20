@@ -8,7 +8,6 @@ return function(settings)
 
 		index = {
 			raycastFilter = settings.SuperballTool.raycastFilter;
-			reloadTime = settings.SuperballTool.reloadTime;
 			velocity = settings.SuperballTool.velocity;
 			spawnDistance = settings.SuperballTool.spawnDistance;
 			prefab = settings.SuperballTool.prefab;

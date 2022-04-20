@@ -1,5 +1,12 @@
 local Matter = require(script.Parent.Parent.Parent.Matter)
 
-return function(discriminator, cleanupFn)
-	return Matter.useHookState(discriminator, cleanupFn)
+local function useHookStorage(discriminator, initState, cleanupFn)
+	local state = Matter.useHookState(discriminator, cleanupFn)
+	if initState and not next(state) then
+		initState(state)
+	end
+
+	return state
 end
+
+return useHookStorage

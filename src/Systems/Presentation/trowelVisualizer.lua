@@ -1,14 +1,16 @@
+local CollectionService = game:GetService("CollectionService")
+
 local Callbacks = require(script.Parent.Parent.Parent.Utilities.Callbacks)
 local Input = require(script.Parent.Parent.Parent.Input.Input)
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local function makeWall(params, equippingTool)
+local function makeWall(trowelTool)
     local wall = Callbacks.buildTrowel(
         function() end,
-        params.Settings.Callbacks,
-        nil,
+        function() return true end,
+        Instance.new("Model"),
         Vector3.zAxis,
-        equippingTool,
+        trowelTool,
         Vector3.yAxis,
         nil,
         Vector3.zero
@@ -18,7 +20,7 @@ local function makeWall(params, equippingTool)
         if descendant:IsA("JointInstance") then
             descendant.Parent = nil
         elseif descendant:IsA("BasePart") then
-            -- CollectionService:AddTag(descendant, "Visualizer")
+            CollectionService:AddTag(descendant, "Visualizer")
             descendant.Anchored = true
             descendant.CanCollide = false
             descendant.CanTouch = false
@@ -66,7 +68,7 @@ local function trowelVisualizer(world, components, params)
     end
 
     if equippingTool then
-        wall = wall or makeWall(params, equippingTrowel)
+        wall = wall or makeWall(equippingTrowel)
         wall.Parent = workspace
 
         raycastParams.FilterDescendantsInstances = {wall}

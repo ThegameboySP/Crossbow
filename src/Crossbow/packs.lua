@@ -1,8 +1,9 @@
 local function generateToolPack(crossbow)
 	return function(generate)
 		return function(character, params)
+			params = params or {}
 			local components = crossbow.Components
-			local userComponents = {generate(params or {}, character)}
+			local userComponents = {generate(params, character)}
 			local toolComponent = userComponents[1]
 
 			local componentName = toolComponent:getDefinition().componentName
@@ -12,6 +13,8 @@ local function generateToolPack(crossbow)
 				components.Tool({
 					character = character;
 					componentName = componentName;
+
+					reloadTime = rawget(settings, "reloadTime") and (params.reloadTime or settings.reloadTime:Get()) or 0;
 					equipSound = rawget(settings, "equipSound") and settings.equipSound:Get();
 					fireSound = rawget(settings, "fireSound") and settings.fireSound:Get();
 				}),
@@ -146,6 +149,18 @@ return function(crossbow, onInit)
 					buildSound = settings.TrowelTool.buildSound:Get();
 				})
 		end);
+		TrowelWall = function(id, pos, part, normal, dir)
+			return
+				components.TrowelWall({
+					normal = normal;
+					part = part;
+					spawnerId = id;
+				}),
+				components.TrowelBuilding(),
+				components.Transform({
+					cframe = CFrame.lookAt(pos, pos - dir);
+				})
+		end;
 		Explosion = function(damage, filter)
 			return
 				components.Damage({

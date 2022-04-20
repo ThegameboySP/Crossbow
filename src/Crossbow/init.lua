@@ -132,6 +132,10 @@ function Crossbow:Init()
 					end
 				end
 
+				if self._signals.Update then
+					self._signals.Update:Fire()
+				end
+
 				params.events:clear()
 				params.remoteEvents:clear()
 			end

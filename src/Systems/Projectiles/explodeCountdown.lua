@@ -29,10 +29,18 @@ end
 
 local function updateExplodeCountdown(world, components, params)
     for id, explodeCountdown, part in world:query(components.ExplodeCountdown, components.Part) do
-        local isRunning, colorIndex = useCoroutine(tickBomb, id, explodeCountdown)
-        if colorIndex then
+        local lagCompensation = world:get(id, components.LagCompensation)
+        local dt
+        if lagCompensation then
+            dt = params.currentFrame - lagCompensation.timestamp
+        else
+            dt = params.deltaTime
+        end
+
+        local isRunning, args = useCoroutine(tickBomb, id, dt, explodeCountdown)
+        if args[1] then
             params.events:fire("queuePresentation", presentationHandler, world, components, params)
-            params.events:fire("explodeCountdown-ticked", id, explodeCountdown.tickColors[colorIndex])
+            params.events:fire("explodeCountdown-ticked", id, explodeCountdown.tickColors[args[#args][1]])
         end
         
         if not isRunning then

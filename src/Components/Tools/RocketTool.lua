@@ -8,7 +8,6 @@ return function(settings)
 
 		index = {
 			raycastFilter = settings.RocketTool.raycastFilter;
-			reloadTime = settings.RocketTool.reloadTime;
 			velocity = settings.RocketTool.velocity;
 			spawnDistance = settings.RocketTool.spawnDistance;
 			prefab = settings.RocketTool.prefab;

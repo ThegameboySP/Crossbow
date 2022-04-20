@@ -12,31 +12,46 @@ local function transform(state, ...)
         )
     end
 
-    if coroutine.status(state.coroutine) == "dead" then
-        return false, select(2, ...)
+    if select("#", ...) > 1 then
+        table.insert(state.args, table.pack(select(2, ...)))
     end
-
-    return true, select(2, ...)
 end
 
-local function useCoroutine(callback, discriminator, ...)
+local function useCoroutine(callback, discriminator, dt, ...)
     local state = useHookState(discriminator, cleanup)
 
     if not state.coroutine then
         state.coroutine = coroutine.create(callback)
+        state.args = {}
+
         local sleep = function(time, ...)
-            state.timeToAwake = os.clock() + time
+            state.timeToAwake = time
             coroutine.yield(...)
         end
 
-        return transform(state, coroutine.resume(state.coroutine, sleep, ...))
-    elseif not state.timeToAwake or state.timeToAwake - os.clock() > 0 then
-        return true
+        transform(state, coroutine.resume(state.coroutine, sleep, ...))
     end
 
-    state.timeToAwake = nil
+    while dt > 0 and coroutine.status(state.coroutine) == "suspended" do
+        if state.timeToAwake > 0 then
+            local madeUp = math.min(state.timeToAwake, dt)
+            state.timeToAwake -= madeUp
+            dt -= madeUp
 
-    return transform(state, coroutine.resume(state.coroutine))
+            if state.timeToAwake > 0 then
+                break
+            end
+        end
+
+        transform(state, coroutine.resume(state.coroutine, ...))
+    end
+
+    local args = state.args
+    if args[1] then
+        state.args = {}
+    end
+
+    return coroutine.status(state.coroutine) == "suspended", args
 end
 
 return useCoroutine

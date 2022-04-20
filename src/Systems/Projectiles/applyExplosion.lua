@@ -1,9 +1,32 @@
-local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local Priorities = require(script.Parent.Parent.Priorities)
+local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+local EventQueue = require(script.Parent.Parent.Parent.Utilities.EventQueue)
+
+local function initState(state)
+	state.touched = EventQueue.new()
+end
 
 local function applyExplosion(world, components, params)
-	for id, explodeOnTouch, part in world:query(components.ExplodeOnTouch, components.Part, components.Owned) do
-		for _, hit in Matter.useEvent(part.part, explodeOnTouch.getTouchedSignal(part.part)) do
+	local touched = useHookStorage(nil, initState).touched
+	local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
+
+	for id in world:queryChanged(components.Part) do
+		touched:disconnect(id)
+	end
+
+	for id, record in world:queryChanged(components.ExplodeOnTouch) do
+		if not record.new then
+			touched:disconnect(id)
+		end
+	end
+
+	for id, part, explodeOnTouch in world:query(components.Part, components.ExplodeOnTouch, components.Owned) do
+		if not touched:isConnected(id) then
+			touched:connect(id, getTouchedSignal(part.part))
+			continue
+		end
+
+		for _, hit in touched:iterate(id) do
 			if not params.Settings.Callbacks[explodeOnTouch.filter](hit) then
 				continue
 			end
@@ -47,14 +70,16 @@ local function applyExplosion(world, components, params)
 			world:insert(newId, components.Owned(), params.Packs.Explosion(damage))
 		end
 
-		params.events:fire("exploded", table.freeze({
+		local event = table.freeze({
 			spawnerId = spawnerId;
 			newId = newId;
 			position = pos;
 			radius = radius;
 			damage = damage;
 			isOwned = isOwned;
-		}))
+		})
+
+		params.events:fire("exploded", event)
 	end
 end
 

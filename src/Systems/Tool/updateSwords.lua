@@ -47,7 +47,7 @@ local function updateSwords(world, components, params)
         else world:query(components.SwordTool, components.Tool, components.Owned)
     
     for id, sword, tool in query do
-        if sword.state == "Idle" or tool.reloadTimeLeft > 0 then
+        if sword.state == "Idle" or not tool:canFire(params.currentFrame) then
             continue
         end
 
@@ -91,7 +91,7 @@ local function updateSwords(world, components, params)
             end
 
             world:insert(id, tool:patch({
-                reloadTimeLeft = LUNGE_TIME;
+                nextReloadTimestamp = params.currentFrame + (state == "Lunging" and LUNGE_TIME or SLASH_TIME);
             }))
         end
     end

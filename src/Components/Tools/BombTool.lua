@@ -7,7 +7,6 @@ return function(settings)
 		getProjectileCFrame = General.getProjectileCFrameTop;
 
 		index = {
-			reloadTime = settings.BombTool.reloadTime;
 			spawnDistance = settings.BombTool.spawnDistance;
 			prefab = settings.BombTool.prefab;
 			pack = settings.BombTool.pack;

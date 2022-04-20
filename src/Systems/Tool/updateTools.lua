@@ -17,10 +17,6 @@ local function updateTools(world, components, params)
 			end
 		end
 
-		if tool.reloadTimeLeft > 0 then
-			delta.reloadTimeLeft = math.max(0, tool.reloadTimeLeft - params.deltaTime)
-		end
-
 		if next(delta) then
 			world:insert(id, tool:patch(delta))
 			table.clear(delta)

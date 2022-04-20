@@ -22,16 +22,21 @@ local function updateBodies(world, components)
 		end
 	end
 	
-	for _id, velocityRecord, part in world:queryChanged(components.Velocity, components.Part) do
-		if velocityRecord.new then
-			part.part.AssemblyLinearVelocity = velocityRecord.new.velocity
+	-- If a Part + Transform was just added/changed, set the part's CFrame.
+	for id, transformRecord, part in world:queryChanged(components.Transform, components.Part) do
+		if transformRecord.new then
+			if world:get(id, components.Superball) then
+				part.part.Position = transformRecord.new.cframe.Position
+			else
+				part.part.CFrame = transformRecord.new.cframe
+			end
+			
 		end
 	end
 
-	-- If a Part + Transform was just added/changed, set the part's CFrame.
-	for _id, transformRecord, part in world:queryChanged(components.Transform, components.Part) do
-		if transformRecord.new then
-			part.part.CFrame = transformRecord.new.cframe
+	for _id, velocityRecord, part in world:queryChanged(components.Velocity, components.Part) do
+		if velocityRecord.new then
+			part.part.AssemblyLinearVelocity = velocityRecord.new.velocity
 		end
 	end
 	

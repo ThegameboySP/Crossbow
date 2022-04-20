@@ -191,7 +191,7 @@ return function(crossbow, onInit)
 			reloadTime = Value.new(0, t.number);
 	
 			prefab = Value.new(Prefabs.TrowelBrick, t.instanceIsA("Part"));
-			pack = Value.new("Bomb", packValidator);
+			pack = Value.new("TrowelWall", packValidator);
 
 			rotationStep = Value.new(90, t.number);
 			bricksPerRow = Value.new(3, t.number);

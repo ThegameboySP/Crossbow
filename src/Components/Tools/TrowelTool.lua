@@ -16,7 +16,6 @@ return function(settings)
 		index = {
 			raycastFilter = settings.TrowelTool.raycastFilter;
             shouldWeld = settings.TrowelTool.shouldWeld;
-			reloadTime = settings.TrowelTool.reloadTime;
 			prefab = settings.TrowelTool.prefab;
 			pack = settings.TrowelTool.pack;
 

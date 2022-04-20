@@ -10,18 +10,22 @@ return function()
 			character = true;
 			equipSound = true;
 			fireSound = true;
+			reloadTime = true;
+			nextReloadTimestamp = true;
 		};
 
 		defaults = {
 			fireEnabled = true;
 			isEquipped = false;
-			reloadTimeLeft = 0;
+			nextReloadTimestamp = 0;
 		};
 
 		schema = {
 			componentName = t.string;
 			fireEnabled = t.boolean;
-			reloadTimeLeft = t.number;
+			nextReloadTimestamp = t.number;
+			reloadTime = t.number;
+			
 			isEquipped = t.boolean;
 			character = t.optional(t.Instance);
 			equipSound = t.optional(t.Instance);
@@ -29,8 +33,8 @@ return function()
 		};
 	})
 
-	function Tool:canFire()
-		return self.isEquipped and self.fireEnabled and self.reloadTimeLeft <= 0
+	function Tool:canFire(timestamp)
+		return self.isEquipped and self.fireEnabled and timestamp - self.nextReloadTimestamp >= 0
 	end
 
 	function Tool:getPlayer()
