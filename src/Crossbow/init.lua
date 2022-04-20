@@ -12,7 +12,6 @@ local Filters = require(script.Parent.Utilities.Filters)
 local Signal = require(script.Parent.Utilities.Signal)
 
 local Events = require(script.Events)
-local Observers = require(script.Observers)
 local packs = require(script.packs)
 local settings = require(script.settings)
 local bindSignals = require(script.bindSignals)
@@ -43,7 +42,6 @@ function Crossbow.new()
 		_signals = {};
 
 		Tools = {};
-		Observers = Observers.new();
 	}, Crossbow)
 
 	local listeners = {}
