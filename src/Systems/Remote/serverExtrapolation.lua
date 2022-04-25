@@ -8,47 +8,8 @@ local function serverExtrapolation(world, components, params)
 		return
 	end
 
+	local dealDamage = params.Settings.Interfacing.dealDamage:Get()
 	local clientToProxyId = useHookStorage()
-
-	-- TODO
-	-- for _, client, packets in params.remoteEvents:iterate("in-extrap-update") do
-	-- 	if type(packets) ~= "table" then
-	-- 		continue
-	-- 	end
-
-	-- 	for _, packet in pairs(packets) do
-	-- 		local clientId, cframe = unpack(packet)
-	-- 		-- if not world:contains(serverId) then
-	-- 		-- 	warn(string.format("Server does not contain entity %q", tostring(serverId)))
-	-- 		-- 	continue
-	-- 		-- end
-
-	-- 		-- local projectile = world:get(serverId, components.Projectile)
-	-- 		-- if projectile == nil then
-	-- 		-- 	warn(string.format("%d.Projectile does not exist", serverId))
-	-- 		-- 	continue
-	-- 		-- end
-
-	-- 		-- local owner = world:get(serverId, components.Owner)
-	-- 		-- if owner == nil or owner.client ~= client then
-	-- 		-- 	warn(string.format("%q does not own this projectile", client.Name))
-	-- 		-- 	continue
-	-- 		-- end
-
-	-- 		-- local transform = world:get(serverId, components.Transform)
-
-	-- 		for _, player in pairs(Players:GetPlayers()) do
-	-- 			if player ~= client then
-	-- 				params.remoteEvents:fire(
-	-- 					"extrap-update",
-	-- 					player,
-	-- 					serverId,
-	-- 					cframe
-	-- 				)
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
 
 	for _, client, spawnerId, projId, timestamp, name, cframe in params.remoteEvents:iterate("in-extrap-projectileSpawned") do
 		local tool = world:contains(spawnerId) and world:get(spawnerId, components.Tool)
@@ -56,7 +17,7 @@ local function serverExtrapolation(world, components, params)
 		if
 			not tool
 			or client ~= Players:GetPlayerFromCharacter(tool.character)
-			or not tool:canFire()
+			or not tool:canFire(params.currentFrame)
 		then
 			params.remoteEvents:fire("out", "extrap-projectileFailed", client, projId)
 			continue
@@ -80,6 +41,44 @@ local function serverExtrapolation(world, components, params)
 					specificTool.velocity,
 					cframe
 				)
+			end
+		end
+	end
+
+	-- TODO
+	for _, client, packets in params.remoteEvents:iterate("in-extrap-update") do
+		if type(packets) ~= "table" then
+			continue
+		end
+
+		for _, clientId, cframe in pairs(packets) do
+			local serverId = clientToProxyId[clientId]
+			if not world:contains(serverId) then
+				-- warn(string.format("Server does not contain entity %q", tostring(serverId)))
+				continue
+			end
+
+			local projectile = world:get(serverId, components.Projectile)
+			if projectile == nil then
+				warn(string.format("%d.Projectile does not exist", serverId))
+				continue
+			end
+
+			local owner = world:get(serverId, components.Owner)
+			if owner == nil or owner.client ~= client then
+				warn(string.format("%q does not own this projectile", client.Name))
+				continue
+			end
+
+			for _, player in pairs(Players:GetPlayers()) do
+				if player ~= client then
+					params.remoteEvents:fire(
+						"extrap-update",
+						player,
+						serverId,
+						cframe
+					)
+				end
 			end
 		end
 	end
@@ -113,6 +112,7 @@ local function serverExtrapolation(world, components, params)
 			end
 		end
 	end
+
 	for _, _, humanoid, damage, damageType in params.remoteEvents:iterate("in-extrap-damaged") do
 		dealDamage(humanoid, damage, damageType, true)
 	end

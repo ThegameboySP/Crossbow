@@ -18,7 +18,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 		end
 
 		if packets[1] then
-			params.remoteEvents:fire("out", "extrap-update", packets)
+			params.remoteEvents:fire("out", "extrap-update", unpack(packets))
 		end
 	end
 
@@ -37,21 +37,12 @@ local function clientExtrapolationOutgoing(world, components, params)
 			)
 		elseif not projectileRecord.new and projectileRecord.old then
 			params.remoteEvents:fire("out", "extrap-projectileRemoved", id)
-		end
-	end
-
-	for id, projectileRecord in world:queryChanged(components.Projectile) do
-		if 
-			not projectileRecord.new and projectileRecord.old
-			and localIds[id]
-		then
-			params.remoteEvents:fire("out", "extrap-projectileRemoved", id)
 			localIds[id] = nil
 		end
 	end
 
 	for _, record in params.events:iterate("damaged") do
-		params.remoteEvents:fire("out", "extrap-damaged", record.humanoid, record.damageComponent.damage, record.damageComponent.damageType)
+		params.remoteEvents:fire("out", "extrap-damaged", record.humanoid, record.damage, record.damageType)
 	end
 
 	for _, event in params.events:iterate("exploded") do
