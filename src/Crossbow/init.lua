@@ -66,7 +66,10 @@ function Crossbow.new()
 	return self
 end
 
-function Crossbow:PopulateParams()
+function Crossbow:Init(systems, customBindSignals)
+	if self.Initialized then return end
+	self.Initialized = true
+	
 	self.Params.Crossbow = self
 	self.Params.Settings = self.Settings
 	self.Params.Packs = self.Packs
@@ -78,14 +81,12 @@ function Crossbow:PopulateParams()
 	self.Params.currentFrame = 0
 	self.Params.previousFrame = 0
 	self.Params.deltaTime = 0
-end
 
-function Crossbow:Init()
-	if self.Initialized then return end
-	self.Initialized = true
-	
-	self:PopulateParams()
+	if systems then
+		self.Loop:scheduleSystems(systems)
+	else
 	self:_registerSystems(script.Parent.Systems)
+	end
 
 	CollectionService:GetInstanceRemovedSignal("CrossbowInstance"):Connect(function(instance)
 		local id = instance:GetAttribute(self.Params.entityKey)
@@ -117,7 +118,7 @@ function Crossbow:Init()
 	assert(Definitions.params(self.Params))
 
 	local params = self.Params
-	self.Loop:begin(bindSignals(function(nextFn, signalName)
+	self.Loop:begin((customBindSignals or bindSignals)(function(nextFn, signalName)
 		return function()
 			if 
 				(IS_SERVER and signalName == "PreSimulation")

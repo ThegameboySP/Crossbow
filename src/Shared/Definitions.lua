@@ -21,7 +21,7 @@ return {
 		serverToClientId = t.table;
 		clientToServerId = t.table;
 
-		remoteEvent = t.instanceIsA("RemoteEvent");
+		remoteEvent = t.any;
 		
 		events = t.table;
 		remoteEvents = t.table;
