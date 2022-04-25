@@ -1,27 +1,12 @@
 local RunService = game:GetService("RunService")
 
-local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
-
 local InputStrategies = require(script.Parent.Parent.Parent.Input.InputStrategies)
-local Input = require(script.Parent.Parent.Parent.Input.Input)
 
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local Priorities = require(script.Parent.Parent.Priorities)
 local updateTools = require(script.Parent.updateTools)
 
 local IS_SERVER = RunService:IsServer()
-
-local function resolveState(isHeld, wasHeld)
-	if isHeld and not wasHeld then
-		return Enum.UserInputState.Begin
-	elseif isHeld and wasHeld then
-		return "Hold"
-	elseif not isHeld and wasHeld then
-		return Enum.UserInputState.End
-	else
-		return Enum.UserInputState.None
-	end
-end
 
 local activations = {}
 local function handleInput(world, id, specificTool, tool, crossbow)
@@ -40,9 +25,7 @@ local function handleInput(world, id, specificTool, tool, crossbow)
 			storage.customStorage[actionName] = customStorage
 		end
 		
-		local isHeld = Input:IsActionHeld(actionName)
-		local event, patch = strategy(specificTool, tool, resolveState(isHeld, customStorage.wasHeld), customStorage, crossbow)
-		customStorage.wasHeld = isHeld
+		local event, patch = strategy(specificTool, tool, crossbow.Input:GetActionState(actionName), customStorage, crossbow)
 		
 		if event then
 			table.insert(activations, {name = actionName, tool = specificTool, id = id, event = event})
@@ -71,9 +54,10 @@ local function useToolActions(world, components, params)
 	
 	for index, activation in ipairs(activations) do
 		activations[index] = nil
+		local tool = world:get(activation.id, components.Tool)
 		if activation.name == "Fire"
 			and
-				(not world:get(activation.id, components.Tool):canFire(params.currentFrame)
+				(not tool:canFire(params.currentFrame)
 				or (activation.event[1] == nil
 					and activation.tool.onlyActivateOnPartHit))
 		then 
@@ -105,17 +89,17 @@ local function useToolActions(world, components, params)
 			end
 		end
 	end
-	
+
 	for id, projectileRecord in world:queryChanged(components.Projectile) do
 		if projectileRecord.old == nil and world:get(id, components.Instance) == nil then
 			local tool = world:get(projectileRecord.new.spawnerId, components.Tool)
 			local specificTool = world:get(projectileRecord.new.spawnerId, components[tool.componentName])
-		
-		local part = specificTool.prefab:Clone()
-		params.Crossbow:InsertBind(part, id)
-		part.Parent = workspace
-		if IS_SERVER then
-			part:SetNetworkOwner(nil)
+			
+			local part = specificTool.prefab:Clone()
+			params.Crossbow:InsertBind(part, id)
+			part.Parent = workspace
+			if IS_SERVER then
+				part:SetNetworkOwner(nil)
 			end
 		end
 	end

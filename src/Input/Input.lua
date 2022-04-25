@@ -1,110 +1,82 @@
 local ContextActionService = game:GetService("ContextActionService")
 local UserInputService = game:GetService("UserInputService")
-local HttpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
 
 local Raycaster = require(script.Parent.Parent.Utilities.Raycaster)
-local General = require(script.Parent.Parent.Utilities.General)
 
-local Input = {
-	Actions = General.makeEnum("Actions", {
-		"Fire", "Rotate", "CancelRotate", "ToggleVisualization";
-	});
+local Input = {}
+Input.__index = Input
 
-	Inputs = {
-		Fire = {
-			Enum.KeyCode.F;
-			Enum.UserInputType.Touch;
-		};
-		Rotate = {
-			Enum.KeyCode.R;
-		};
-		CancelRotate = {
-			Enum.KeyCode.T;
-		};
-		ToggleVisualization = {
-			Enum.KeyCode.V;
-		};
-	};
+local function actionNameFn(actionName)
+	return "Crossbow_" .. actionName
+end
 
-	Priorities = General.makeEnum("Priorities", {
-		First = 0;
-		Normal = 500;
-		Powerups = 600;
-		Last = 1000;
-	});
-}
+function Input.new(crossbow)
+	assert(not crossbow.IsServer, "Cannot create Input on server")
 
-local uniqueIds = {}
-local actions = {}
-function Input:BindAtPriority(actionName, purpose, priority, handler)
-	assert(not RunService:IsServer(), "Cannot bind action on server")
+	local self = setmetatable({
+		_crossbow = crossbow;
+		_actionStates = {};
+		_actionInputs = {};
+		_lastActionInputType = {};
+	}, Input)
 
-	if self.Actions[actionName] == nil then
-		error(("%s is not a valid action name"):format(actionName))
+	crossbow:On("Update", function()
+		for actionName in pairs(self._actionInputs) do
+			if self._lastActionInputType[actionName] == Enum.UserInputType.Touch then
+				self:SetActionState(actionName, Enum.UserInputState.End)
+			elseif self:GetActionState(actionName) == Enum.UserInputState.Begin then
+				self:SetActionState(actionName, "Hold")
+			end
+		end
+	end)
+
+	UserInputService.TouchTap:Connect(function(_, gp)
+		if gp then
+			return
+		end
+
+		for actionName, binds in pairs(self._actionInputs) do
+			if table.find(binds, Enum.UserInputType.Touch) then
+				self:SetActionState(actionName, Enum.UserInputState.Begin)
+				self._lastActionInputType[actionName] = Enum.UserInputType.Touch
+			end
+		end
+	end)
+
+	return self
+end
+
+function Input:RegisterAction(actionName, ...)
+	assert(type(actionName) == "string", "Expected 'string'")
+
+	local oldActionInputs = self._actionInputs[actionName]
+	self._actionInputs[actionName] = table.freeze({...})
+
+	if oldActionInputs then
+		ContextActionService:UnbindAction(actionNameFn(actionName))
 	end
-
-	local prefix = string.format("%s_%s_", actionName, purpose)
-	local id
-	repeat
-		id = prefix .. HttpService:GenerateGUID()
-	until uniqueIds[id] == nil
-
-	local tbl = {actionName = actionName, id = id, priority = priority, handler = function(_, ...)
-		return handler(...)
-	end}
-	uniqueIds[id] = tbl
-	actions[actionName] = actions[actionName] or {}
-	table.insert(actions[actionName], tbl)
 
 	ContextActionService:BindActionAtPriority(
-		id, tbl.handler, false, priority, unpack(self.Inputs[actionName])
+		actionNameFn(actionName), 
+		function(_, inputState, inputObject)
+			if inputObject.UserInputType == Enum.UserInputType.Touch then
+				return Enum.ContextActionResult.Pass
+			end
+			
+            if inputState == Enum.UserInputState.Begin or inputState == Enum.UserInputState.End then
+                self:SetActionState(actionName, inputState)
+			end
+
+			self._lastActionInputType[actionName] = inputObject.UserInputType
+			return Enum.ContextActionResult.Pass
+		end,
+		false,
+		100,
+		...
 	)
-
-	return tbl
-end
-
-function Input:onActionKeymapChanged(actionName, keymap)
-	if self.Actions[actionName] == nil then
-		error(("%s is not a valid action name"):format(actionName))
-	end
-
-	self.Inputs[actionName] = keymap
-
-	for _, bind in ipairs(uniqueIds[actionName]) do
-		if bind.inputs == nil then continue end
-
-		ContextActionService:UnbindAction(bind.id)
-		ContextActionService:BindActionAtPriority(
-			bind.id, bind.priority, bind.handler, unpack(keymap)
-		)
-	end
-end
-
-function Input:Unbind(id)
-	assert(type(id) == "table" and id.actionName, "Not a valid Id!")
-
-	uniqueIds[id] = nil
-	local binds = actions[id.actionName]
-	table.remove(binds, table.find(binds, id))
-	ContextActionService:UnbindAction(id.id)
-end
-
-function Input:RegisterAction(actionName, inputs)
-	if self.Inputs[actionName] then
-		error(("%s is an already registered action name"):format(actionName))
-	end
-
-	assert(type(actionName) == "string", "Expected 'string'")
-	assert(type(inputs) == "table", "Expected 'table'")
-
-	rawset(self.Actions, actionName, true)
-	self.Inputs[actionName] = inputs
 end
 
 function Input:Raycast(filter, params)
-	assert(not RunService:IsServer(), "Cannot raycast on server")
-
 	local pos = UserInputService:GetMouseLocation()
 	local ray = workspace.CurrentCamera:ViewportPointToRay(pos.X, pos.Y, 0)
 	local to = ray.Direction.Unit * 1000
@@ -113,20 +85,12 @@ function Input:Raycast(filter, params)
 	return result and result.Position or ray.Origin + to, result and result.Instance, result and result.Normal
 end
 
-function Input:IsActionHeld(actionName)
-	for _, enum in pairs(self.Inputs[actionName]) do
-		if enum.Name:find("Mouse") then
-			if UserInputService:IsMouseButtonPressed(enum) then
-				return true
-			end
-		elseif enum.EnumType == Enum.KeyCode then
-			if UserInputService:IsKeyDown(enum) then
-				return true
-			end
-		end
-	end
+function Input:SetActionState(actionName, actionState)
+	self._actionStates[actionName] = actionState
+end
 
-	return false
+function Input:GetActionState(actionName)
+	return self._actionStates[actionName]
 end
 
 return Input

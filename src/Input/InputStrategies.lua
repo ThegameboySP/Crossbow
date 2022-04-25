@@ -1,14 +1,12 @@
-local Input = require(script.Parent.Input)
-
 local function pressActivate(tool, _, state, _, crossbow)
 	if state == Enum.UserInputState.Begin then
-		return {Input:Raycast(crossbow.Settings.Callbacks[tool.raycastFilter])}
+		return {crossbow.Input:Raycast(crossbow.Settings.Callbacks[tool.raycastFilter])}
 	end
 end
 
 local function holdActivate(tool, _, state, _, crossbow)
 	if state == "Hold" then
-		return {Input:Raycast(crossbow.Settings.Callbacks[tool.raycastFilter])}
+		return {crossbow.Input:Raycast(crossbow.Settings.Callbacks[tool.raycastFilter])}
 	end
 end
 
@@ -29,7 +27,7 @@ return {
 				if trowelTool.isLocked then
 					rot = (rot + trowelTool.rotationStep) % 360
 				else
-					local pos = Input:Raycast(crossbow.Settings.Callbacks[trowelTool.raycastFilter])
+					local pos = crossbow.Input:Raycast(crossbow.Settings.Callbacks[trowelTool.raycastFilter])
 					local autoRot = trowelTool:getAutomaticRotation(tool:getDirection(pos, "Head"))
 					rot = (math.deg(autoRot) + trowelTool.rotationStep) % 360
 				end

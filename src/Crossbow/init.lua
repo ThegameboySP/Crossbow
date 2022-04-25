@@ -10,7 +10,9 @@ local Matter = require(script.Parent.Parent.Matter)
 local Definitions = require(script.Parent.Shared.Definitions)
 local Filters = require(script.Parent.Utilities.Filters)
 local Signal = require(script.Parent.Utilities.Signal)
+local Input = require(script.Parent.Input.Input)
 
+local defaultBindings = require(script.defaultBindings)
 local Events = require(script.Events)
 local packs = require(script.packs)
 local settings = require(script.settings)
@@ -29,6 +31,7 @@ function Crossbow.new()
 		Components = nil;
 		Settings = nil;
 		Packs = nil;
+		Input = nil;
 
 		IsServer = IS_SERVER;
 		IsTesting = false;
@@ -99,6 +102,11 @@ function Crossbow:Init()
 			self.Params.remoteEvent = remoteEvent
 		else
 			self.Params.remoteEvent = ReplicatedStorage:WaitForChild("CrossbowRemoteEvent")
+
+			self.Input = Input.new(self)
+			for actionName, inputs in pairs(defaultBindings) do
+				self.Input:RegisterAction(actionName, unpack(inputs))
+			end
 
 			local soundGroup = Instance.new("SoundGroup")
 			soundGroup.Name = "CrossbowSounds"

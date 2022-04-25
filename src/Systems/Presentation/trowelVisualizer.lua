@@ -1,7 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 
 local Callbacks = require(script.Parent.Parent.Parent.Utilities.Callbacks)
-local Input = require(script.Parent.Parent.Parent.Input.Input)
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local function makeWall(trowelTool)
@@ -72,7 +71,7 @@ local function trowelVisualizer(world, components, params)
         wall.Parent = workspace
 
         raycastParams.FilterDescendantsInstances = {wall}
-        local worldPos, part = Input:Raycast(params.Settings.Callbacks[equippingTrowel.raycastFilter], raycastParams)
+        local worldPos, part = params.Crossbow.Input:Raycast(params.Settings.Callbacks[equippingTrowel.raycastFilter], raycastParams)
 
         local lookDir = equippingTrowel:getLookDirection(equippingTool:getDirection(worldPos, "Head"))
         local rounded = equippingTrowel:getRoundedOrigin(worldPos, part)
