@@ -61,30 +61,27 @@ function General.weld(p0, p1)
 end
 
 function General.getCharacter(instance)
-	local parent = instance.Parent
+	local node = instance
 
-	while parent do
-		local hum = parent:FindFirstChildOfClass("Humanoid")
+	while node do
+		local hum = node:FindFirstChild("Humanoid")
 		if hum then
-			return parent, hum
+			return node, hum
 		end
 
-		parent = parent.Parent
+		node = node.Parent
 	end
 
 	return nil
 end
 
 function General.getCharacterFromHitbox(instance)
-	local parent = instance
-
-	while parent and not parent:IsA("Accoutrement") do
-		local hum = parent:FindFirstChildOfClass("Humanoid")
+	local parent = instance.Parent
+	if parent then
+		local hum = parent:FindFirstChild("Humanoid")
 		if hum then
 			return parent, hum
 		end
-
-		parent = parent.Parent
 	end
 
 	return nil
