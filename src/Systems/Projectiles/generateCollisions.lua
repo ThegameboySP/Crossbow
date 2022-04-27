@@ -3,27 +3,34 @@ local Priorities = require(script.Parent.Parent.Priorities)
 
 local function generateCollisions(world, components, params)
     local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
-    local connections = useHookStorage()
+    local state = useHookStorage()
+    if not state.componentsToTrack then
+        state.componentsToTrack = {components.Damage, components.Ricochets, components.ExplodeOnTouch}
+        state.connections = {}
+    end
 
     table.clear(params.hitQueue)
 
-    for id, record in world:queryChanged(components.Projectile) do
-        if record.new and not connections[id] then
-            local part = world:get(id, components.Part)
+    for _, component in ipairs(state.componentsToTrack) do
+        for id, record in world:queryChanged(component) do
+            if record.new and not state.connections[id] then
+                local part = world:get(id, components.Part)
 
-            connections[id] = getTouchedSignal(part.part):Connect(function(hit)
-                local queue = params.hitQueue[id]
+                state.connections[id] = getTouchedSignal(part.part):Connect(function(hit)
+                    local queue = params.hitQueue[id]
 
-                if queue == nil then
-                    queue = {}
-                    params.hitQueue[id] = queue
-                end
+                    if queue == nil then
+                        queue = {}
+                        params.hitQueue[id] = queue
+                    end
 
-                table.insert(queue, hit)
-            end)
-        elseif not record.new and connections[id] then
-            connections[id]:Disconnect()
-            connections[id] = nil
+                    table.insert(queue, hit)
+                end)
+                
+            elseif not record.new and state.connections[id] then
+                state.connections[id]:Disconnect()
+                state.connections[id] = nil
+            end
         end
     end
 end
