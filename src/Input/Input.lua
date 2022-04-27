@@ -30,7 +30,7 @@ function Input.new(crossbow)
 		end
 	end)
 
-	UserInputService.TouchTap:Connect(function(_, gp)
+	UserInputService.TouchTapInWorld:Connect(function(_, gp)
 		if gp then
 			return
 		end
