@@ -1,5 +1,6 @@
 local ContextActionService = game:GetService("ContextActionService")
 local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
 
 local Raycaster = require(script.Parent.Parent.Utilities.Raycaster)
 
@@ -17,28 +18,50 @@ function Input.new(crossbow)
 		_crossbow = crossbow;
 		_actionStates = {};
 		_actionInputs = {};
-		_lastActionInputType = {};
 	}, Input)
 
 	crossbow:On("Update", function()
 		for actionName in pairs(self._actionInputs) do
-			if self._lastActionInputType[actionName] == Enum.UserInputType.Touch then
-				self:SetActionState(actionName, Enum.UserInputState.End)
-			elseif self:GetActionState(actionName) == Enum.UserInputState.Begin then
+			if self:GetActionState(actionName) == Enum.UserInputState.Begin then
 				self:SetActionState(actionName, "Hold")
 			end
 		end
 	end)
 
-	UserInputService.TouchTapInWorld:Connect(function(_, gp)
-		if gp then
-			return
-		end
+	local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 
+	-- ContextActionService seems to be faster than its UIS counterparts.
+	ContextActionService:BindAction(
+		"Crossbow_Touch",
+		function(_, state, inputObject)
+			if state == Enum.UserInputState.Begin then
+				local pos = inputObject.Position
+				for _, gui in pairs(PlayerGui:GetGuiObjectsAtPosition(pos.X, pos.Y)) do
+					-- funny hack
+					-- really, is there no better way to handle this?
+					if gui.Name == "DynamicThumbstickFrame" then
+						return Enum.ContextActionResult.Pass
+					end
+				end
+
+				for actionName, binds in pairs(self._actionInputs) do
+					if table.find(binds, Enum.UserInputType.Touch) then
+						self:SetActionState(actionName, Enum.UserInputState.Begin)
+					end
+				end
+
+				return Enum.ContextActionResult.Pass
+			end
+		end,
+		false,
+		Enum.UserInputType.Touch
+	)
+
+	-- TouchEnded fires even if hovering over a GUI.
+	UserInputService.TouchEnded:Connect(function()
 		for actionName, binds in pairs(self._actionInputs) do
 			if table.find(binds, Enum.UserInputType.Touch) then
-				self:SetActionState(actionName, Enum.UserInputState.Begin)
-				self._lastActionInputType[actionName] = Enum.UserInputType.Touch
+				self:SetActionState(actionName, Enum.UserInputState.End)
 			end
 		end
 	end)
@@ -67,7 +90,6 @@ function Input:RegisterAction(actionName, ...)
                 self:SetActionState(actionName, inputState)
 			end
 
-			self._lastActionInputType[actionName] = inputObject.UserInputType
 			return Enum.ContextActionResult.Pass
 		end,
 		false,
