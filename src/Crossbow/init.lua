@@ -41,10 +41,13 @@ function Crossbow.new()
 		Params = params;
 		World = world;
 		Loop = nil;
+		Signals = setmetatable({}, {__index = function(t, key)
+			local signal = Signal.new()
+			t[key] = signal
+			return signal
+		end});
 		_systemsSet = {};
 		
-		_signals = {};
-
 		Tools = {};
 	}, Crossbow)
 
@@ -149,15 +152,13 @@ function Crossbow:Init(systems, customBindSignals)
 
 			if signalName == "PostSimulation" then
 				for name, event in params.events:iterateAll() do
-					local signal = self._signals[name]
+					local signal = rawget(self.Signals, name)
 					if signal then
 						signal:Fire(unpack(event, 1, event.n))
 					end
 				end
 
-				if self._signals.Update then
-					self._signals.Update:Fire()
-				end
+				self.Signals.Update:Fire()
 
 				params.events:clear()
 				params.remoteEvents:clear()
@@ -175,17 +176,11 @@ function Crossbow:RegisterDefaultTools()
 	self:RegisterTool("Slingshot", Prefabs.SlingshotTool, self.Packs.SlingshotTool)
 end
 
-function Crossbow:On(signalName, handler)
-	local signal = self._signals[signalName]
-	if signal == nil then
-		signal = Signal.new()
-		self._signals[signalName] = signal
+function Crossbow:GetProjectile(part)
+	if not CollectionService:HasTag(part, "CrossbowInstance") then
+		return nil
 	end
 
-	return signal:Connect(handler)
-end
-
-function Crossbow:GetProjectile(part)
 	local id = part:GetAttribute(self.Params.entityKey)
 
 	if id and self.World:contains(id) then

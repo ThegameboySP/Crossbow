@@ -20,7 +20,7 @@ function Input.new(crossbow)
 		_actionInputs = {};
 	}, Input)
 
-	crossbow:On("Update", function()
+	crossbow.Signals.Update:Connect(function()
 		for actionName in pairs(self._actionInputs) do
 			if self:GetActionState(actionName) == Enum.UserInputState.Begin then
 				self:SetActionState(actionName, "Hold")
