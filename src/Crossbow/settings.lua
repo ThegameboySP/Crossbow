@@ -80,6 +80,9 @@ return function(crossbow, onInit)
 					or surface == Enum.SurfaceType.Weld
 					or surface == Enum.SurfaceType.Glue
 			end;
+			defaultRicochetFilter = function(part)
+				return Filters.canCollide(part)
+			end;
 			always = Filters.always;
 			never = Filters.never;
 		};
@@ -113,7 +116,7 @@ return function(crossbow, onInit)
 			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
 			velocity = Value.new(200, t.number);
 			reloadTime = Value.new(2, t.number);
-			spawnDistance = Value.new(2, t.number);
+			spawnDistance = Value.new(4, t.number);
 	
 			prefab = Value.new(Prefabs.Superball, t.instanceIsA("Part"));
 	
@@ -124,7 +127,7 @@ return function(crossbow, onInit)
 			bounceSound = Value.new(Audio.SuperballBounce, optionalSound);
 
 			damageAmount = Value.new(1, t.number);
-			damageCooldown = Value.new(1, t.number);
+			damageCooldown = Value.new(1/30, t.number);
 			damage = Value.new(55, t.number);
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 
@@ -132,9 +135,7 @@ return function(crossbow, onInit)
 			maxBounces = Value.new(8, t.number);
 			bouncePauseTime = Value.new(0.1, t.number);
 
-			hitFilter = Value.new(function(part)
-				return Filters.canCollide(part)
-			end, t.callback);
+			ricochetFilter = Value.new("defaultRicochetFilter", t.callbackValidator);
 
 			colorEnabled = Value.new(true, t.boolean);
 		});
@@ -209,6 +210,9 @@ return function(crossbow, onInit)
 			velocity = Value.new(85, t.number);
 			reloadTime = Value.new(0.2, t.number);
 			spawnDistance = Value.new(3, t.number);
+
+			maxBounces = Value.new(8, t.number);
+			bouncePauseTime = Value.new(0.1, t.number);
 	
 			prefab = Value.new(Prefabs.SlingshotPellet, t.instanceIsA("Part"));
 	
@@ -217,8 +221,8 @@ return function(crossbow, onInit)
 
 		SlingshotPellet = General.lockTable("SlingshotPellet", {
 			damageAmount = Value.new(1, t.number);
+			damage = Value.new(16, t.number);
 			damageCooldown = Value.new(0.5, t.number);
-			damage = Value.new(8, t.number);
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 
 			lifetime = Value.new(7, t.number);

@@ -36,7 +36,11 @@ local function applyDamage(world, components, params)
 				continue
 			end
 
+			local ricochets = world:get(id, components.Ricochets)
 			local damageAmount = damage.damage
+			if ricochets then
+				damageAmount *= ricochets.damageMultiplier^ricochets.ricochets
+			end
 			
 			if params.Crossbow.IsServer then
 				dealDamage(humanoid, damageAmount, damage.damageType, true)

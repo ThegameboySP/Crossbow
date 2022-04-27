@@ -84,15 +84,17 @@ return function(crossbow, onInit)
 		SuperballTool = toolPack(bind(crossbow, "SuperballTool"));
 		Superball = projectilePack(function(params, _, _, velocity, cframe)
 			return
-				components.Superball({
-					maxBounces = params.maxBounces or settings.Superball.maxBounces:Get();
-					bouncePauseTime = params.bouncePauseTime or settings.Superball.bouncePauseTime:Get();
-					bounces = 0;
-					lastHitTimestamp = 0;
-					bounceSound = params.bounceSound or settings.Superball.bounceSound:Get();
-				}),
+				components.Superball(),
 				components.Velocity({
 					velocity = cframe.LookVector * velocity;
+				}),
+				components.Ricochets({
+					damageMultiplier = 0.5;
+					debounce = settings.Superball.bouncePauseTime:Get();
+					filter = settings.Superball.ricochetFilter:Get();
+					maxRicochets = settings.Superball.maxBounces:Get();
+					ricochets = 0;
+					timestamp = 0;
 				}),
 				components.Damage({
 					filter = params.canDamageFilter or settings.Superball.canDamageFilter:Get();
@@ -173,6 +175,14 @@ return function(crossbow, onInit)
 					damage = settings.SlingshotPellet.damage:Get();
 					filter = settings.SlingshotPellet.canDamageFilter:Get();
 					damageType = "Hit";
+				}),
+				components.Ricochets({
+					damageMultiplier = 0.5;
+					debounce = settings.Superball.bouncePauseTime:Get();
+					filter = "defaultRicochetFilter";
+					maxRicochets = settings.Superball.maxBounces:Get();
+					ricochets = 0;
+					timestamp = 0;
 				}),
 				components.Velocity({
 					velocity = cframe.LookVector * velocity;
