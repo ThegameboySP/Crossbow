@@ -1,5 +1,3 @@
-local Priorities = require(script.Parent.Parent.Priorities)
-
 local function showExplosions(world, components, params)
 	for _, event in params.events:iterate("exploded") do
 		local part = world:get(event.newId, components.Part).part
@@ -36,8 +34,4 @@ local function showExplosions(world, components, params)
 	end
 end
 
-return {
-	system = showExplosions;
-	event = "PostSimulation";
-	priority = Priorities.Presentation;
-}
+return showExplosions

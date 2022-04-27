@@ -1,7 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 
-local Callbacks = require(script.Parent.Parent.Parent.Utilities.Callbacks)
-local Priorities = require(script.Parent.Parent.Priorities)
+local Callbacks = require(script.Parent.Parent.Parent.Parent.Utilities.Callbacks)
 
 local function makeWall(trowelTool)
     local wall = Callbacks.buildTrowel(
@@ -95,9 +94,4 @@ local function trowelVisualizer(world, components, params)
     end
 end
 
-return {
-    realm = "client";
-    system = trowelVisualizer;
-    event = "PostSimulation";
-    priority = Priorities.Presentation;
-}
+return trowelVisualizer
