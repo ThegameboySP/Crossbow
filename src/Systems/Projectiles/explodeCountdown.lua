@@ -53,5 +53,5 @@ end
 return {
     system = updateExplodeCountdown;
 	event = "PreSimulation";
-	priority = Priorities.Projectiles;
+	priority = Priorities.Projectiles + 1;
 }

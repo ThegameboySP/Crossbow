@@ -17,9 +17,11 @@ return {
 		Crossbow = t.table;
 		Packs = t.table;
 		Settings = t.table;
+		SoundPlayer = t.optional(t.table);
 
 		serverToClientId = t.table;
 		clientToServerId = t.table;
+		hitQueue = t.table;
 
 		remoteEvent = t.any;
 		

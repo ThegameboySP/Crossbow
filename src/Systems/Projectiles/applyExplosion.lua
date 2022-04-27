@@ -1,32 +1,13 @@
 local Priorities = require(script.Parent.Parent.Priorities)
-local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
-local EventQueue = require(script.Parent.Parent.Parent.Utilities.EventQueue)
-
-local function initState(state)
-	state.touched = EventQueue.new()
-end
 
 local function applyExplosion(world, components, params)
-	local touched = useHookStorage(nil, initState).touched
-	local getTouchedSignal = params.Settings.Interfacing.getTouchedSignal:Get()
-
-	for id in world:queryChanged(components.Part) do
-		touched:disconnect(id)
-	end
-
-	for id, record in world:queryChanged(components.ExplodeOnTouch) do
-		if not record.new then
-			touched:disconnect(id)
-		end
-	end
-
 	for id, part, explodeOnTouch in world:query(components.Part, components.ExplodeOnTouch, components.Owned) do
-		if not touched:isConnected(id) then
-			touched:connect(id, getTouchedSignal(part.part))
+		local queue = params.hitQueue[id]
+		if queue == nil then
 			continue
 		end
 
-		for _, hit in touched:iterate(id) do
+		for _, hit in ipairs(queue) do
 			if not params.Settings.Callbacks[explodeOnTouch.filter](hit) then
 				continue
 			end
@@ -34,8 +15,10 @@ local function applyExplosion(world, components, params)
 			local pos = params.Settings.Callbacks[explodeOnTouch.transform](part.part)
 			params.events:fire("explosion", pos, explodeOnTouch.radius, explodeOnTouch.damage, true, id)
 			params.events:fire("queueRemove", id)
+			
 			if explodeOnTouch.explodeSound then
-				params.events:fire("playSound", explodeOnTouch.explodeSound, part.part.Position, id)
+				params.events:fire("queueSound", explodeOnTouch.explodeSound, id, part.part.Position, 2)
+				params.SoundPlayer:queueSound(explodeOnTouch.explodeSound, part.part.Position, id)
 			end
 
 			break

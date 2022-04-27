@@ -78,6 +78,7 @@ function Crossbow:Init(systems, customBindSignals)
 	self.Params.entityKey = self.IsServer and "serverEntityId" or "clientEntityId"
 	self.Params.serverToClientId = {}
 	self.Params.clientToServerId = {}
+	self.Params.hitQueue = {}
 	self.Params.currentFrame = 0
 	self.Params.previousFrame = 0
 	self.Params.deltaTime = 0
