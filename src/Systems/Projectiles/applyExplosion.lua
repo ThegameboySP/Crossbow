@@ -13,13 +13,8 @@ local function applyExplosion(world, components, params)
 			end
 
 			local pos = params.Settings.Callbacks[explodeOnTouch.transform](part.part)
-			params.events:fire("explosion", pos, explodeOnTouch.radius, explodeOnTouch.damage, true, id)
+			params.events:fire("explosion", pos, explodeOnTouch.radius, explodeOnTouch.damage, true, id, explodeOnTouch.explodeSound)
 			params.events:fire("queueRemove", id)
-			
-			if explodeOnTouch.explodeSound then
-				params.events:fire("queueSound", explodeOnTouch.explodeSound, id, part.part.Position, 2)
-				params.SoundPlayer:queueSound(explodeOnTouch.explodeSound, part.part.Position, id)
-			end
 
 			break
 		end
@@ -38,7 +33,7 @@ local function applyExplosion(world, components, params)
 		collision.Parent = workspace
 
 		if soundValue then
-			params.events:fire("queueSound", soundValue, spawnerId, pos)
+			params.soundPlayer:queueSound(soundValue, nil, pos, 2)
 		end
 
 		local newId = params.Crossbow:SpawnBind(

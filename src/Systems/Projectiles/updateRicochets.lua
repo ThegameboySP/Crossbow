@@ -23,16 +23,6 @@ local function updateSuperballs(world, components, params)
             if (currentFrame - ricochets.timestamp) >= ricochets.debounce then
                 params.events:fire("ricocheted", id)
                 
-                if ricochets.ricochetSound then
-                    params.events:fire(
-                        "queueSound",
-                        ricochets.ricochetSound,
-                        world:get(id, components.Projectile).spawnerId,
-                        world:get(id, components.Part).part.Position,
-                        1
-                    )
-                end
-
                 if (ricochets.ricochets + 1) > ricochets.maxRicochets then
                     params.events:fire("queueRemove", id)
                 else

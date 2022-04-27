@@ -18,10 +18,10 @@ local function makeAnimationSetter(name)
             toolAnim.Parent = tool
 
             if name == "Slash" and swordTool.slashSound then
-                params.events:fire("playSound", swordTool.slashSound, part.part.Position)
+                params.soundPlayer:queueSound(swordTool.slashSound, nil, part.part.Position)
             elseif name == "Lunge" then
                 if swordTool.lungeSound then
-                    params.events:fire("playSound", swordTool.lungeSound, part.part.Position)
+                    params.soundPlayer:queueSound(swordTool.lungeSound, nil, part.part.Position)
                 end
 
                 tool.GripForward = Vector3.new(0, 0, 1)

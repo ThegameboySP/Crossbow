@@ -12,7 +12,7 @@ local function updateTools(world, components, params)
 			
 			if isEquipped and not params.Crossbow.IsServer then
 				if tool.equipSound then
-					params.events:fire("queueSound", tool.equipSound, id, world:get(id, components.Part).part.Position)
+					params.soundPlayer:queueSound(tool.equipSound, id, world:get(id, components.Part).part.Position, 1)
 				end
 			end
 		end

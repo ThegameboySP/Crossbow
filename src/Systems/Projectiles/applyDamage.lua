@@ -54,7 +54,7 @@ local function applyDamage(world, components, params)
 			}))
 
 			if not world:get(id, components.SwordTool) then
-				params.events:fire("playSound", params.Settings.Sounds.successfulHit:Get())
+				params.soundPlayer:queueSound(params.Settings.Sounds.successfulHit:Get())
 			end
 
 			damaged[part] = damaged[part] or {}

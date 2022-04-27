@@ -259,12 +259,6 @@ return function(crossbow, onInit)
 			
 			breakJointsFilter = Value.new(Filters.always, t.callback);
 		});
-	
-		ThrottledSounds = onInit({}, function(throttled)
-			-- TODO: doesn't work with changing settings mid-game
-			throttled[crossbow.Settings.SwordTool.equipSound:Get()] = 1
-			throttled[crossbow.Settings.Superball.bounceSound:Get()] = 1
-		end);
 
 		Sounds = General.lockTable("Sounds", {
 			fireSlingshot = Value.new(Audio.SlingshotModern, optionalSound);

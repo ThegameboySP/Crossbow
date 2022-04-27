@@ -10,7 +10,6 @@ return function()
 			ricochets = t.number;
 			debounce = t.number;
 			timestamp = t.number;
-			ricochetSound = t.optional(t.Instance);
 		};
 	})
 end

@@ -21,7 +21,7 @@ local function presentationHandler(world, components, params)
             part.part.Color = color
 
             if explodeCountdown.tickSound then
-                params.events:fire("queueSound", explodeCountdown.tickSound, id, part.part.Position)
+                params.soundPlayer:queueSound(explodeCountdown.tickSound, nil, part.part.Position, 10)
             end
         end
     end

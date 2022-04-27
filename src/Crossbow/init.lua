@@ -13,6 +13,7 @@ local Signal = require(script.Parent.Utilities.Signal)
 local Input = require(script.Parent.Input.Input)
 
 local defaultBindings = require(script.defaultBindings)
+local SoundPlayer = require(script.SoundPlayer)
 local Events = require(script.Events)
 local packs = require(script.packs)
 local settings = require(script.settings)
@@ -96,7 +97,9 @@ function Crossbow:Init(systems, customBindSignals)
 		end
 	end)
 
-	if not self.IsTesting then
+	if self.IsTesting then
+		self.Params.soundPlayer = SoundPlayer.new(nil, nil)
+	else
 		if IS_SERVER then
 			local remoteEvent = Instance.new("RemoteEvent")
 			remoteEvent.Name = "CrossbowRemoteEvent"
@@ -113,6 +116,18 @@ function Crossbow:Init(systems, customBindSignals)
 			local soundGroup = Instance.new("SoundGroup")
 			soundGroup.Name = "CrossbowSounds"
 			soundGroup.Parent = SoundService
+
+			local soundRoot = Instance.new("Part")
+			soundRoot.Name = "CrossbowSoundPlayer"
+			soundRoot.Anchored = true
+			soundRoot.CanCollide = false
+			soundRoot.CanTouch = false
+			soundRoot.CanQuery = false
+			soundRoot.Transparency = 1
+			soundRoot.CFrame = CFrame.new(0, 0, 0)
+			soundRoot.Parent = workspace
+
+			self.Params.soundPlayer = SoundPlayer.new(soundRoot, soundGroup)
 		end
 	end
 

@@ -44,7 +44,7 @@ local function updateTrowels(world, components, params)
         )
 
         if trowelTool.buildSound then
-            params.events:fire("playSound", trowelTool.buildSound, pos, id)
+            params.soundPlayer:queueSound(trowelTool.buildSound, id, pos)
         end
     end
 

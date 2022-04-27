@@ -85,7 +85,7 @@ local function useToolActions(world, components, params)
 			)
 
 			if tool.fireSound then
-				params.events:fire("playSound", tool.fireSound, cframe.Position, id)
+				params.soundPlayer:queueSound(tool.fireSound, id, cframe.Position)
 			end
 		end
 	end
