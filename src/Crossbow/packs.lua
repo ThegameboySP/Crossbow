@@ -149,6 +149,12 @@ return function(crossbow, onInit)
 					rotation = 0;
 					isLocked = false;
 					buildSound = settings.TrowelTool.buildSound:Get();
+
+					rotationStep = settings.TrowelTool.rotationStep:Get();
+					bricksPerRow = settings.TrowelTool.bricksPerRow:Get();
+					bricksPerColumn = settings.TrowelTool.bricksPerColumn:Get();
+					brickSpeed = settings.TrowelTool.brickSpeed:Get();
+					shouldWeld = settings.TrowelTool.shouldWeld:Get();
 				})
 		end);
 		TrowelWall = function(id, pos, part, normal, dir)

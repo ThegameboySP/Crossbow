@@ -10,7 +10,7 @@ local Assets = script.Parent.Parent.Assets
 local Audio = Assets.Audio
 local Prefabs = Assets.Prefabs
 
-return function(crossbow, onInit)
+return function(crossbow)
 	local callbackValidator = function(value)
 		local ok, err = t.string(value)
 		if not ok then
@@ -164,7 +164,7 @@ return function(crossbow, onInit)
 
 			tickColors = Value.new({
 				Color3.fromRGB(170, 0, 0),
-				Color3.fromRGB(27, 42, 53),
+				Color3.fromRGB(27, 42, 53)
 			}, t.array(t.Color3));
 		});
 

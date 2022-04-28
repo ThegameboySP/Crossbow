@@ -6,6 +6,7 @@
 		"ReplicatedStorage": {
 			"$className": "ReplicatedStorage",
 			"$path": "Packages",
+			"$ignoreUnknownInstances": true,
 			"Crossbow": {
 				"$path": "default.project.json"
 			}

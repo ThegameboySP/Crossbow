@@ -12,17 +12,32 @@ local Filters = require(script.Parent.Utilities.Filters)
 local Signal = require(script.Parent.Utilities.Signal)
 local Input = require(script.Parent.Input.Input)
 
+local HotReloader = require(script.HotReloader)
 local defaultBindings = require(script.defaultBindings)
 local SoundPlayer = require(script.SoundPlayer)
 local Events = require(script.Events)
-local packs = require(script.packs)
-local settings = require(script.settings)
+local packs = script.packs
+local settings = script.settings
 local bindSignals = require(script.bindSignals)
 
 local Crossbow = {}
 Crossbow.__index = Crossbow
 
 local IS_SERVER = RunService:IsServer()
+
+local function makeOnInit()
+	local listeners = {}
+	local function onInit(...)
+		table.insert(listeners, table.pack( ... ))
+		return ...
+	end
+
+	return onInit, function()
+		for _, listener in ipairs(listeners) do
+			listener[listener.n](unpack(listener, 1, listener.n - 1))
+		end
+	end
+end
 
 function Crossbow.new()
 	local params = {}
@@ -47,24 +62,33 @@ function Crossbow.new()
 			return signal
 		end});
 		_systemsSet = {};
-		
+
 		Tools = {};
 	}, Crossbow)
 
-	local listeners = {}
-	local function onInit(...)
-		table.insert(listeners, table.pack( ... ))
-		return ...
+	local hotReloader = HotReloader.new()
+	local function reload()
+		local onInit, init = makeOnInit()
+
+		local newSettings = require(hotReloader:getLatest(settings))(self, onInit)
+		local newPacks = require(hotReloader:getLatest(packs))(self, onInit)
+
+		self.Params.Settings = newSettings
+		self.Settings = newSettings
+		self.Params.Packs = newPacks
+		self.Packs = newPacks
+
+		if not self.Components then
+			self.Components = self:_getComponents(script.Parent.Components)
+		end
+		init()
 	end
 
-	self.Settings = settings(self, onInit)
-	self.Packs = packs(self, onInit)
-	self.Components = self:_getComponents(script.Parent.Components)
-
-	for _, listener in ipairs(listeners) do
-		listener[listener.n](unpack(listener, 1, listener.n - 1))
+	for _, sourceModule in pairs({settings, packs}) do
+		hotReloader:listen(sourceModule, reload)
 	end
-
+	
+	reload()
 	self.Loop = Matter.Loop.new(world, self.Components, params)
 
 	return self
@@ -90,7 +114,7 @@ function Crossbow:Init(systems, customBindSignals)
 	if systems then
 		self.Loop:scheduleSystems(systems)
 	else
-	self:_registerSystems(script.Parent.Systems)
+		self:_registerSystems(script.Parent.Systems)
 	end
 
 	CollectionService:GetInstanceRemovedSignal("CrossbowInstance"):Connect(function(instance)
@@ -168,19 +192,19 @@ function Crossbow:Init(systems, customBindSignals)
 end
 
 function Crossbow:RegisterDefaultTools()
-	self:RegisterTool("Sword", Prefabs.SwordTool, self.Packs.SwordTool)
-	self:RegisterTool("Superball", Prefabs.SuperballTool, self.Packs.SuperballTool)
-	self:RegisterTool("Rocket", Prefabs.RocketTool, self.Packs.RocketTool)
-	self:RegisterTool("Bomb", Prefabs.BombTool, self.Packs.BombTool)
-	self:RegisterTool("Trowel", Prefabs.TrowelTool, self.Packs.TrowelTool)
-	self:RegisterTool("Slingshot", Prefabs.SlingshotTool, self.Packs.SlingshotTool)
+	self:RegisterTool("Sword", Prefabs.SwordTool, "SwordTool")
+	self:RegisterTool("Superball", Prefabs.SuperballTool, "SuperballTool")
+	self:RegisterTool("Rocket", Prefabs.RocketTool, "RocketTool")
+	self:RegisterTool("Bomb", Prefabs.BombTool, "BombTool")
+	self:RegisterTool("Trowel", Prefabs.TrowelTool, "TrowelTool")
+	self:RegisterTool("Slingshot", Prefabs.SlingshotTool, "SlingshotTool")
 end
 
 function Crossbow:GetProjectile(part)
 	if not CollectionService:HasTag(part, "CrossbowInstance") then
 		return nil
 	end
-
+	
 	local id = part:GetAttribute(self.Params.entityKey)
 
 	if id and self.World:contains(id) then
@@ -193,10 +217,10 @@ function Crossbow:GetProjectile(part)
 	return nil
 end
 
-function Crossbow:RegisterTool(name, prefab, pack)
+function Crossbow:RegisterTool(name, prefab, packName)
 	local entry = {
 		prefab = prefab;
-		pack = pack;
+		packName = packName;
 		shouldAdd = Filters.always;
 	}
 
@@ -263,7 +287,8 @@ function Crossbow:AddToolsToCharacter(character)
 
 		local tool = entry.prefab:Clone()
 
-		self:SpawnBind(tool, self.Components.Owner({client = player}), entry.pack(character))
+		local pack = self.Packs[entry.packName]
+		self:SpawnBind(tool, self.Components.Owner({client = player}), pack(character))
 		tool.Parent = backpack
 	end
 end
