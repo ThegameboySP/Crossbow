@@ -184,9 +184,9 @@ return function(crossbow, onInit)
 				}),
 				components.Ricochets({
 					damageMultiplier = 0.5;
-					debounce = settings.Superball.bouncePauseTime:Get();
+					debounce = settings.SlingshotPellet.bouncePauseTime:Get();
 					filter = "defaultRicochetFilter";
-					maxRicochets = settings.Superball.maxBounces:Get();
+					maxRicochets = settings.SlingshotPellet.maxBounces:Get();
 					ricochets = 0;
 					timestamp = 0;
 				}),

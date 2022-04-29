@@ -198,6 +198,7 @@ return function(crossbow)
 			bricksPerRow = Value.new(3, t.number);
 			bricksPerColumn = Value.new(4, t.number);
 			brickSpeed = Value.new(0.04, t.number);
+			lifetime = Value.new(25, t.number);
 			shouldWeld = Value.new("defaultTrowelShouldWeld", callbackValidator);
 
 			visualizationEnabled = Value.new(false, t.boolean);
@@ -210,9 +211,6 @@ return function(crossbow)
 			velocity = Value.new(85, t.number);
 			reloadTime = Value.new(0.2, t.number);
 			spawnDistance = Value.new(3, t.number);
-
-			maxBounces = Value.new(8, t.number);
-			bouncePauseTime = Value.new(0.1, t.number);
 	
 			prefab = Value.new(Prefabs.SlingshotPellet, t.instanceIsA("Part"));
 	
@@ -224,6 +222,9 @@ return function(crossbow)
 			damage = Value.new(16, t.number);
 			damageCooldown = Value.new(0.5, t.number);
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
+
+			maxBounces = Value.new(3, t.number);
+			bouncePauseTime = Value.new(0.1, t.number);
 
 			lifetime = Value.new(7, t.number);
 		});

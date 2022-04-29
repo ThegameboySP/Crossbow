@@ -55,7 +55,7 @@ local function updateTrowels(world, components, params)
             world:remove(id, components.TrowelBuilding)
 
             world:insert(id, components.Lifetime({
-                duration = 10;
+                duration = params.Settings.TrowelTool.lifetime:Get();
                 timestamp = params.currentFrame;
             }))
         end
