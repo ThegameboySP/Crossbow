@@ -28,7 +28,7 @@ end
 function SoundPlayer:_queueSound(sound, discriminator, binding, throttle, isForcing)
     local soundsCount = self._activeSoundsCount[discriminator]
     if not isForcing and throttle and soundsCount and soundsCount >= throttle then
-        return
+        return false
     end
 
     table.insert(self._queue, table.freeze({
@@ -36,6 +36,8 @@ function SoundPlayer:_queueSound(sound, discriminator, binding, throttle, isForc
         binding = binding;
         discriminator = discriminator;
     }))
+
+    return true
 end
 
 function SoundPlayer:queueSound(sound, discriminator, binding,  throttle)
