@@ -55,7 +55,7 @@ function Callbacks.buildTrowel(sleep, shouldWeld, model, lookDir, trowelTool, no
     local brickHeight = trowelTool.prefab.Size.Y
 
     local middleOffset = (brickLength * trowelTool.bricksPerRow) / 2
-	local crossDir = lookDir:Cross(normal)
+	local crossDir = lookDir:Cross(Vector3.yAxis)
 	local middleTransformed = crossDir * middleOffset
 	local roundedOrigin = trowelTool:getRoundedOrigin(pos - middleTransformed, part)
 
