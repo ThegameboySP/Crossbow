@@ -1,4 +1,6 @@
 local RunService = game:GetService("RunService")
+local PhysicsService = game:GetService("PhysicsService")
+local CollectionService = game:GetService("CollectionService")
 
 local InputStrategies = require(script.Parent.Parent.Parent.Input.InputStrategies)
 
@@ -97,7 +99,10 @@ local function useToolActions(world, components, params)
 			
 			local part = specificTool.prefab:Clone()
 			params.Crossbow:InsertBind(part, id)
+			PhysicsService:SetPartCollisionGroup(part, "Crossbow_Projectile")
+			CollectionService:AddTag(part, "Projectile")
 			part.Parent = workspace
+
 			if IS_SERVER then
 				part:SetNetworkOwner(nil)
 			end

@@ -127,6 +127,14 @@
 					"Volume": 0.8,
 					"PlaybackSpeed": 0.7
 				}
+			},
+
+			"PaintballFire": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxasset://sounds//paintball.wav",
+					"Volume": 0.5
+				}
 			}
 		},
 		"Prefabs": {

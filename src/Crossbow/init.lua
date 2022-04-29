@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local PhysicsService = game:GetService("PhysicsService")
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -128,6 +129,11 @@ function Crossbow:Init(systems, customBindSignals)
 		self.Params.soundPlayer = SoundPlayer.new(nil, nil)
 	else
 		if IS_SERVER then
+			PhysicsService:CreateCollisionGroup("Crossbow_Visual")
+			PhysicsService:CreateCollisionGroup("Crossbow_Projectile")
+			PhysicsService:CollisionGroupSetCollidable("Crossbow_Visual", "Crossbow_Projectile", false)
+			PhysicsService:CollisionGroupSetCollidable("Crossbow_Visual", "Crossbow_Visual", false)
+
 			local remoteEvent = Instance.new("RemoteEvent")
 			remoteEvent.Name = "CrossbowRemoteEvent"
 			remoteEvent.Parent = ReplicatedStorage
@@ -198,6 +204,7 @@ function Crossbow:RegisterDefaultTools()
 	self:RegisterTool("Bomb", Prefabs.BombTool, "BombTool")
 	self:RegisterTool("Trowel", Prefabs.TrowelTool, "TrowelTool")
 	self:RegisterTool("Slingshot", Prefabs.SlingshotTool, "SlingshotTool")
+	self:RegisterTool("Paintball", Prefabs.PaintballTool, "PaintballTool")
 end
 
 function Crossbow:GetProjectile(part)

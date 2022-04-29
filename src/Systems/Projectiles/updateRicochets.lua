@@ -23,7 +23,7 @@ local function updateSuperballs(world, components, params)
             if (currentFrame - ricochets.timestamp) >= ricochets.debounce then
                 params.events:fire("ricocheted", id)
                 
-                if (ricochets.ricochets + 1) > ricochets.maxRicochets then
+                if (ricochets.ricochets + 1) >= ricochets.maxRicochets then
                     params.events:fire("queueRemove", id)
                 else
                     world:insert(id, ricochets:patch({

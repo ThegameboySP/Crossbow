@@ -81,7 +81,7 @@ return function(crossbow)
 					or surface == Enum.SurfaceType.Glue
 			end;
 			defaultRicochetFilter = function(part)
-				return Filters.canCollide(part)
+				return Filters.canCollide(part, "Crossbow_Projectile")
 			end;
 			always = Filters.always;
 			never = Filters.never;
@@ -226,6 +226,33 @@ return function(crossbow)
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 
 			lifetime = Value.new(7, t.number);
+		});
+
+		PaintballTool = General.lockTable("PaintballTool", {
+			fireSound = Value.new(Audio.PaintballFire, optionalSound);
+
+			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
+			velocity = Value.new(200, t.number);
+			reloadTime = Value.new(0.5, t.number);
+			spawnDistance = Value.new(3, t.number);
+	
+			prefab = Value.new(Prefabs.PaintballPellet, t.instanceIsA("Part"));
+	
+			pack = Value.new("PaintballPellet", packValidator);
+		});
+
+		PaintballPellet = General.lockTable("PaintballPellet", {
+			damageAmount = Value.new(1, t.number);
+			damage = Value.new(15, t.number);
+			damageCooldown = Value.new(0, t.number);
+			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
+
+			ricochetFilter = Value.new("defaultRicochetFilter", callbackValidator);
+			ricochetDebounce = Value.new(0, t.number);
+
+			antigravity = Value.new(0.834, t.number);
+
+			lifetime = Value.new(10, t.number);
 		});
 	
 		Network = General.lockTable("Network", {

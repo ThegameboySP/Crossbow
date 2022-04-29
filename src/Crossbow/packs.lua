@@ -197,7 +197,40 @@ return function(crossbow, onInit)
 					duration = settings.SlingshotPellet.lifetime:Get();
 					timestamp = crossbow.Params.currentFrame;
 				})
-		end),
+		end);
+		PaintballTool = toolPack(function()
+			return
+				components.PaintballTool()
+		end);
+		PaintballPellet = projectilePack(function(_, _, _, velocity, cframe)
+			return
+				components.PaintballPellet(),
+				components.Damage({
+					amount = settings.PaintballPellet.damageAmount:Get();
+					damage = settings.PaintballPellet.damage:Get();
+					cooldown = settings.PaintballPellet.damageCooldown:Get();
+					filter = settings.PaintballPellet.canDamageFilter:Get();
+					damageType = "Hit";
+				}),
+				components.Ricochets({
+					damageMultiplier = 1;
+					debounce = settings.PaintballPellet.ricochetDebounce:Get();
+					filter = settings.PaintballPellet.ricochetFilter:Get();
+					maxRicochets = 1;
+					ricochets = 0;
+					timestamp = 0;
+				}),
+				components.Velocity({
+					velocity = cframe.LookVector * velocity;
+				}),
+				components.Antigravity({
+					factor = settings.PaintballPellet.antigravity:Get();
+				}),
+				components.Lifetime({
+					duration = settings.PaintballPellet.lifetime:Get();
+					timestamp = crossbow.Params.currentFrame;
+				})
+		end);
 		Explosion = function(damage, filter)
 			return
 				components.Damage({
