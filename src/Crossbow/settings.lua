@@ -50,10 +50,13 @@ return function(crossbow)
 					and (not attacker or not attacker:FindFirstChildWhichIsA("ForceField"))
 			end;
 			defaultRaycastFilter = function(part)
-				return 
-					Filters.canCollide(part)
-					and not Filters.isLocalCharacter(part)
-					and not crossbow:GetProjectile(part)
+				if not Filters.canCollide(part) or Filters.isLocalCharacter(part) then
+					return false
+				end
+
+				-- No projectile or a bombshoot
+				local _, projectile = crossbow:GetProjectile(part)
+				return not projectile or projectile.componentName == "Bomb" 
 			end;
 			trowelRaycastFilter = function(part)
 				return

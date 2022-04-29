@@ -3,10 +3,14 @@ local Debris = game:GetService("Debris")
 
 local General = {}
 
-function General.getProjectileCFrame(tool, spawnDistance, spawnPos)
+function General.getProjectileCFrame(tool, spawnDistance, mousePos)
 	local pos = tool:getPosition("Head")
-	local dir = tool:getDirection(spawnPos, "Head")
-	local at = pos + dir * spawnDistance
+	local dir = tool:getDirection(mousePos, "Head")
+	
+	local at = mousePos
+	if (mousePos - pos).Magnitude > spawnDistance then
+		at = pos + dir * spawnDistance
+	end
 	
 	return CFrame.lookAt(at, at + dir)
 end
