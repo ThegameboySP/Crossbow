@@ -100,7 +100,7 @@ local function useToolActions(world, components, params)
 			local part = specificTool.prefab:Clone()
 			params.Crossbow:InsertBind(part, id)
 			PhysicsService:SetPartCollisionGroup(part, "Crossbow_Projectile")
-			CollectionService:AddTag(part, "Projectile")
+			CollectionService:AddTag(part, "Crossbow_Projectile")
 			part.Parent = workspace
 
 			if IS_SERVER then

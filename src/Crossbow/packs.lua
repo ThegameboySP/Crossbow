@@ -233,9 +233,14 @@ return function(crossbow, onInit)
 		end);
 		Explosion = function(damage, filter)
 			return
+				components.Explosion(),
+				components.Lifetime({
+					duration = 0;
+					timestamp = crossbow.Params.currentFrame;
+				}),
 				components.Damage({
 					damage = damage or settings.Explosion.damage:Get();
-					filter = filter or "always";
+					filter = filter or settings.Explosion.damageFilter:Get();
 					damageType = "Explosion";
 				})
 		end;

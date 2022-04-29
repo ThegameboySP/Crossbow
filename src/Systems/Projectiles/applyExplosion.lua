@@ -36,28 +36,20 @@ local function applyExplosion(world, components, params)
 			params.soundPlayer:queueSound(soundValue, nil, pos, 2)
 		end
 
-		local newId = params.Crossbow:SpawnBind(
-			collision,
-			components.Lifetime({
-				duration = 0;
-				timestamp = params.currentFrame;
-			})
-		)
+		local newId = params.Crossbow:SpawnBind(collision, params.Packs.Explosion(damage))
 
 		if isOwned then
-			world:insert(newId, components.Owned(), params.Packs.Explosion(damage))
+			world:insert(newId, components.Owned())
 		end
 
-		local event = table.freeze({
+		params.events:fire("exploded", table.freeze({
 			spawnerId = spawnerId;
 			newId = newId;
 			position = pos;
 			radius = radius;
 			damage = damage;
 			isOwned = isOwned;
-		})
-
-		params.events:fire("exploded", event)
+		}))
 	end
 end
 

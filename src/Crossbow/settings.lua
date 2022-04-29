@@ -284,11 +284,16 @@ return function(crossbow)
 
 		Explosion = General.lockTable("Explosion", {
 			damage = Value.new(101, t.number);
+			damageFilter = Value.new("defaultCanDamage", callbackValidator);
 			flingBombsEnabled = Value.new(true, t.boolean);
 			flingFactorOnSelf = Value.new(0, t.number);
 			flingFilter = Value.new(Filters.always, t.callback);
 			
 			breakJointsFilter = Value.new(Filters.always, t.callback);
+		});
+
+		ExplosionsEatParts = General.lockTable("ExplosionsEatParts", {
+			maxMass = Value.new(75, t.number);
 		});
 
 		Sounds = General.lockTable("Sounds", {

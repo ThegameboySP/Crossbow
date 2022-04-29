@@ -48,7 +48,7 @@ local function showPaintballPellets(world, components, params)
             if filter(hit) then
                 spatter(part.part)
                 
-                if hit.Anchored == false and not CollectionService:HasTag(hit, "Projectile") then
+                if hit.Anchored == false and not CollectionService:HasTag(hit, "Crossbow_Projectile") then
                     if partColors[hit] == nil then
                         partColors[hit] = {
                             color = hit.Color;
