@@ -6,7 +6,6 @@ local InputStrategies = require(script.Parent.Parent.Parent.Input.InputStrategie
 
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local Priorities = require(script.Parent.Parent.Priorities)
-local updateTools = require(script.Parent.updateTools)
 
 local IS_SERVER = RunService:IsServer()
 
@@ -113,6 +112,5 @@ end
 return {
 	system = useToolActions;
 	event = "PreSimulation";
-	after = { updateTools };
 	priority = Priorities.Tools;
 }

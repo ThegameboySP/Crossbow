@@ -1,4 +1,5 @@
 local Priorities = require(script.Parent.Parent.Priorities)
+local updateToolActions = require(script.Parent.updateToolActions)
 
 local delta = {}
 
@@ -27,5 +28,6 @@ end
 return {
 	system = updateTools;
 	event = "PreSimulation";
+	after = { updateToolActions };
 	priority = Priorities.Tools;
 }
