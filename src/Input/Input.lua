@@ -101,7 +101,10 @@ end
 function Input:Raycast(filter, params)
 	local pos = UserInputService:GetMouseLocation()
 	local ray = workspace.CurrentCamera:ViewportPointToRay(pos.X, pos.Y, 0)
-	local to = ray.Direction.Unit * 1000
+	-- Because this is a 3rd person game, the max distance *matters* when aiming at the skybox.
+	-- The raycast comes out of the camera. The projectile direction uses the character's position.
+	-- 10,000 is an approximation taken from Mouse.Hit's empirically tested maximum range.
+	local to = ray.Direction.Unit * 10_000
 	local result = Raycaster.withFilter(ray.Origin, to, params, filter)
 
 	return result and result.Position or ray.Origin + to, result and result.Instance, result and result.Normal
