@@ -157,6 +157,7 @@ return function(crossbow)
 		Bomb = General.lockTable("Bomb", {
 			explodeSound = Value.new(Audio.BombExplodeModern, optionalSound);
 			tickSound = Value.new(Audio.BombTick, optionalSound);
+			bombshootSound = Value.new(Audio.Bombshoot, optionalSound);
 
 			damage = Value.new(101, t.number);
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);

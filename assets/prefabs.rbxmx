@@ -2,14 +2,14 @@
 	<Meta name="ExplicitAutoJoints">true</Meta>
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Folder" referent="RBX64C9F1E1DC7B4C188B86E29FAF81AA6D">
+	<Item class="Folder" referent="RBX97E3765B803B4346BF76360B35011808">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<string name="Name">Prefabs</string>
 			<int64 name="SourceAssetId">-1</int64>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
-		<Item class="Part" referent="RBXD464180F222645288E5A84FC05010A5D">
+		<Item class="Part" referent="RBXA9A4976D17D343E6B20DA338EA8AC3FE">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -108,7 +108,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBX4F09BFCA4CC04E8DB406141713EEC0FE">
+		<Item class="Part" referent="RBXBD1C4D06AAC14BC68434EADA93174521">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -202,7 +202,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBXBEA919E3FCC14110B892EF7FA7D130AA">
+		<Item class="Part" referent="RBXC97639EB1442447AA62CEA4B8F6076C3">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -296,7 +296,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBX6FFFDB5F596649D3BDDBB3C520B9C491">
+		<Item class="Part" referent="RBX850A1198FCFB46F78965CE67B89ED81B">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -390,7 +390,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBXA62685947B304561BDA258CB61518A29">
+		<Item class="Part" referent="RBXC7527ADD0F2B4B588984CEAA5C0A638E">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -489,7 +489,7 @@
 				</Vector3>
 			</Properties>
 		</Item>
-		<Item class="Tool" referent="RBX12E10763353B459EB029D3D152165ABA">
+		<Item class="Tool" referent="RBX4AEF6709F2CA47F6A62F1AFCAFECAF54">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -516,7 +516,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Rocket.png</url></Content>
 				<string name="ToolTip"></string>
 			</Properties>
-			<Item class="MeshPart" referent="RBX56D92E4FE5EB43D1B64C358BB8BBF8D6">
+			<Item class="MeshPart" referent="RBX46789CE5D8BA4FE9A9FD4F558B0F6F16">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -621,6 +621,7 @@
 						<Y>0</Y>
 						<Z>0</Z>
 					</Vector3>
+					<int name="VertexCount">0</int>
 					<Vector3 name="size">
 						<X>4.42399979</X>
 						<Y>0.839250028</Y>
@@ -629,7 +630,7 @@
 				</Properties>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBX690B5301DB7C4CFA8E47D3D2E52D24CE">
+		<Item class="Tool" referent="RBX3A654681A2824D08AD7257D3AD5474D2">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -656,7 +657,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Slingshot.png</url></Content>
 				<string name="ToolTip">Sling</string>
 			</Properties>
-			<Item class="MeshPart" referent="RBX278B25DE08A54CE5B26C7300CD7B8753">
+			<Item class="MeshPart" referent="RBX60F92A2B67B845EEB96EA9F4A640F480">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -761,6 +762,7 @@
 						<Y>0</Y>
 						<Z>0</Z>
 					</Vector3>
+					<int name="VertexCount">0</int>
 					<Vector3 name="size">
 						<X>1.52450001</X>
 						<Y>2.12350011</Y>
@@ -769,129 +771,7 @@
 				</Properties>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBX26C83C49097745E8B5AFA7B057EF4917">
-			<Properties>
-				<BinaryString name="AttributesSerialize"></BinaryString>
-				<bool name="CanBeDropped">false</bool>
-				<bool name="Enabled">false</bool>
-				<CoordinateFrame name="Grip">
-					<X>0</X>
-					<Y>0</Y>
-					<Z>0</Z>
-					<R00>1</R00>
-					<R01>0</R01>
-					<R02>0</R02>
-					<R10>0</R10>
-					<R11>1</R11>
-					<R12>0</R12>
-					<R20>0</R20>
-					<R21>0</R21>
-					<R22>1</R22>
-				</CoordinateFrame>
-				<bool name="ManualActivationOnly">false</bool>
-				<string name="Name">SuperballTool</string>
-				<bool name="RequiresHandle">true</bool>
-				<int64 name="SourceAssetId">-1</int64>
-				<BinaryString name="Tags"></BinaryString>
-				<Content name="TextureId"><url>rbxasset://Textures/Superball.png</url></Content>
-				<string name="ToolTip">Superball</string>
-			</Properties>
-			<Item class="Part" referent="RBXDA22337262D344F49C01E4C0FE092069">
-				<Properties>
-					<bool name="Anchored">false</bool>
-					<BinaryString name="AttributesSerialize"></BinaryString>
-					<float name="BackParamA">-0.5</float>
-					<float name="BackParamB">0.5</float>
-					<token name="BackSurface">0</token>
-					<token name="BackSurfaceInput">0</token>
-					<float name="BottomParamA">-0.5</float>
-					<float name="BottomParamB">0.5</float>
-					<token name="BottomSurface">0</token>
-					<token name="BottomSurfaceInput">0</token>
-					<CoordinateFrame name="CFrame">
-						<X>0</X>
-						<Y>0</Y>
-						<Z>0</Z>
-						<R00>1</R00>
-						<R01>0</R01>
-						<R02>0</R02>
-						<R10>0</R10>
-						<R11>1</R11>
-						<R12>0</R12>
-						<R20>0</R20>
-						<R21>0</R21>
-						<R22>1</R22>
-					</CoordinateFrame>
-					<bool name="CanCollide">false</bool>
-					<bool name="CanQuery">true</bool>
-					<bool name="CanTouch">true</bool>
-					<bool name="CastShadow">false</bool>
-					<int name="CollisionGroupId">0</int>
-					<Color3uint8 name="Color3uint8">4291045404</Color3uint8>
-					<PhysicalProperties name="CustomPhysicalProperties">
-						<CustomPhysics>false</CustomPhysics>
-					</PhysicalProperties>
-					<float name="FrontParamA">-0.5</float>
-					<float name="FrontParamB">0.5</float>
-					<token name="FrontSurface">0</token>
-					<token name="FrontSurfaceInput">0</token>
-					<float name="LeftParamA">-0.5</float>
-					<float name="LeftParamB">0.5</float>
-					<token name="LeftSurface">0</token>
-					<token name="LeftSurfaceInput">0</token>
-					<bool name="Locked">false</bool>
-					<bool name="Massless">true</bool>
-					<token name="Material">272</token>
-					<string name="MaterialVariantSerialized"></string>
-					<string name="Name">Handle</string>
-					<CoordinateFrame name="PivotOffset">
-						<X>0</X>
-						<Y>0</Y>
-						<Z>0</Z>
-						<R00>1</R00>
-						<R01>0</R01>
-						<R02>0</R02>
-						<R10>0</R10>
-						<R11>1</R11>
-						<R12>0</R12>
-						<R20>0</R20>
-						<R21>0</R21>
-						<R22>1</R22>
-					</CoordinateFrame>
-					<float name="Reflectance">0</float>
-					<float name="RightParamA">-0.5</float>
-					<float name="RightParamB">0.5</float>
-					<token name="RightSurface">0</token>
-					<token name="RightSurfaceInput">0</token>
-					<int name="RootPriority">0</int>
-					<Vector3 name="RotVelocity">
-						<X>0</X>
-						<Y>0</Y>
-						<Z>0</Z>
-					</Vector3>
-					<int64 name="SourceAssetId">-1</int64>
-					<BinaryString name="Tags"></BinaryString>
-					<float name="TopParamA">-0.5</float>
-					<float name="TopParamB">0.5</float>
-					<token name="TopSurface">0</token>
-					<token name="TopSurfaceInput">0</token>
-					<float name="Transparency">0</float>
-					<Vector3 name="Velocity">
-						<X>0</X>
-						<Y>0</Y>
-						<Z>0</Z>
-					</Vector3>
-					<token name="formFactorRaw">1</token>
-					<token name="shape">0</token>
-					<Vector3 name="size">
-						<X>2</X>
-						<Y>2</Y>
-						<Z>2</Z>
-					</Vector3>
-				</Properties>
-			</Item>
-		</Item>
-		<Item class="Tool" referent="RBX5A352991DF774BC9968C0268E4B80600">
+		<Item class="Tool" referent="RBX06E846F056854F74A6D829CE09BB04EB">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -918,7 +798,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Sword128.png</url></Content>
 				<string name="ToolTip">Sword</string>
 			</Properties>
-			<Item class="MeshPart" referent="RBX2341C1F0520E40B0BD353BF61C2C5D16">
+			<Item class="MeshPart" referent="RBX48F236D9B5EE4858A64F33DBDEE43647">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1023,6 +903,7 @@
 						<Y>0</Y>
 						<Z>0</Z>
 					</Vector3>
+					<int name="VertexCount">0</int>
 					<Vector3 name="size">
 						<X>1.15032995</X>
 						<Y>0.339332014</Y>
@@ -1031,7 +912,7 @@
 				</Properties>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBX4E52BC8EB80E45FDB8056ADE07920061">
+		<Item class="Tool" referent="RBX3B2EE0D91CCE4ED4BB9C65C64CB6623A">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -1058,7 +939,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Wall.png</url></Content>
 				<string name="ToolTip">Wall</string>
 			</Properties>
-			<Item class="MeshPart" referent="RBX6DF65144C09B428E9CA7AAD20231EC9B">
+			<Item class="MeshPart" referent="RBX30AE426DEB764AE68241A8A843F1724F">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1163,6 +1044,7 @@
 						<Y>0</Y>
 						<Z>0</Z>
 					</Vector3>
+					<int name="VertexCount">0</int>
 					<Vector3 name="size">
 						<X>1.40603495</X>
 						<Y>4.15118027</Y>
@@ -1171,7 +1053,7 @@
 				</Properties>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBXAA1D233426C146A39C6B13E1B9268D83">
+		<Item class="Tool" referent="RBX30F3ED35A55C4DE58E89BD1EA2711DA3">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -1198,7 +1080,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/Bomb.png</url></Content>
 				<string name="ToolTip">Bomb</string>
 			</Properties>
-			<Item class="MeshPart" referent="RBX9245C918D7B84AFE8EA01AC673CBA69D">
+			<Item class="MeshPart" referent="RBXCB0DDB26092E489BB455FA135AE29A5E">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1303,6 +1185,7 @@
 						<Y>0</Y>
 						<Z>0</Z>
 					</Vector3>
+					<int name="VertexCount">0</int>
 					<Vector3 name="size">
 						<X>1.96263003</X>
 						<Y>1.96263003</Y>
@@ -1311,7 +1194,7 @@
 				</Properties>
 			</Item>
 		</Item>
-		<Item class="Tool" referent="RBXF5D0A529EB1E421297E1C7A350492B22">
+		<Item class="Tool" referent="RBX891E230B81E14F4DB8066EAD20C2CA5D">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<bool name="CanBeDropped">false</bool>
@@ -1338,7 +1221,7 @@
 				<Content name="TextureId"><url>rbxasset://Textures/PaintballIcon.png</url></Content>
 				<string name="ToolTip"></string>
 			</Properties>
-			<Item class="MeshPart" referent="RBXD83286ED961E41CD97DC64CCA2BB174D">
+			<Item class="MeshPart" referent="RBX68A4FBEF6867456EAA9556B78C6A88C4">
 				<Properties>
 					<bool name="Anchored">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1443,6 +1326,7 @@
 						<Y>0</Y>
 						<Z>0</Z>
 					</Vector3>
+					<int name="VertexCount">0</int>
 					<Vector3 name="size">
 						<X>4.91660023</X>
 						<Y>3.22375989</Y>
@@ -1451,7 +1335,7 @@
 				</Properties>
 			</Item>
 		</Item>
-		<Item class="Part" referent="RBX5125C891E65E45C9B7F62B835B92306E">
+		<Item class="Part" referent="RBX020C8F462DEA4166844030BE0355C05F">
 			<Properties>
 				<bool name="Anchored">false</bool>
 				<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1543,6 +1427,175 @@
 					<Y>1</Y>
 					<Z>1</Z>
 				</Vector3>
+			</Properties>
+		</Item>
+		<Item class="Tool" referent="RBXD7DEE15FBEE64889A06413A29B59C2EB">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<bool name="CanBeDropped">false</bool>
+				<bool name="Enabled">false</bool>
+				<CoordinateFrame name="Grip">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+					<R00>1</R00>
+					<R01>0</R01>
+					<R02>0</R02>
+					<R10>0</R10>
+					<R11>1</R11>
+					<R12>0</R12>
+					<R20>0</R20>
+					<R21>0</R21>
+					<R22>1</R22>
+				</CoordinateFrame>
+				<bool name="ManualActivationOnly">false</bool>
+				<string name="Name">SuperballTool</string>
+				<bool name="RequiresHandle">true</bool>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+				<Content name="TextureId"><url>rbxasset://Textures/Superball.png</url></Content>
+				<string name="ToolTip">Superball</string>
+			</Properties>
+			<Item class="Part" referent="RBX4DF0C6FC584349228165AC17D8C8F1DB">
+				<Properties>
+					<bool name="Anchored">false</bool>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<float name="BackParamA">-0.5</float>
+					<float name="BackParamB">0.5</float>
+					<token name="BackSurface">0</token>
+					<token name="BackSurfaceInput">0</token>
+					<float name="BottomParamA">-0.5</float>
+					<float name="BottomParamB">0.5</float>
+					<token name="BottomSurface">0</token>
+					<token name="BottomSurfaceInput">0</token>
+					<CoordinateFrame name="CFrame">
+						<X>0</X>
+						<Y>0</Y>
+						<Z>0</Z>
+						<R00>1</R00>
+						<R01>0</R01>
+						<R02>0</R02>
+						<R10>0</R10>
+						<R11>1</R11>
+						<R12>0</R12>
+						<R20>0</R20>
+						<R21>0</R21>
+						<R22>1</R22>
+					</CoordinateFrame>
+					<bool name="CanCollide">false</bool>
+					<bool name="CanQuery">true</bool>
+					<bool name="CanTouch">true</bool>
+					<bool name="CastShadow">false</bool>
+					<int name="CollisionGroupId">0</int>
+					<Color3uint8 name="Color3uint8">4291045404</Color3uint8>
+					<PhysicalProperties name="CustomPhysicalProperties">
+						<CustomPhysics>false</CustomPhysics>
+					</PhysicalProperties>
+					<float name="FrontParamA">-0.5</float>
+					<float name="FrontParamB">0.5</float>
+					<token name="FrontSurface">0</token>
+					<token name="FrontSurfaceInput">0</token>
+					<float name="LeftParamA">-0.5</float>
+					<float name="LeftParamB">0.5</float>
+					<token name="LeftSurface">0</token>
+					<token name="LeftSurfaceInput">0</token>
+					<bool name="Locked">false</bool>
+					<bool name="Massless">true</bool>
+					<token name="Material">272</token>
+					<string name="MaterialVariantSerialized"></string>
+					<string name="Name">Handle</string>
+					<CoordinateFrame name="PivotOffset">
+						<X>0</X>
+						<Y>0</Y>
+						<Z>0</Z>
+						<R00>1</R00>
+						<R01>0</R01>
+						<R02>0</R02>
+						<R10>0</R10>
+						<R11>1</R11>
+						<R12>0</R12>
+						<R20>0</R20>
+						<R21>0</R21>
+						<R22>1</R22>
+					</CoordinateFrame>
+					<float name="Reflectance">0</float>
+					<float name="RightParamA">-0.5</float>
+					<float name="RightParamB">0.5</float>
+					<token name="RightSurface">0</token>
+					<token name="RightSurfaceInput">0</token>
+					<int name="RootPriority">0</int>
+					<Vector3 name="RotVelocity">
+						<X>0</X>
+						<Y>0</Y>
+						<Z>0</Z>
+					</Vector3>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+					<float name="TopParamA">-0.5</float>
+					<float name="TopParamB">0.5</float>
+					<token name="TopSurface">0</token>
+					<token name="TopSurfaceInput">0</token>
+					<float name="Transparency">0</float>
+					<Vector3 name="Velocity">
+						<X>0</X>
+						<Y>0</Y>
+						<Z>0</Z>
+					</Vector3>
+					<token name="formFactorRaw">1</token>
+					<token name="shape">0</token>
+					<Vector3 name="size">
+						<X>2</X>
+						<Y>2</Y>
+						<Z>2</Z>
+					</Vector3>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="ParticleEmitter" referent="RBX094136AF6D644477BCABD388E90F77D4">
+			<Properties>
+				<Vector3 name="Acceleration">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+				</Vector3>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<float name="Brightness">1.63999999</float>
+				<ColorSequence name="Color">0 1 1 1 0 1 1 1 1 0 </ColorSequence>
+				<float name="Drag">0</float>
+				<token name="EmissionDirection">1</token>
+				<bool name="Enabled">false</bool>
+				<NumberRange name="FlipbookFramerate">1 1 </NumberRange>
+				<string name="FlipbookIncompatible">Particle texture must be 1024 by 1024 to use flipbooks.</string>
+				<token name="FlipbookLayout">0</token>
+				<token name="FlipbookMode">0</token>
+				<bool name="FlipbookStartRandom">false</bool>
+				<NumberRange name="Lifetime">0.15 0.15 </NumberRange>
+				<float name="LightEmission">1</float>
+				<float name="LightInfluence">0</float>
+				<bool name="LockedToPart">false</bool>
+				<string name="Name">BombshootParticle</string>
+				<token name="Orientation">0</token>
+				<float name="Rate">5</float>
+				<NumberRange name="RotSpeed">0 0 </NumberRange>
+				<NumberRange name="Rotation">0 0 </NumberRange>
+				<token name="Shape">0</token>
+				<token name="ShapeInOut">0</token>
+				<float name="ShapePartial">1</float>
+				<token name="ShapeStyle">0</token>
+				<NumberSequence name="Size">0 3.5 0 0.0820981 2.8125 0 1 1 0 </NumberSequence>
+				<int64 name="SourceAssetId">-1</int64>
+				<NumberRange name="Speed">1 1 </NumberRange>
+				<Vector2 name="SpreadAngle">
+					<X>0</X>
+					<Y>0</Y>
+				</Vector2>
+				<NumberSequence name="Squash">0 0 0 1 0 0 </NumberSequence>
+				<BinaryString name="Tags"></BinaryString>
+				<Content name="Texture"><url>rbxasset://textures/particles/sparkles_main.dds</url></Content>
+				<float name="TimeScale">1</float>
+				<NumberSequence name="Transparency">0 0 0 1 1 0 </NumberSequence>
+				<float name="VelocityInheritance">0</float>
+				<float name="ZOffset">0</float>
 			</Properties>
 		</Item>
 	</Item>

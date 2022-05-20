@@ -135,6 +135,15 @@
 					"SoundId": "rbxasset://sounds//paintball.wav",
 					"Volume": 0.5
 				}
+			},
+
+			"Bombshoot": {
+				"$className": "Sound",
+				"$properties": {
+					"SoundId": "rbxassetid://1300120761",
+					"Volume": 0.8,
+					"TimePosition": 0.45
+				}
 			}
 		},
 		"Prefabs": {
