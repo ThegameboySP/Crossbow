@@ -131,8 +131,12 @@ function Crossbow:Init(systems, customBindSignals)
 		if IS_SERVER then
 			PhysicsService:CreateCollisionGroup("Crossbow_Visual")
 			PhysicsService:CreateCollisionGroup("Crossbow_Projectile")
+			PhysicsService:CreateCollisionGroup("Crossbow_VisualNoCollision", "Crossbow_VisualNoCollision", false)
 			PhysicsService:CollisionGroupSetCollidable("Crossbow_Visual", "Crossbow_Projectile", false)
 			PhysicsService:CollisionGroupSetCollidable("Crossbow_Visual", "Crossbow_Visual", false)
+			PhysicsService:CollisionGroupSetCollidable("Crossbow_VisualNoCollision", "Crossbow_Projectile", false)
+			PhysicsService:CollisionGroupSetCollidable("Crossbow_VisualNoCollision", "Crossbow_Visual", false)
+			PhysicsService:CollisionGroupSetCollidable("Crossbow_VisualNoCollision", "Default", false)
 
 			local remoteEvent = Instance.new("RemoteEvent")
 			remoteEvent.Name = "CrossbowRemoteEvent"
