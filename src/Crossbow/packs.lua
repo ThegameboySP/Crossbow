@@ -102,6 +102,7 @@ return function(crossbow, onInit)
 					cooldown = params.damageCooldown or settings.Superball.damageCooldown:Get();
 					damage = params.damage or settings.Superball.damage:Get();
 					damageType = "Hit";
+					removeOnNoDamage = true;
 				}),
 				components.Lifetime({
 					duration = params.lifetime or settings.Superball.lifetime:Get();
@@ -181,6 +182,7 @@ return function(crossbow, onInit)
 					damage = settings.SlingshotPellet.damage:Get();
 					filter = settings.SlingshotPellet.canDamageFilter:Get();
 					damageType = "Hit";
+					removeOnNoDamage = true;
 				}),
 				components.Ricochets({
 					damageMultiplier = 0.5;
@@ -211,6 +213,7 @@ return function(crossbow, onInit)
 					cooldown = settings.PaintballPellet.damageCooldown:Get();
 					filter = settings.PaintballPellet.canDamageFilter:Get();
 					damageType = "Hit";
+					removeOnNoDamage = true;
 				}),
 				components.Ricochets({
 					damageMultiplier = 1;

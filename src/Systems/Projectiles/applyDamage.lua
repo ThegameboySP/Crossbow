@@ -66,6 +66,10 @@ local function applyDamage(world, components, params)
 			}))
 
 			if (damage.amount - 1) == 0 then
+				if damage.removeOnNoDamage then
+					params.events:fire("queueRemove", id)
+				end
+
 				break
 			end
 		end

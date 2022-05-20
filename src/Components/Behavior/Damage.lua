@@ -18,6 +18,7 @@ return function()
 			filter = t.string;
 			damageType = Definitions.damageType;
 			timestamp = t.number;
+			removeOnNoDamage = t.optional(t.boolean);
 		};
 	})
 end
