@@ -1,5 +1,7 @@
 local TweenService = game:GetService("TweenService")
 
+local Priorities = require(script.Parent.Parent.Priorities)
+
 local function newGui(position, damage)
     local scale = math.clamp(damage / 25, 0.5, 1)
 
@@ -54,4 +56,9 @@ local function showDamage(_, _, params)
     end
 end
 
-return showDamage
+return {
+    realm = "client";
+    system = showDamage;
+    event = "PostSimulation";
+    priority = Priorities.Presentation;
+}

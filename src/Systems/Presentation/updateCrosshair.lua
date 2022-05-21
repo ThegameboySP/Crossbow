@@ -1,6 +1,8 @@
 local Players = game:GetService("Players")
 local Mouse = Players.LocalPlayer and Players.LocalPlayer:GetMouse()
 
+local Priorities = require(script.Parent.Parent.Priorities)
+
 local function updateCrosshair(world, components, params)
 	local equippingTool
 
@@ -20,4 +22,9 @@ local function updateCrosshair(world, components, params)
 	end
 end
 
-return updateCrosshair
+return {
+    realm = "client";
+    system = updateCrosshair;
+    event = "PostSimulation";
+    priority = Priorities.Presentation;
+}

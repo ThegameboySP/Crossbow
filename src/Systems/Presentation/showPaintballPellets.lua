@@ -2,7 +2,8 @@ local CollectionService = game:GetService("CollectionService")
 local PhysicsService = game:GetService("PhysicsService")
 local Debris = game:GetService("Debris")
 
-local useHookStorage = require(script.Parent.Parent.Parent.Parent.Shared.useHookStorage)
+local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+local Priorities = require(script.Parent.Parent.Priorities)
 
 local random = Random.new()
 local function spatter(part)
@@ -68,4 +69,9 @@ local function showPaintballPellets(world, components, params)
     end
 end
 
-return showPaintballPellets
+return {
+    realm = "client";
+    system = showPaintballPellets;
+    event = "PostSimulation";
+    priority = Priorities.Presentation;
+}

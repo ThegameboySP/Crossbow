@@ -1,6 +1,7 @@
 local Debris = game:GetService("Debris")
 
-local Prefabs = script.Parent.Parent.Parent.Parent.Assets.Prefabs
+local Prefabs = script.Parent.Parent.Parent.Assets.Prefabs
+local Priorities = require(script.Parent.Parent.Priorities)
 
 local function showBombshoots(_, _, params)
     for _, position in params.events:iterate("bombshoot") do
@@ -22,4 +23,9 @@ local function showBombshoots(_, _, params)
     end
 end
 
-return showBombshoots
+return {
+    realm = "client";
+    system = showBombshoots;
+    event = "PostSimulation";
+    priority = Priorities.Presentation;
+}

@@ -1,4 +1,5 @@
-local useHookStorage = require(script.Parent.Parent.Parent.Parent.Shared.useHookStorage)
+local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+local Priorities = require(script.Parent.Parent.Priorities)
 
 local function playSuperballSounds(world, components, params)
     local currentFrame = params.currentFrame
@@ -35,4 +36,9 @@ local function playSuperballSounds(world, components, params)
     end
 end
 
-return playSuperballSounds
+return {
+    realm = "client";
+    system = playSuperballSounds;
+    event = "PostSimulation";
+    priority = Priorities.Presentation;
+}

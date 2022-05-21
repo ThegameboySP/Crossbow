@@ -1,9 +1,10 @@
-local component = require(script.Parent.Parent.Parent.Parent.Parent.Matter).component
-local OriginalColor = component()
+local component = require(script.Parent.Parent.Parent.Parent.Matter).component
+local Priorities = require(script.Parent.Parent.Priorities)
 
+local OriginalColor = component()
 local WHITE = Color3.fromRGB(255, 255, 255)
 
-local function showSuperballDamageColor(world, components)
+local function showRicochetColor(world, components)
     for id, part, ricochets in world:query(components.Part, components.Ricochets):without(OriginalColor) do
         if ricochets.maxRicochets > 1 then
             world:insert(id, OriginalColor({
@@ -21,4 +22,9 @@ local function showSuperballDamageColor(world, components)
     end
 end
 
-return showSuperballDamageColor
+return {
+    realm = "client";
+    system = showRicochetColor;
+    event = "PostSimulation";
+    priority = Priorities.Presentation;
+}

@@ -62,7 +62,6 @@ function Crossbow.new()
 			t[key] = signal
 			return signal
 		end});
-		_systemsSet = {};
 
 		Tools = {};
 	}, Crossbow)
@@ -341,9 +340,10 @@ end
 
 function Crossbow:_registerSystems(target)
 	local newSystems = {}
+	local namesBySystem = {}
 
 	forEachModulescript(target, function(module)
-		if module.name:find(".spec$") then return end
+		if module.name:find("%.spec$") then return end
 
 		local source = require(module)
 		if table.isfrozen(source) then return end
@@ -357,13 +357,33 @@ function Crossbow:_registerSystems(target)
 			return
 		end
 
-		if not self._systemsSet[source] then
-			self._systemsSet[source] = true
-			table.insert(newSystems, source)
-		end
+		namesBySystem[source] = module.Name
+		table.insert(newSystems, source)
 	end)
 
-	self.Loop:scheduleSystems(newSystems)
+	-- Optimization: Crossbow should never nest Loops, so we can actually combine
+	-- all systems into one system per event. It won't have to restart TopoRuntime or
+	-- create a new coroutine for every system.
+	local loop = Matter.Loop.new()
+	loop:scheduleSystems(newSystems)
+	local orderedSystemsByEvent = loop._orderedSystemsByEvent
+
+	for _, eventName in ipairs({"PreRender", "PreSimulation", "PostSimulation"}) do
+		self.Loop:scheduleSystem({
+			event = eventName;
+			system = function(world, components, params)
+				for _, system in ipairs(orderedSystemsByEvent[eventName] or {}) do
+					debug.profilebegin(namesBySystem[system])
+
+					xpcall(system.system, function(err)
+						task.spawn(error, debug.traceback(err, 2))
+					end, world, components, params)
+
+					debug.profileend()
+				end
+			end;
+		})
+	end
 end
 
 function Crossbow:_getComponents(target)

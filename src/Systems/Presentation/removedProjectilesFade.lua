@@ -1,6 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local PhysicsService = game:GetService("PhysicsService")
 
+local Priorities = require(script.Parent.Parent.Priorities)
 local TWEEN_INFO = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
 local function removedProjectilesFade(world, components, params)
@@ -28,4 +29,9 @@ local function removedProjectilesFade(world, components, params)
     end
 end
 
-return removedProjectilesFade
+return {
+    realm = "client";
+    system = removedProjectilesFade;
+    event = "PostSimulation";
+    priority = Priorities.Presentation;
+}
