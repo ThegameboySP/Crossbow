@@ -95,7 +95,7 @@ return function(crossbow)
 
 			raycastFilter = Value.new("defaultRaycastFilter", callbackValidator);
 			velocity = Value.new(60, t.number);
-			reloadTime = Value.new(0, t.number);
+			reloadTime = Value.new(7, t.number);
 			spawnDistance = Value.new(6, t.number);
 	
 			prefab = Value.new(Prefabs.Rocket, t.instanceIsA("Part"));
@@ -193,7 +193,7 @@ return function(crossbow)
 			buildSound = Value.new(Audio.TrowelBuild, optionalSound);
 
 			raycastFilter = Value.new("trowelRaycastFilter", callbackValidator);
-			reloadTime = Value.new(0, t.number);
+			reloadTime = Value.new(4, t.number);
 	
 			prefab = Value.new(Prefabs.TrowelBrick, t.instanceIsA("Part"));
 			pack = Value.new("TrowelWall", packValidator);
