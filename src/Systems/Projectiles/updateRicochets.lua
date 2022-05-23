@@ -1,7 +1,5 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local applyDamage = require(script.Parent.applyDamage)
-
 local function updateSuperballs(world, components, params)
     local callbacks = params.Settings.Callbacks
     local hitQueue = params.hitQueue
@@ -37,8 +35,7 @@ local function updateSuperballs(world, components, params)
 end
 
 return {
-    event = "PreSimulation";
+    event = "PostSimulation";
     system = updateSuperballs;
     priority = Priorities.Projectiles + 9;
-    after = { applyDamage };
 }

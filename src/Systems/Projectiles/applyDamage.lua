@@ -1,7 +1,7 @@
 local General = require(script.Parent.Parent.Parent.Utilities.General)
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local applyExplosion = require(script.Parent.applyExplosion)
+local updateRicochets = require(script.Parent.updateRicochets)
 
 local function applyDamage(world, components, params)
 	local settings = params.Settings
@@ -78,7 +78,7 @@ end
 
 return {
 	system = applyDamage;
-	event = "PreSimulation";
-	after = { applyExplosion };
+	event = "PostSimulation";
+	after = { updateRicochets };
 	priority = Priorities.Projectiles + 9;
 }
