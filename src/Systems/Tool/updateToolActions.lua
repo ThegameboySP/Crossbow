@@ -74,11 +74,11 @@ local function useToolActions(world, components, params)
 		local specificTool = world:get(id, components[tool.componentName])
 
 		local toolType = specificTool:getDefinition().toolType
-		if toolType == "Projectile" then
-			world:insert(id, tool:patch({
-				nextReloadTimestamp = params.currentFrame + tool.reloadTime;
-			}))
+		world:insert(id, tool:patch({
+			nextReloadTimestamp = params.currentFrame + tool.reloadTime;
+		}))
 
+		if toolType == "Projectile" then
 			local cframe = specificTool.getProjectileCFrame(tool, specificTool.spawnDistance, pos, specificTool)
 			world:spawn(
 				components.Owned(),
