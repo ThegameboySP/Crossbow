@@ -3,9 +3,13 @@ local Debris = game:GetService("Debris")
 local Prefabs = script.Parent.Parent.Parent.Assets.Prefabs
 local Priorities = require(script.Parent.Parent.Priorities)
 
+local random = Random.new()
 local function showBombshoots(_, _, params)
     for _, position in params.events:iterate("bombshoot") do
-        params.soundPlayer:queueSound(params.Settings.Bomb.bombshootSound:Get(), nil, position)
+        local sound = params.Settings.Bomb.bombshootSound:Get():Clone()
+        sound.PlaybackSpeed = random:NextNumber(0.92, 1.2)
+        params.soundPlayer:queueSound(sound, nil, position)
+
         local part = Instance.new("Part")
         part.Anchored = true
         part.CanCollide = false

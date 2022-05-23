@@ -14,7 +14,13 @@ function SoundPlayer.new(soundRoot, soundGroup)
     }, SoundPlayer)
 
     self._connection = CollectionService:GetInstanceRemovedSignal("CrossbowSound"):Connect(function(sound)
-        self._activeSoundsCount[self._soundToDiscriminator[sound]] -= 1
+        local discriminator = self._soundToDiscriminator[sound]
+        self._activeSoundsCount[discriminator] -= 1
+        
+        if self._activeSoundsCount[discriminator] == 0 then
+            self._activeSoundsCount[discriminator] = nil
+        end
+
         self._soundToDiscriminator[sound] = nil
     end)
 

@@ -1,3 +1,5 @@
+local CollectionService = game:GetService("CollectionService")
+
 local t = require(script.Parent.Parent.Parent.t)
 
 local Filters = require(script.Parent.Parent.Utilities.Filters)
@@ -39,7 +41,7 @@ return function(crossbow)
 
 	local optionalSound = t.optional(t.instanceIsA("Sound"))
 	local isTool = t.instanceIsA("Tool")
-	
+
 	return General.lockTable("Settings", {
 		Callbacks = {
 			defaultCanDamage = function(victim, attacker, damageType)
@@ -84,7 +86,10 @@ return function(crossbow)
 					or surface == Enum.SurfaceType.Glue
 			end;
 			defaultRicochetFilter = function(part)
-				return Filters.canCollide(part, "Crossbow_Projectile")
+				return
+					not CollectionService:HasTag(part, "Crossbow_Projectile")
+					and Filters.canCollide(part, "Crossbow_Projectile")
+					and not General.getCharacter(part)
 			end;
 			always = Filters.always;
 			never = Filters.never;

@@ -1,6 +1,17 @@
 local Priorities = require(script.Parent.Parent.Priorities)
+local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 
 local function showExplosions(world, components, params)
+	local displayingIds = useHookStorage()
+
+	for id, record in world:queryChanged(components.Explosion) do
+		if not record.new then
+			local part = displayingIds[id]
+			task.delay(0.5, part.Destroy, part)
+			displayingIds[id] = nil
+		end
+	end
+
 	for _, event in params.events:iterate("exploded") do
 		local part = world:get(event.newId, components.Part).part
 
@@ -17,22 +28,7 @@ local function showExplosions(world, components, params)
 		explosion.CastShadow = false
 		explosion.Parent = workspace
 
-		local newId = params.Crossbow:SpawnBind(explosion, components.Lifetime({
-			duration = 0.5;
-			timestamp = params.currentFrame;
-		}))
-
-		if world:contains(event.spawnerId) then
-			local skin = world:get(event.spawnerId, components.Skin)
-			if skin then
-				local projectile = world:get(event.spawnerId, components.Projectile)
-				if projectile and skin.explosionDecorator then
-					skin.explosionDecorator(explosion, projectile.character, newId)
-				else
-					skin.explosionDecorator(explosion, nil, newId)
-				end
-			end
-		end
+		displayingIds[event.newId] = explosion
 	end
 end
 
