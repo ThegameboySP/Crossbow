@@ -1,11 +1,10 @@
 local CollectionService = game:GetService("CollectionService")
 
-local Callbacks = require(script.Parent.Parent.Parent.Utilities.Callbacks)
 local Priorities = require(script.Parent.Parent.Priorities)
 local Components = require(script.Parent.Parent.Parent.Components)
 
 local function makeWall(trowelTool)
-    local wall = Callbacks.buildTrowel(
+    local wall = Components.TrowelTool.buildTrowel(
         function() end,
         function() return true end,
         Instance.new("Model"),

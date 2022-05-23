@@ -1,7 +1,6 @@
 local updateToolActions = require(script.Parent.updateToolActions)
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local Callbacks = require(script.Parent.Parent.Parent.Utilities.Callbacks)
 local useCoroutine = require(script.Parent.Parent.Parent.Shared.useCoroutine)
 local Components = require(script.Parent.Parent.Parent.Components)
 
@@ -12,7 +11,7 @@ local function setupTrowel(sleep, world, params, id)
     local trowelTool = world:get(trowelWall.spawnerId, Components.TrowelTool)
     local tool = world:get(trowelWall.spawnerId, Components.Tool)
 
-    return Callbacks.buildTrowel(
+    return Components.TrowelTool.buildTrowel(
         sleep,
         params.Crossbow.Settings.Callbacks[trowelTool.shouldWeld],
         world:get(id, Components.Instance).instance,
