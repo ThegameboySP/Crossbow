@@ -1,14 +1,20 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function clientExtrapolationIncoming(world, components, params)
+local function clientExtrapolationIncoming(world, params)
 	if params.Settings.Network.netMode:Get() ~= "Extrapolation" then
 		return
 	end
 
 	local proxyToClientId = useHookStorage()
 
+	for _, instance, packId, character in params.remoteEvents:iterate("in-extrap-newTool") do
+		params.Crossbow:SpawnBind(instance, params.Packs[packId](character))
+	end
+
 	for _, spawnerId in params.remoteEvents:iterate("in-extrap-projectileFailed") do
+		warn("projectile failed", spawnerId)
 		params.events:fire("queueRemove", spawnerId)
 	end
 
@@ -22,18 +28,16 @@ local function clientExtrapolationIncoming(world, components, params)
 
 	for _, spawnerId, proxyId, timestamp, name, velocity, cframe in params.remoteEvents:iterate("in-extrap-projectileSpawned") do
 		local spawnerClientId = params.serverToClientId[spawnerId]
-		local tool = world:get(spawnerClientId, components.Tool)
+		local tool = world:get(spawnerClientId, Components.Tool)
 
-		local specificTool = world:get(spawnerClientId, components[tool.componentName])
+		local specificTool = world:get(spawnerClientId, Components[tool.componentName])
 		local id = world:spawn(specificTool.pack(spawnerClientId, tool.character, velocity, cframe))
 
 		proxyToClientId[proxyId] = id
 
-		if name == "Rocket" then
-			local delta = params.currentFrame - timestamp
-
-			world:insert(id, components.Transform({
-				cframe = cframe * CFrame.new(-Vector3.zAxis * delta * velocity)
+		if useExtrapolation or name == "Rocket" then
+			world:insert(id, Components.LagCompensation({
+				timestamp = timestamp;
 			}))
 		end
 	end

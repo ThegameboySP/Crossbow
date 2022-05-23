@@ -1,8 +1,9 @@
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function updateBodies(world, components)
+local function updateBodies(world)
 	-- If a Part + FixedVelocity was just added/changed, setup physics bodies.
-	for _id, partRecord, fixedVelocity in world:queryChanged(components.Part, components.FixedVelocity) do
+	for _id, partRecord, fixedVelocity in world:queryChanged(Components.Part, Components.FixedVelocity) do
 		if partRecord.new then
 			local part = partRecord.new.part
 			part.Anchored = false
@@ -20,9 +21,9 @@ local function updateBodies(world, components)
 	end
 	
 	-- If a Part + Transform was just added/changed, set the part's CFrame.
-	for id, transformRecord, part in world:queryChanged(components.Transform, components.Part) do
+	for id, transformRecord, part in world:queryChanged(Components.Transform, Components.Part) do
 		if transformRecord.new then
-			if world:get(id, components.Superball) then
+			if world:get(id, Components.Superball) then
 				part.part.Position = transformRecord.new.cframe.Position
 			else
 				part.part.CFrame = transformRecord.new.cframe
@@ -31,21 +32,21 @@ local function updateBodies(world, components)
 		end
 	end
 
-	for _id, velocityRecord, part in world:queryChanged(components.Velocity, components.Part) do
+	for _id, velocityRecord, part in world:queryChanged(Components.Velocity, Components.Part) do
 		if velocityRecord.new then
 			part.part.AssemblyLinearVelocity = velocityRecord.new.velocity
 		end
 	end
 	
 	-- If a FixedVelocity + Part was just added/changed, update its physics bodies.
-	for _id, fixedVelocityRecord, part in world:queryChanged(components.FixedVelocity, components.Part) do
+	for _id, fixedVelocityRecord, part in world:queryChanged(Components.FixedVelocity, Components.Part) do
 		if fixedVelocityRecord.new then
 			part.part.BodyVelocity.Velocity = fixedVelocityRecord.new.velocity
 			part.part.BodyGyro.CFrame = CFrame.lookAt(Vector3.zero, fixedVelocityRecord.new.velocity)
 		end
 	end
 
-	for _id, record, part in world:queryChanged(components.Antigravity, components.Part) do
+	for _id, record, part in world:queryChanged(Components.Antigravity, Components.Part) do
 		if record.new then
 			part.part.Anchored = false
 

@@ -1,11 +1,12 @@
 local component = require(script.Parent.Parent.Parent.Parent.Matter).component
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local OriginalColor = component()
 local WHITE = Color3.fromRGB(255, 255, 255)
 
-local function showRicochetColor(world, components)
-    for id, part, ricochets in world:query(components.Part, components.Ricochets):without(OriginalColor) do
+local function showRicochetColor(world)
+    for id, part, ricochets in world:query(Components.Part, Components.Ricochets):without(OriginalColor) do
         if ricochets.maxRicochets > 1 then
             world:insert(id, OriginalColor({
                 color = part.part.Color;
@@ -13,7 +14,7 @@ local function showRicochetColor(world, components)
         end
     end
 
-    for _id, ricochetsRecord, part, originalColor in world:queryChanged(components.Ricochets, components.Part, OriginalColor) do
+    for _id, ricochetsRecord, part, originalColor in world:queryChanged(Components.Ricochets, Components.Part, OriginalColor) do
         local ricochets = ricochetsRecord.new
         
         if ricochets then

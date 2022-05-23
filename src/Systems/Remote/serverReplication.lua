@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local NULL = string.char(0)
 
@@ -49,7 +50,7 @@ end}
 local newPlayers = {}
 local EMPTY_TBL = table.freeze({})
 
-local function serverReplication(world, components, params)
+local function serverReplication(world, params)
 	local newComponents = {}
 	local removedComponents = {}
 
@@ -63,7 +64,7 @@ local function serverReplication(world, components, params)
 	-- This isn't what we want, so we need to store old component values ourselves.
 	local oldValues = setmetatable(useHookStorage(), returnTableMt)
 
-	for _, definition in pairs(components) do
+	for _, definition in pairs(Components) do
 		if definition.noReplicate then continue end
 		
 		for id, record in world:queryChanged(definition) do
@@ -103,7 +104,7 @@ local function serverReplication(world, components, params)
 	if next(newPlayers) then
 		local new = {}
 
-		for _, definition in pairs(components) do
+		for _, definition in pairs(Components) do
 			if definition.noReplicate then continue end
 
 			for id, component in world:query(definition) do

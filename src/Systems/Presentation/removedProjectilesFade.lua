@@ -3,16 +3,18 @@ local PhysicsService = game:GetService("PhysicsService")
 
 local Priorities = require(script.Parent.Parent.Priorities)
 local removeQueued = require(script.Parent.Parent.Core.removeQueued)
+local Components = require(script.Parent.Parent.Parent.Components)
+
 local TWEEN_INFO = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
-local function removedProjectilesFade(_, components, params)
-    -- Don't use :queryChanged here because we need access to various of its old components.
+local function removedProjectilesFade(_, params)
+    -- Don't use :queryChanged here because we need access to various of its old Components.
     for _, removedBin in pairs(params.removedBins) do
-        if not removedBin[components.Superball] and not removedBin[components.SlingshotPellet] then
+        if not removedBin[Components.Superball] and not removedBin[Components.SlingshotPellet] then
             continue
         end
 
-        local part = removedBin[components.Part]
+        local part = removedBin[Components.Part]
         if part == nil then
             continue
         end

@@ -4,11 +4,12 @@ local UserInputService = game:GetService("UserInputService")
 local Priorities = require(script.Parent.Parent.Priorities)
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local useEvent = require(script.Parent.Parent.Parent.Parent.Matter).useEvent
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local overlapParams = OverlapParams.new()
 overlapParams.FilterType = Enum.RaycastFilterType.Blacklist
 
-local function superballFireDoubleJumps(world, components, params)
+local function superballFireDoubleJumps(world, params)
     local storage = useHookStorage(nil, function(state)
         state.jumpedCharacter = nil
         state.lastJumpRequest = 0
@@ -40,7 +41,7 @@ local function superballFireDoubleJumps(world, components, params)
         lastInputType == Enum.UserInputType.Touch
         or lastInputType == Enum.UserInputType.Gamepad1
 
-    for id, record, projectile, part in world:queryChanged(components.Superball, components.Projectile, components.Part, components.Owned) do
+    for id, record, projectile, part in world:queryChanged(Components.Superball, Components.Projectile, Components.Part, Components.Owned) do
         if 
             (not usingAltInput or ((params.currentFrame - storage.lastJumpRequest) > 0.4))
             and not UserInputService:IsKeyDown(Enum.KeyCode.Space)

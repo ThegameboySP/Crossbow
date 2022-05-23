@@ -1,8 +1,9 @@
 local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local Priorities = require(script.Parent.Parent.Priorities)
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function clientExtrapolationOutgoing(world, components, params)
+local function clientExtrapolationOutgoing(world, params)
 	if params.Settings.Network.netMode:Get() ~= "Extrapolation" then
 		return
 	end
@@ -12,7 +13,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 	if Matter.useThrottle(params.Settings.Network.extrapolationFrequency:Get()) then
 		local packets = {}
 
-		for id, part in world:query(components.Part, components.Projectile, components.Owned):without(components.Rocket) do
+		for id, part in world:query(Components.Part, Components.Projectile, Components.Owned):without(Components.Rocket) do
 			local position = part.part.Position
 			table.insert(packets, {id, position})
 		end
@@ -22,7 +23,7 @@ local function clientExtrapolationOutgoing(world, components, params)
 		end
 	end
 
-	for id, projectileRecord, part in world:queryChanged(components.Projectile, components.Part, components.Owned) do
+	for id, projectileRecord, part in world:queryChanged(Components.Projectile, Components.Part, Components.Owned) do
 		if projectileRecord.new and not projectileRecord.old then
 			localIds[id] = true
 
@@ -42,14 +43,14 @@ local function clientExtrapolationOutgoing(world, components, params)
 	end
 
 	for _, record in params.events:iterate("damaged") do
-		params.remoteEvents:fire("out", "extrap-damaged", record.humanoid, record.damage, record.damageType)
+		params.remoteEvents:fire("out", "extrap-damaged", record)
 	end
 
 	for _, event in params.events:iterate("exploded") do
 		if
 			not event.isOwned
 			or not world:contains(event.spawnerId)
-			or not world:get(event.spawnerId, components.Projectile)
+			or not world:get(event.spawnerId, Components.Projectile)
 		then
 			continue
 		end

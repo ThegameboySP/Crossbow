@@ -12,6 +12,7 @@ local Definitions = require(script.Parent.Shared.Definitions)
 local Filters = require(script.Parent.Utilities.Filters)
 local Signal = require(script.Parent.Utilities.Signal)
 local Input = require(script.Parent.Input.Input)
+local Components = require(script.Parent.Components)
 
 local HotReloader = require(script.HotReloader)
 local defaultBindings = require(script.defaultBindings)
@@ -45,7 +46,6 @@ function Crossbow.new()
 	local world = Matter.World.new()
 
 	local self = setmetatable({
-		Components = nil;
 		Settings = nil;
 		Packs = nil;
 		Input = nil;
@@ -77,10 +77,6 @@ function Crossbow.new()
 		self.Settings = newSettings
 		self.Params.Packs = newPacks
 		self.Packs = newPacks
-
-		if not self.Components then
-			self.Components = self:_getComponents(script.Parent.Components)
-		end
 		init()
 	end
 
@@ -89,7 +85,7 @@ function Crossbow.new()
 	end
 	
 	reload()
-	self.Loop = Matter.Loop.new(world, self.Components, params)
+	self.Loop = Matter.Loop.new(world, params)
 
 	return self
 end
@@ -219,9 +215,9 @@ function Crossbow:GetProjectile(part)
 	local id = part:GetAttribute(self.Params.entityKey)
 
 	if id and self.World:contains(id) then
-		local projectile = self.World:get(id, self.Components.Projectile)
+		local projectile = self.World:get(id, Components.Projectile)
 		if projectile then
-			return id, projectile, self.World:get(id, self.Components[projectile.componentName])
+			return id, projectile, self.World:get(id, Components[projectile.componentName])
 		end
 	end
 
@@ -243,7 +239,7 @@ function Crossbow:_errorIfBound(instance, newId)
 	local id = instance:GetAttribute(self.Params.entityKey)
 
 	if id and id ~= newId and self.World:contains(id) then
-		local component = self.World:get(id, self.Components.Instance)
+		local component = self.World:get(id, Components.Instance)
 
 		if component and component.instance == instance then
 			error(("%s is already bound to a Matter entity. Did you forget to remove the Instance component?"):format(instance:GetFullName()), 3)
@@ -268,16 +264,16 @@ function Crossbow:InsertBind(instance, id, ...)
 	
 	if part then 
 		return id, self.World:insert(id,
-			self.Components.Part({
+			Components.Part({
 				part = part;
 			}),
-			self.Components.Instance({
+			Components.Instance({
 				instance = instance;
 			}),
 			...
 		)	
 	else
-		return id, self.World:insert(id, self.Components.Instance({
+		return id, self.World:insert(id, Components.Instance({
 			instance = instance;
 		}), ...)
 	end
@@ -299,7 +295,7 @@ function Crossbow:AddToolsToCharacter(character)
 		local tool = entry.prefab:Clone()
 
 		local pack = self.Packs[entry.packName]
-		self:SpawnBind(tool, self.Components.Owner({client = player}), pack(character))
+		self:SpawnBind(tool, Components.Owner({client = player}), pack(character))
 		tool.Parent = backpack
 	end
 end
@@ -385,20 +381,6 @@ function Crossbow:_registerSystems(target)
 			end;
 		})
 	end
-end
-
-function Crossbow:_getComponents(target)
-	local components = {}
-
-	forEachModulescript(target, function(module)
-		local getComponent = require(module)
-		local component = getComponent(self.Settings) or error("No component returned by module: " .. module.Name)
-		components[module.Name] = component
-	end)
-
-	return setmetatable(components, {__index = function(_, k)
-		error(("No component named %q!"):format(k), 2)
-	end})
 end
 
 function forEachModulescript(target, handler)

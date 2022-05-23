@@ -1,7 +1,8 @@
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function applyExplosion(world, components, params)
-	for id, part, explodeOnTouch in world:query(components.Part, components.ExplodeOnTouch, components.Owned) do
+local function applyExplosion(world, params)
+	for id, part, explodeOnTouch in world:query(Components.Part, Components.ExplodeOnTouch, Components.Owned) do
 		local queue = params.hitQueue[id]
 		if queue == nil then
 			continue
@@ -39,7 +40,7 @@ local function applyExplosion(world, components, params)
 		local newId = params.Crossbow:SpawnBind(collision, params.Packs.Explosion(damage))
 
 		if isOwned then
-			world:insert(newId, components.Owned())
+			world:insert(newId, Components.Owned())
 		end
 
 		params.events:fire("exploded", table.freeze({

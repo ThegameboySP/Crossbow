@@ -1,7 +1,8 @@
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function playSuperballSounds(world, components, params)
+local function playSuperballSounds(world, params)
     local currentFrame = params.currentFrame
 
     local lastPlayed = useHookStorage()
@@ -16,18 +17,18 @@ local function playSuperballSounds(world, components, params)
             continue
         end
         
-        local superball = world:get(id, components.Superball)
+        local superball = world:get(id, Components.Superball)
         if superball == nil then
             continue
         end
 
-        local spawnerId = world:get(id, components.Projectile).spawnerId
+        local spawnerId = world:get(id, Components.Projectile).spawnerId
 
         if params.soundPlayer:getActiveSoundCount(spawnerId) == 0 then
             if params.soundPlayer:queueSound(
                 params.Settings.Superball.bounceSound:Get(),
                 nil,
-                world:get(id, components.Part).part.Position,
+                world:get(id, Components.Part).part.Position,
                 2
             ) then
                 lastPlayed[id] = currentFrame

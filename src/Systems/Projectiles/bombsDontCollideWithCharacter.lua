@@ -1,13 +1,14 @@
 local component = require(script.Parent.Parent.Parent.Parent.Matter).component
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local NoCollision = component()
 local Processed = component()
 
 local xz = Vector3.new(1, 0, 1)
 
-local function bombsDontCollideWithCharacter(world, components)
-    for id, part, projectile in world:query(components.Part, components.Projectile, components.Bomb, components.Owned):without(Processed) do
+local function bombsDontCollideWithCharacter(world)
+    for id, part, projectile in world:query(Components.Part, Components.Projectile, Components.Bomb, Components.Owned):without(Processed) do
         local bombPart = part.part
         local noCollision = world:get(id, NoCollision)
 

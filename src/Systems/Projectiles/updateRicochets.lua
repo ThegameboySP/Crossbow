@@ -1,11 +1,12 @@
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function updateSuperballs(world, components, params)
+local function updateSuperballs(world, params)
     local callbacks = params.Settings.Callbacks
     local hitQueue = params.hitQueue
     local currentFrame = params.currentFrame
 
-    for id, ricochets in world:query(components.Ricochets, components.Owned) do
+    for id, ricochets in world:query(Components.Ricochets, Components.Owned) do
         local queue = hitQueue[id]
         if queue == nil then
             continue

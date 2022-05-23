@@ -1,10 +1,11 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function removedQueued(world, components, params)
+local function removedQueued(world, params)
 	local query = useHookStorage()
 
-	for id, lifetimeRecord in world:queryChanged(components.Lifetime) do
+	for id, lifetimeRecord in world:queryChanged(Components.Lifetime) do
 		if lifetimeRecord.new then
 			query[id] = lifetimeRecord.new
 		else
@@ -26,7 +27,7 @@ local function removedQueued(world, components, params)
 			local bin = {}
 			params.removedBins[id] = bin
 
-			for _, metatable in pairs(components) do
+			for _, metatable in pairs(Components) do
 				bin[metatable] = world:get(id, metatable)
 			end
 
@@ -34,14 +35,14 @@ local function removedQueued(world, components, params)
 		end
 	end
 
-	for _id, instanceRecord in world:queryChanged(components.Instance) do
+	for _id, instanceRecord in world:queryChanged(Components.Instance) do
 		if instanceRecord.new == nil then
 			instanceRecord.old.instance.Parent = nil
 		end
 	end
 
-	for id in world:query(components.LagCompensation) do
-		world:remove(id, components.LagCompensation)
+	for id in world:query(Components.LagCompensation) do
+		world:remove(id, Components.LagCompensation)
 	end
 end
 

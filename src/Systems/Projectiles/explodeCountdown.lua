@@ -1,5 +1,6 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 local useCoroutine = require(script.Parent.Parent.Parent.Shared.useCoroutine)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local function tickBomb(sleep, explodeCountdown)
     local interval = explodeCountdown.startingInterval
@@ -14,9 +15,9 @@ local function tickBomb(sleep, explodeCountdown)
     end
 end
 
-local function presentationHandler(world, components, params)
+local function presentationHandler(world, params)
     for _, id, color in params.events:iterate("explodeCountdown-ticked") do
-        local part, explodeCountdown = world:get(id, components.Part, components.ExplodeCountdown)
+        local part, explodeCountdown = world:get(id, Components.Part, Components.ExplodeCountdown)
         if part then
             part.part.Color = color
 
@@ -27,9 +28,9 @@ local function presentationHandler(world, components, params)
     end
 end
 
-local function updateExplodeCountdown(world, components, params)
-    for id, explodeCountdown, part in world:query(components.ExplodeCountdown, components.Part) do
-        local lagCompensation = world:get(id, components.LagCompensation)
+local function updateExplodeCountdown(world, params)
+    for id, explodeCountdown, part in world:query(Components.ExplodeCountdown, Components.Part) do
+        local lagCompensation = world:get(id, Components.LagCompensation)
         local dt
         if lagCompensation then
             dt = params.currentFrame - lagCompensation.timestamp
@@ -39,13 +40,13 @@ local function updateExplodeCountdown(world, components, params)
 
         local isRunning, args = useCoroutine(tickBomb, id, dt, explodeCountdown)
         if args[1] then
-            params.events:fire("queuePresentation", presentationHandler, world, components, params)
+            params.events:fire("queuePresentation", presentationHandler, world, params)
             params.events:fire("explodeCountdown-ticked", id, explodeCountdown.tickColors[args[#args][1]])
         end
         
         if not isRunning then
             params.events:fire("queueRemove", id)
-            params.events:fire("explosion", part.part.Position, explodeCountdown.radius, 100, world:get(id, components.Owned) ~= nil, id, explodeCountdown.explodeSound)
+            params.events:fire("explosion", part.part.Position, explodeCountdown.radius, 100, world:get(id, Components.Owned) ~= nil, id, explodeCountdown.explodeSound)
         end
     end
 end

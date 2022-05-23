@@ -1,3 +1,4 @@
+local Components = require(script.Parent.Parent.Parent.Components)
 local createNetworkEnvironment = require(script.Parent.Parent.Parent.Tests.createNetworkEnvironment)
 
 local clientReplication = require(script.Parent.clientReplication)
@@ -19,7 +20,7 @@ return function()
 
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(0, crossbowClient.Components.Instance)).to.be.ok()
+		expect(crossbowClient.World:get(0, Components.Instance)).to.be.ok()
 		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(0)
 	end)
 
@@ -35,7 +36,7 @@ return function()
 		runClient()
 		runServer()
 		runClient()
-		expect(crossbowClient.World:get(0, crossbowClient.Components.Instance)).to.be.ok()
+		expect(crossbowClient.World:get(0, Components.Instance)).to.be.ok()
 		expect(folder:GetAttribute(crossbowClient.Params.entityKey)).to.equal(0)
 	end)
 end

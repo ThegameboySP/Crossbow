@@ -2,11 +2,12 @@ local Players = game:GetService("Players")
 local Mouse = Players.LocalPlayer and Players.LocalPlayer:GetMouse()
 
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function updateCrosshair(world, components, params)
+local function updateCrosshair(world, params)
 	local equippingTool
 
-	for _id, tool in world:query(components.Tool, components.Owned) do
+	for _id, tool in world:query(Components.Tool, Components.Owned) do
 		if tool.isEquipped then
 			equippingTool = tool
 			break

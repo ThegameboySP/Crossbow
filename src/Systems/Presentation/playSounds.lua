@@ -1,6 +1,6 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local function playSounds(_, _, params)
+local function playSounds(_, params)
     params.soundPlayer:step()
 end
 

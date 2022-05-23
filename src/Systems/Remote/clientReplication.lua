@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local NULL = string.char(0)
 local LOCAL_PLAYER = Players.LocalPlayer
@@ -15,20 +16,20 @@ local function transformToNil(t)
 	return t
 end
 
-local function getNewComponents(world, components, id, remoteComponents)
-	debug.profilebegin("replication: reconcile components")
+local function getNewComponents(world, id, remoteComponents)
+	debug.profilebegin("replication: reconcile Components")
 
 	local newComponents = {}
 	for name, body in pairs(remoteComponents) do
-		local component = id and world:get(id, components[name])
-		local replicateFn = components[name].replicate or function(...)
+		local component = id and world:get(id, Components[name])
+		local replicateFn = Components[name].replicate or function(...)
 			return ...
 		end
 
 		if component then
 			table.insert(newComponents, component:patch(replicateFn(transformToNil(body))))
 		else
-			table.insert(newComponents, components[name].new(replicateFn(transformToNil(body))))
+			table.insert(newComponents, Components[name].new(replicateFn(transformToNil(body))))
 		end
 	end
 
@@ -37,7 +38,7 @@ local function getNewComponents(world, components, id, remoteComponents)
 	return newComponents
 end
 
-local function clientReplication(world, components, params)
+local function clientReplication(world, params)
 	local serverToClientId = params.serverToClientId
 	local clientToServerId = params.clientToServerId
 
@@ -48,9 +49,9 @@ local function clientReplication(world, components, params)
 
 			if clientId and world:contains(clientId) then
 				if name == "Owner" then
-					world:remove(clientId, components.Owned)
+					world:remove(clientId, Components.Owned)
 				end
-				world:remove(clientId, components[name])
+				world:remove(clientId, Components[name])
 
 				clientToServerId[clientId] = nil
 			end
@@ -64,7 +65,7 @@ local function clientReplication(world, components, params)
 			local clientId = serverToClientId[serverId]
 			local instanceComponent = remoteComponents.Instance
 			if instanceComponent == nil and clientId then
-				instanceComponent = world:get(clientId, components.Instance)
+				instanceComponent = world:get(clientId, Components.Instance)
 			end
 
 			if instanceComponent == nil then
@@ -89,14 +90,14 @@ local function clientReplication(world, components, params)
 			serverId = tonumber(serverId)
 			
 			local clientId = serverToClientId[serverId]
-			local componentsToInsert = getNewComponents(world, components, clientId, remoteComponents)
+			local componentsToInsert = getNewComponents(world, clientId, remoteComponents)
 			world:insert(clientId, unpack(componentsToInsert))
 
 			if remoteComponents.Owner then
 				if remoteComponents.Owner.client == LOCAL_PLAYER then
-					world:insert(clientId, components.Owned())
+					world:insert(clientId, Components.Owned())
 				else
-					world:remove(clientId, components.Owned)
+					world:remove(clientId, Components.Owned)
 				end
 			end
 		end

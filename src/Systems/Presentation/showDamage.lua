@@ -47,7 +47,7 @@ local function newGui(position, damage)
 	return part
 end
 
-local function showDamage(_, _, params)
+local function showDamage(_, params)
     for _, record in params.events:iterate("damaged") do
         local head = record.humanoid.Parent:FindFirstChild("Head")
         if head then

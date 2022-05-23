@@ -1,6 +1,6 @@
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local function fireRemotes(_, _, params)
+local function fireRemotes(_, params)
 	if not params.remoteEvents:isEmpty() then
 		if params.Crossbow.IsServer then
 			local clientEvents = {}

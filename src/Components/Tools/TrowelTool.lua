@@ -9,51 +9,47 @@ local function round(n, base)
 	return (n + base / 2) - (n + base / 2) % base
 end
 
-return function(settings)
-	return newComponent("TrowelTool", {
-		toolType = "Misc";
+return newComponent("TrowelTool", {
+    toolType = "Misc";
 
-		index = {
-			raycastFilter = settings.TrowelTool.raycastFilter;
-            shouldWeld = settings.TrowelTool.shouldWeld;
-			prefab = settings.TrowelTool.prefab;
-			pack = settings.TrowelTool.pack;
+    schema = {
+        rotation = t.number;
+        isLocked = t.boolean;
+        buildSound = t.optional(t.Instance);
+        
+        raycastFilter = t.string;
+        shouldWeld = t.string;
+        prefab = t.Instance;
+        pack = t.string;
 
-            rotationStep = settings.TrowelTool.rotationStep;
-            bricksPerRow = settings.TrowelTool.bricksPerRow;
-            bricksPerColumn = settings.TrowelTool.bricksPerColumn;
-            brickSpeed = settings.TrowelTool.brickSpeed;
-		};
+        rotationStep = t.number;
+        bricksPerRow = t.number;
+        bricksPerColumn = t.number;
+        brickSpeed = t.number;
+    };
 
-        schema = {
-            rotation = t.number;
-            isLocked = t.boolean;
-            buildSound = t.optional(t.Instance);
-        };
-
-        getAutomaticRotation = function(self, charToTrowelDir)
-            return round(math.atan2(-charToTrowelDir.Z, charToTrowelDir.X), math.rad(self.rotationStep)) + math.pi/2
-        end;
-        
-        getLookDirection = function(self, charToTrowelDir)
-            local rot = self.isLocked
-                and math.rad(self.rotation)
-                or self:getAutomaticRotation(charToTrowelDir)
-        
-            return Vector3.new(roundSmall(math.sin(rot)), 0, roundSmall(math.cos(rot))).Unit
-        end;
-        
-        getRoundedOrigin = function(_, origin, part)
-            if part then
-                origin -= part.Position + part.Size/2
-            end
-        
-            local roundedOrigin = Vector3.new(math.round(origin.X), math.round(origin.Y), math.round(origin.Z))
-            if part then
-                roundedOrigin += part.Position + part.Size/2
-            end
-        
-            return roundedOrigin
+    getAutomaticRotation = function(self, charToTrowelDir)
+        return round(math.atan2(-charToTrowelDir.Z, charToTrowelDir.X), math.rad(self.rotationStep)) + math.pi/2
+    end;
+    
+    getLookDirection = function(self, charToTrowelDir)
+        local rot = self.isLocked
+            and math.rad(self.rotation)
+            or self:getAutomaticRotation(charToTrowelDir)
+    
+        return Vector3.new(roundSmall(math.sin(rot)), 0, roundSmall(math.cos(rot))).Unit
+    end;
+    
+    getRoundedOrigin = function(_, origin, part)
+        if part then
+            origin -= part.Position + part.Size/2
         end
-	})
-end
+    
+        local roundedOrigin = Vector3.new(math.round(origin.X), math.round(origin.Y), math.round(origin.Z))
+        if part then
+            roundedOrigin += part.Position + part.Size/2
+        end
+    
+        return roundedOrigin
+    end
+})

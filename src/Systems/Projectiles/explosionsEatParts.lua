@@ -1,12 +1,14 @@
 local CollectionService = game:GetService("CollectionService")
 
 local Priorities = require(script.Parent.Parent.Priorities)
+local generateCollisions = require(script.Parent.generateCollisions)
 local General = require(script.Parent.Parent.Parent.Utilities.General)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function explosionsEatParts(world, components, params)
+local function explosionsEatParts(world, params)
     local maxMass = params.Settings.ExplosionsEatParts.maxMass:Get()
 
-    for id in world:query(components.Part, components.Explosion) do
+    for id in world:query(Components.Part, Components.Explosion) do
         local queue = params.hitQueue[id]
         if queue == nil then
             continue
@@ -28,6 +30,7 @@ end
 
 return {
     system = explosionsEatParts;
-    event = "PostSimulation";
-    priority = Priorities.Projectiles;
+    event = "PreSimulation";
+    priority = Priorities.CoreAfter + 9;
+    after = { generateCollisions };
 }

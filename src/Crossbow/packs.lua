@@ -1,8 +1,9 @@
+local Components = require(script.Parent.Parent.Components)
+
 local function generateToolPack(crossbow)
 	return function(generate)
 		return function(character, params)
 			params = params or {}
-			local components = crossbow.Components
 			local userComponents = {generate(params, character)}
 			local toolComponent = userComponents[1]
 
@@ -10,7 +11,7 @@ local function generateToolPack(crossbow)
 			local settings = crossbow.Settings[componentName]
 
 			return
-				components.Tool({
+				Components.Tool({
 					character = character;
 					componentName = componentName;
 
@@ -23,20 +24,19 @@ local function generateToolPack(crossbow)
 	end
 end
 
-local function generateProjectilePack(crossbow)
+local function generateProjectilePack()
 	return function(generate)
 		return function(spawnerId, character, velocity, cframe, params)
-			local components = crossbow.Components
 			local userComponents = {generate(params or {}, spawnerId, character, velocity, cframe)}
 			local projectileComponent = userComponents[1]
 
 			return
-				components.Projectile({
+				Components.Projectile({
 					spawnerId = spawnerId;
 					componentName = projectileComponent:getDefinition().componentName;
 					character = character;
 				}),
-				components.Transform({
+				Components.Transform({
 					cframe = cframe
 				}),
 				unpack(userComponents)
@@ -44,51 +44,61 @@ local function generateProjectilePack(crossbow)
 	end
 end
 
-local function bind(crossbow, name)
-	return function()
-		return crossbow.Components[name]()
-	end
-end
-
 return function(crossbow, onInit)
 	local toolPack = generateToolPack(crossbow)
-	local projectilePack = generateProjectilePack(crossbow)
+	local projectilePack = generateProjectilePack()
 	
-	local components
 	local settings
 	onInit(function()
-		components = crossbow.Components
 		settings = crossbow.Settings
 	end)
 
 	return {
-		RocketTool = toolPack(bind(crossbow, "RocketTool"));
+		RocketTool = toolPack(function()
+			return
+				Components.RocketTool({
+					raycastFilter = settings.RocketTool.raycastFilter:Get();
+					velocity = settings.RocketTool.velocity:Get();
+					spawnDistance = settings.RocketTool.spawnDistance:Get();
+					prefab = settings.RocketTool.prefab:Get();
+					pack = settings.RocketTool.pack:Get();
+				})
+		end);
 		Rocket = projectilePack(function(params, _, _, velocity, cframe)
 			return
-				components.Rocket(),
-				components.FixedVelocity({
+				Components.Rocket(),
+				Components.FixedVelocity({
 					velocity = cframe.LookVector * velocity;
 				}),
-				components.ExplodeOnTouch({
+				Components.ExplodeOnTouch({
 					damage = params.explosionDamage or settings.Rocket.explosionDamage:Get():get();
 					radius = params.explosionRadius or settings.Rocket.explosionRadius:Get();
 					filter = params.explodeFilter or settings.Rocket.explodeFilter:Get();
 					transform = "getPartPosAtTip";
 					explodeSound = params.explodeSound or settings.Rocket.explodeSound:Get();
 				}),
-				components.Lifetime({
+				Components.Lifetime({
 					duration = params.lifetime or settings.Rocket.lifetime:Get();
 					timestamp = crossbow.Params.currentFrame;
 				})
 		end);
-		SuperballTool = toolPack(bind(crossbow, "SuperballTool"));
+		SuperballTool = toolPack(function()
+			return
+				Components.SuperballTool({
+					raycastFilter = settings.SuperballTool.raycastFilter:Get();
+					velocity = settings.SuperballTool.velocity:Get();
+					spawnDistance = settings.SuperballTool.spawnDistance:Get();
+					prefab = settings.SuperballTool.prefab:Get();
+					pack = settings.SuperballTool.pack:Get();
+				})
+		end);
 		Superball = projectilePack(function(params, _, _, velocity, cframe)
 			return
-				components.Superball(),
-				components.Velocity({
+				Components.Superball(),
+				Components.Velocity({
 					velocity = cframe.LookVector * velocity;
 				}),
-				components.Ricochets({
+				Components.Ricochets({
 					damageMultiplier = 0.5;
 					debounce = settings.Superball.bouncePauseTime:Get();
 					filter = settings.Superball.ricochetFilter:Get();
@@ -96,7 +106,7 @@ return function(crossbow, onInit)
 					ricochets = 0;
 					timestamp = 0;
 				}),
-				components.Damage({
+				Components.Damage({
 					filter = params.canDamageFilter or settings.Superball.canDamageFilter:Get();
 					amount = params.damageAmount or settings.Superball.damageAmount:Get();
 					cooldown = params.damageCooldown or settings.Superball.damageCooldown:Get();
@@ -104,16 +114,23 @@ return function(crossbow, onInit)
 					damageType = "Hit";
 					removeOnNoDamage = true;
 				}),
-				components.Lifetime({
+				Components.Lifetime({
 					duration = params.lifetime or settings.Superball.lifetime:Get();
 					timestamp = crossbow.Params.currentFrame;
 				})
 		end);
-		BombTool = toolPack(bind(crossbow, "BombTool"));
+		BombTool = toolPack(function()
+			return
+				Components.BombTool({
+					spawnDistance = settings.BombTool.spawnDistance:Get();
+					prefab = settings.BombTool.prefab:Get();
+					pack = settings.BombTool.pack:Get();
+				})
+		end);
 		Bomb = projectilePack(function(params)
 			return
-				components.Bomb(),
-				components.ExplodeCountdown({
+				Components.Bomb(),
+				Components.ExplodeCountdown({
 					tickColors = params.tickColors or settings.Bomb.tickColors:Get();
 					startingInterval = params.startingInterval or settings.Bomb.startingInterval:Get();
 					multiplier = params.multiplier or settings.Bomb.multiplier:Get();
@@ -124,7 +141,7 @@ return function(crossbow, onInit)
 		end);
 		SwordTool = toolPack(function(params)
 			return
-				components.SwordTool({
+				Components.SwordTool({
 					state = "Idle";
 
 					slashSound = params.slashSound or settings.SwordTool.slashSound:Get();
@@ -137,7 +154,7 @@ return function(crossbow, onInit)
 					floatAmount = params.floatAmount or settings.SwordTool.floatAmount:Get();
 					floatHeight = params.floatHeight or settings.SwordTool.floatHeight:Get();
 				}),
-				components.Damage({
+				Components.Damage({
 					damage = params.idleDamage or settings.SwordTool.idleDamage:Get();
 					cooldown = params.damageCooldown or settings.SwordTool.damageCooldown:Get();
 					filter = params.damageFilter or settings.SwordTool.canDamageFilter:Get();
@@ -146,45 +163,55 @@ return function(crossbow, onInit)
 		end);
 		TrowelTool = toolPack(function()
 			return
-				components.TrowelTool({
+				Components.TrowelTool({
 					rotation = 0;
 					isLocked = false;
 					buildSound = settings.TrowelTool.buildSound:Get();
+					
+					raycastFilter = settings.TrowelTool.raycastFilter:Get();
+					shouldWeld = settings.TrowelTool.shouldWeld:Get();
+					prefab = settings.TrowelTool.prefab:Get();
+					pack = settings.TrowelTool.pack:Get();
 
 					rotationStep = settings.TrowelTool.rotationStep:Get();
 					bricksPerRow = settings.TrowelTool.bricksPerRow:Get();
 					bricksPerColumn = settings.TrowelTool.bricksPerColumn:Get();
 					brickSpeed = settings.TrowelTool.brickSpeed:Get();
-					shouldWeld = settings.TrowelTool.shouldWeld:Get();
 				})
 		end);
 		TrowelWall = function(id, pos, part, normal, dir)
 			return
-				components.TrowelWall({
+				Components.TrowelWall({
 					normal = normal;
 					part = part;
 					spawnerId = id;
 				}),
-				components.TrowelBuilding(),
-				components.Transform({
+				Components.TrowelBuilding(),
+				Components.Transform({
 					cframe = CFrame.lookAt(pos, pos - dir);
 				})
 		end;
 		SlingshotTool = toolPack(function()
 			return
-				components.SlingshotTool()
+				Components.SlingshotTool({
+					raycastFilter = settings.SlingshotTool.raycastFilter:Get();
+					velocity = settings.SlingshotTool.velocity:Get();
+					spawnDistance = settings.SlingshotTool.spawnDistance:Get();
+					prefab = settings.SlingshotTool.prefab:Get();
+					pack = settings.SlingshotTool.pack:Get();
+				})
 		end),
 		SlingshotPellet = projectilePack(function(_, _, _, velocity, cframe)
 			return
-				components.SlingshotPellet(),
-				components.Damage({
+				Components.SlingshotPellet(),
+				Components.Damage({
 					amount = settings.SlingshotPellet.damageAmount:Get();
 					damage = settings.SlingshotPellet.damage:Get();
 					filter = settings.SlingshotPellet.canDamageFilter:Get();
 					damageType = "Hit";
 					removeOnNoDamage = true;
 				}),
-				components.Ricochets({
+				Components.Ricochets({
 					damageMultiplier = 0.5;
 					debounce = settings.SlingshotPellet.bouncePauseTime:Get();
 					filter = "defaultRicochetFilter";
@@ -192,22 +219,28 @@ return function(crossbow, onInit)
 					ricochets = 0;
 					timestamp = 0;
 				}),
-				components.Velocity({
+				Components.Velocity({
 					velocity = cframe.LookVector * velocity;
 				}),
-				components.Lifetime({
+				Components.Lifetime({
 					duration = settings.SlingshotPellet.lifetime:Get();
 					timestamp = crossbow.Params.currentFrame;
 				})
 		end);
 		PaintballTool = toolPack(function()
 			return
-				components.PaintballTool()
+				Components.PaintballTool({
+					raycastFilter = settings.PaintballTool.raycastFilter:Get();
+					velocity = settings.PaintballTool.velocity:Get();
+					spawnDistance = settings.PaintballTool.spawnDistance:Get();
+					prefab = settings.PaintballTool.prefab:Get();
+					pack = settings.PaintballTool.pack:Get();
+				})
 		end);
 		PaintballPellet = projectilePack(function(_, _, _, velocity, cframe)
 			return
-				components.PaintballPellet(),
-				components.Damage({
+				Components.PaintballPellet(),
+				Components.Damage({
 					amount = settings.PaintballPellet.damageAmount:Get();
 					damage = settings.PaintballPellet.damage:Get();
 					cooldown = settings.PaintballPellet.damageCooldown:Get();
@@ -215,7 +248,7 @@ return function(crossbow, onInit)
 					damageType = "Hit";
 					removeOnNoDamage = true;
 				}),
-				components.Ricochets({
+				Components.Ricochets({
 					damageMultiplier = 1;
 					debounce = settings.PaintballPellet.ricochetDebounce:Get();
 					filter = settings.PaintballPellet.ricochetFilter:Get();
@@ -223,25 +256,25 @@ return function(crossbow, onInit)
 					ricochets = 0;
 					timestamp = 0;
 				}),
-				components.Velocity({
+				Components.Velocity({
 					velocity = cframe.LookVector * velocity;
 				}),
-				components.Antigravity({
+				Components.Antigravity({
 					factor = settings.PaintballPellet.antigravity:Get();
 				}),
-				components.Lifetime({
+				Components.Lifetime({
 					duration = settings.PaintballPellet.lifetime:Get();
 					timestamp = crossbow.Params.currentFrame;
 				})
 		end);
 		Explosion = function(damage, filter)
 			return
-				components.Explosion(),
-				components.Lifetime({
+				Components.Explosion(),
+				Components.Lifetime({
 					duration = 0;
 					timestamp = crossbow.Params.currentFrame;
 				}),
-				components.Damage({
+				Components.Damage({
 					damage = damage or settings.Explosion.damage:Get();
 					filter = filter or settings.Explosion.damageFilter:Get();
 					damageType = "Explosion";

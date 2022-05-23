@@ -4,6 +4,7 @@ local Debris = game:GetService("Debris")
 
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local random = Random.new()
 local function spatter(part)
@@ -25,7 +26,7 @@ local function spatter(part)
 	end
 end
 
-local function showPaintballPellets(world, components, params)
+local function showPaintballPellets(world, params)
     local currentFrame = params.currentFrame
     local partColors = useHookStorage()
 
@@ -36,14 +37,14 @@ local function showPaintballPellets(world, components, params)
         end
     end
     
-    for id in world:query(components.PaintballPellet) do
+    for id in world:query(Components.PaintballPellet) do
         local queue = params.hitQueue[id]
         if queue == nil then
             continue
         end
         
-        local part = world:get(id, components.Part)
-        local filter = params.Settings.Callbacks[world:get(id, components.Ricochets).filter]
+        local part = world:get(id, Components.Part)
+        local filter = params.Settings.Callbacks[world:get(id, Components.Ricochets).filter]
 
         for _, hit in ipairs(queue) do
             if filter(hit) then

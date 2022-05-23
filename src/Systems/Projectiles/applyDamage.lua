@@ -1,17 +1,18 @@
 local General = require(script.Parent.Parent.Parent.Utilities.General)
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local updateRicochets = require(script.Parent.updateRicochets)
 
-local function applyDamage(world, components, params)
+local function applyDamage(world, params)
 	local settings = params.Settings
 	local dealDamage = settings.Interfacing.dealDamage:Get()
 	local currentTime = params.currentFrame
 	local damaged = {}
 
-	for id, part, damage in world:query(components.Part, components.Damage, components.Owned) do
+	for id, part, damage in world:query(Components.Part, Components.Damage, Components.Owned) do
 		if damage.amount <= 0 then
-			world:remove(id, components.Damage)
+			world:remove(id, Components.Damage)
 			continue
 		end
 
@@ -30,13 +31,13 @@ local function applyDamage(world, components, params)
 			if humanoid.Health <= 0 then continue end
 			if damaged[part] and damaged[part][victim] then continue end
 
-			local projectile = world:get(id, components.Projectile)
+			local projectile = world:get(id, Components.Projectile)
 			local damageFilter = settings.Callbacks[damage.filter]
 			if not damageFilter(victim, projectile and projectile.character, damage.damageType) then
 				continue
 			end
 
-			local ricochets = world:get(id, components.Ricochets)
+			local ricochets = world:get(id, Components.Ricochets)
 			local damageAmount = damage.damage
 			if ricochets then
 				damageAmount *= ricochets.damageMultiplier^ricochets.ricochets
@@ -53,7 +54,7 @@ local function applyDamage(world, components, params)
 				sourceId = id;
 			}))
 
-			if not world:get(id, components.SwordTool) then
+			if not world:get(id, Components.SwordTool) then
 				params.soundPlayer:queueSound(params.Settings.Sounds.successfulHit:Get())
 			end
 

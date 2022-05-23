@@ -1,8 +1,10 @@
 local Players = game:GetService("Players")
 
 local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage)
+local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function serverExtrapolation(world, components, params)
+local function serverExtrapolation(world, params)
 	local NetworkSettings = params.Settings.Network
 	if NetworkSettings.netMode:Get() ~= "Extrapolation" then
 		return
@@ -12,12 +14,12 @@ local function serverExtrapolation(world, components, params)
 	local clientToProxyId = useHookStorage()
 
 	for _, client, spawnerId, projId, timestamp, name, cframe in params.remoteEvents:iterate("in-extrap-projectileSpawned") do
-		local tool = world:contains(spawnerId) and world:get(spawnerId, components.Tool)
+		local tool = world:contains(spawnerId) and world:get(spawnerId, Components.Tool)
 
 		if
 			not tool
 			or client ~= Players:GetPlayerFromCharacter(tool.character)
-			or not tool:canFire(params.currentFrame)
+			or not tool.fireEnabled or params.currentFrame - tool.nextReloadTimestamp < 0
 		then
 			params.remoteEvents:fire("out", "extrap-projectileFailed", client, projId)
 			continue
@@ -27,7 +29,7 @@ local function serverExtrapolation(world, components, params)
 		clientToProxyId[client] = clientToProxyId[client] or {}
 		clientToProxyId[client][projId] = serverId
 
-		local specificTool = world:get(spawnerId, components[tool.componentName])
+		local specificTool = world:get(spawnerId, Components[tool.componentName])
 		for _, player in pairs(Players:GetPlayers()) do
 			if player ~= client then
 				params.remoteEvents:fire(
@@ -58,13 +60,13 @@ local function serverExtrapolation(world, components, params)
 				continue
 			end
 
-			local projectile = world:get(serverId, components.Projectile)
+			local projectile = world:get(serverId, Components.Projectile)
 			if projectile == nil then
 				warn(string.format("%d.Projectile does not exist", serverId))
 				continue
 			end
 
-			local owner = world:get(serverId, components.Owner)
+			local owner = world:get(serverId, Components.Owner)
 			if owner == nil or owner.client ~= client then
 				warn(string.format("%q does not own this projectile", client.Name))
 				continue
@@ -113,13 +115,14 @@ local function serverExtrapolation(world, components, params)
 		end
 	end
 
-	for _, _, humanoid, damage, damageType in params.remoteEvents:iterate("in-extrap-damaged") do
-		dealDamage(humanoid, damage, damageType, true)
+	for _, _, record in params.remoteEvents:iterate("in-extrap-damaged") do
+		dealDamage(record.humanoid, record.damage, record.damageType, true)
 	end
 end
 
 return {
 	realm = "server";
 	system = serverExtrapolation;
-	event = "PostSimulation";
+	event = "PreSimulation";
+	priority = Priorities.RemoteBefore;
 }

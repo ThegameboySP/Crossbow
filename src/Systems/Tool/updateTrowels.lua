@@ -3,18 +3,19 @@ local Priorities = require(script.Parent.Parent.Priorities)
 
 local Callbacks = require(script.Parent.Parent.Parent.Utilities.Callbacks)
 local useCoroutine = require(script.Parent.Parent.Parent.Shared.useCoroutine)
+local Components = require(script.Parent.Parent.Parent.Components)
 
-local function setupTrowel(sleep, world, components, params, id)
-    local trowelWall = world:get(id, components.TrowelWall)
-    local cframe = world:get(id, components.Transform).cframe
+local function setupTrowel(sleep, world, params, id)
+    local trowelWall = world:get(id, Components.TrowelWall)
+    local cframe = world:get(id, Components.Transform).cframe
 
-    local trowelTool = world:get(trowelWall.spawnerId, components.TrowelTool)
-    local tool = world:get(trowelWall.spawnerId, components.Tool)
+    local trowelTool = world:get(trowelWall.spawnerId, Components.TrowelTool)
+    local tool = world:get(trowelWall.spawnerId, Components.Tool)
 
     return Callbacks.buildTrowel(
         sleep,
         params.Crossbow.Settings.Callbacks[trowelTool.shouldWeld],
-        world:get(id, components.Instance).instance,
+        world:get(id, Components.Instance).instance,
         trowelTool:getLookDirection(tool:getDirection(cframe.Position, "Head")),
         trowelTool,
         trowelWall.normal,
@@ -23,14 +24,14 @@ local function setupTrowel(sleep, world, components, params, id)
     )
 end
 
-local function updateTrowels(world, components, params)
+local function updateTrowels(world, params)
     for _, id, pos, part, normal in params.events:iterate("tool-activated-fire") do
-        local trowelTool = world:get(id, components.TrowelTool)
+        local trowelTool = world:get(id, Components.TrowelTool)
         if not trowelTool then
             continue
         end
 
-        local tool = world:get(id, components.Tool)
+        local tool = world:get(id, Components.Tool)
         local dir = tool:getDirection(pos, "Head")
 
         local model = Instance.new("Model")
@@ -39,7 +40,7 @@ local function updateTrowels(world, components, params)
 
         params.Crossbow:SpawnBind(
             model,
-            components.Owned(),
+            Components.Owned(),
             params.Packs[trowelTool.pack](id, pos, part, normal, dir)
         )
 
@@ -48,13 +49,13 @@ local function updateTrowels(world, components, params)
         end
     end
 
-    for id in world:query(components.TrowelBuilding, components.TrowelWall) do
-        local isRunning = useCoroutine(setupTrowel, id, params.deltaTime, world, components, params, id)
+    for id in world:query(Components.TrowelBuilding, Components.TrowelWall) do
+        local isRunning = useCoroutine(setupTrowel, id, params.deltaTime, world, params, id)
 
         if not isRunning then
-            world:remove(id, components.TrowelBuilding)
+            world:remove(id, Components.TrowelBuilding)
 
-            world:insert(id, components.Lifetime({
+            world:insert(id, Components.Lifetime({
                 duration = params.Settings.TrowelTool.lifetime:Get();
                 timestamp = params.currentFrame;
             }))

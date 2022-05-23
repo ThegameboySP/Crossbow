@@ -4,7 +4,7 @@ local Prefabs = script.Parent.Parent.Parent.Assets.Prefabs
 local Priorities = require(script.Parent.Parent.Priorities)
 
 local random = Random.new()
-local function showBombshoots(_, _, params)
+local function showBombshoots(_, params)
     for _, position in params.events:iterate("bombshoot") do
         local sound = params.Settings.Bomb.bombshootSound:Get():Clone()
         sound.PlaybackSpeed = random:NextNumber(0.92, 1.2)

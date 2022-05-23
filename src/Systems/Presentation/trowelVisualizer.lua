@@ -2,6 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 
 local Callbacks = require(script.Parent.Parent.Parent.Utilities.Callbacks)
 local Priorities = require(script.Parent.Parent.Priorities)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local function makeWall(trowelTool)
     local wall = Callbacks.buildTrowel(
@@ -48,7 +49,7 @@ local FROM_COLOR = Color3.new(0.65, 0.65, 0.65)
 local TO_COLOR = Color3.new(1, 1, 1)
 
 local wall
-local function trowelVisualizer(world, components, params)
+local function trowelVisualizer(world, params)
     if not params.Settings.TrowelTool.visualizationEnabled:Get() then
         if wall then
             wall.Parent = nil
@@ -58,7 +59,7 @@ local function trowelVisualizer(world, components, params)
     end
     
     local equippingTrowel, equippingTool
-    for _id, tool, trowelTool in world:query(components.Tool, components.TrowelTool, components.Owned) do
+    for _id, tool, trowelTool in world:query(Components.Tool, Components.TrowelTool, Components.Owned) do
         if tool.isEquipped then
             equippingTool = tool
             equippingTrowel = trowelTool

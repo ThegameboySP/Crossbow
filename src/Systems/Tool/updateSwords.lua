@@ -2,13 +2,14 @@ local Debris = game:GetService("Debris")
 
 local Priorities = require(script.Parent.Parent.Priorities)
 local updateToolActions = require(script.Parent.updateToolActions)
+local Components = require(script.Parent.Parent.Parent.Components)
 
 local LUNGE_TIME = 0.8
 local SLASH_TIME = 0.2
 
 local function makeAnimationSetter(name)
-    return function(world, components, params, id)
-        local instance, part, swordTool = world:get(id, components.Instance, components.Part, components.SwordTool)
+    return function(world, params, id)
+        local instance, part, swordTool = world:get(id, Components.Instance, Components.Part, Components.SwordTool)
         if instance and part and swordTool then
             local tool = instance.instance
 
@@ -41,10 +42,10 @@ end
 local lungeAnimation = makeAnimationSetter("Lunge")
 local slashAnimation = makeAnimationSetter("Slash")
 
-local function updateSwords(world, components, params)
+local function updateSwords(world, params)
     local query =
-        if params.Crossbow.IsServer then world:query(components.SwordTool, components.Tool)
-        else world:query(components.SwordTool, components.Tool, components.Owned)
+        if params.Crossbow.IsServer then world:query(Components.SwordTool, Components.Tool)
+        else world:query(Components.SwordTool, Components.Tool, Components.Owned)
     
     for id, sword, tool in query do
         if sword.state == "Idle" or not tool:canFire(params.currentFrame) then
@@ -55,13 +56,13 @@ local function updateSwords(world, components, params)
             state = "Idle";
         }))
 
-        world:insert(id, world:get(id, components.Damage):patch({
+        world:insert(id, world:get(id, Components.Damage):patch({
             damage = sword.idleDamage;
         }))
     end
 
     for _, id, state in params.events:iterate("tool-activated-fire") do
-        local sword, tool, damage = world:get(id, components.SwordTool, components.Tool, components.Damage)
+        local sword, tool, damage = world:get(id, Components.SwordTool, Components.Tool, Components.Damage)
         if sword == nil or sword.state ~= "Idle" or state == "Idle" then
             continue
         end
@@ -96,15 +97,15 @@ local function updateSwords(world, components, params)
         end
     end
 
-    for id, swordRecord in world:queryChanged(components.SwordTool) do
+    for id, swordRecord in world:queryChanged(Components.SwordTool) do
         if swordRecord.new then
             local state = swordRecord.new.state
 
             if swordRecord.old == nil or state ~= swordRecord.old.state then
                 if state == "Lunging" then
-                    params.events:fire("queuePresentation", lungeAnimation, world, components, params, id)
+                    params.events:fire("queuePresentation", lungeAnimation, world, params, id)
                 elseif state == "Slashing" then
-                    params.events:fire("queuePresentation", slashAnimation, world, components, params, id)
+                    params.events:fire("queuePresentation", slashAnimation, world, params, id)
                 end
             end
         end

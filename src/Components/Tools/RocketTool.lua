@@ -1,17 +1,16 @@
 local General = require(script.Parent.Parent.Parent.Utilities.General)
 local newComponent = require(script.Parent.Parent.Parent.Shared.newComponent)
+local t = require(script.Parent.Parent.Parent.Parent.t)
 
-return function(settings)
-	return newComponent("RocketTool", {
-		toolType = "Projectile";
-		getProjectileCFrame = General.getProjectileCFrame;
+return newComponent("RocketTool", {
+	toolType = "Projectile";
+	getProjectileCFrame = General.getProjectileCFrame;
 
-		index = {
-			raycastFilter = settings.RocketTool.raycastFilter;
-			velocity = settings.RocketTool.velocity;
-			spawnDistance = settings.RocketTool.spawnDistance;
-			prefab = settings.RocketTool.prefab;
-			pack = settings.RocketTool.pack;
-		};
-	})
-end
+	schema = {
+		raycastFilter = t.string;
+		velocity = t.number;
+		spawnDistance = t.number;
+		prefab = t.Instance;
+		pack = t.string;
+	};
+})

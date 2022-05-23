@@ -1,7 +1,7 @@
 local Matter = require(script.Parent.Parent.Parent.Parent.Matter)
 local Priorities = require(script.Parent.Parent.Priorities)
 
-local function getRemotes(_, _, params)
+local function getRemotes(_, params)
 	if params.Crossbow.IsServer then
 		for _, client, events in Matter.useEvent(params.remoteEvent, "OnServerEvent") do
 			-- TODO: is this necessary?
