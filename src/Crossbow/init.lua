@@ -107,6 +107,7 @@ function Crossbow:Init(systems, customBindSignals)
 	self.Params.serverToClientId = {}
 	self.Params.clientToServerId = {}
 	self.Params.hitQueue = {}
+	self.Params.removedBins = {}
 	self.Params.currentFrame = 0
 	self.Params.previousFrame = 0
 	self.Params.deltaTime = 0

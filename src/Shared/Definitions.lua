@@ -22,6 +22,7 @@ return {
 		serverToClientId = t.table;
 		clientToServerId = t.table;
 		hitQueue = t.table;
+		removedBins = t.table;
 
 		remoteEvent = t.any;
 		
