@@ -2,13 +2,11 @@ local useHookStorage = require(script.Parent.Parent.Parent.Shared.useHookStorage
 local Priorities = require(script.Parent.Parent.Priorities)
 local Components = require(script.Parent.Parent.Parent.Components)
 
-local overlapParams = OverlapParams.new()
-overlapParams.CollisionGroup = "Crossbow_Projectile"
-
 local TRACKING_COMPONENTS = {
     Components.Damage,
     Components.Ricochets,
-    Components.ExplodeOnTouch
+    Components.ExplodeOnTouch,
+    Components.Part
 }
 
 local function generateCollisions(world, params)
@@ -19,7 +17,30 @@ local function generateCollisions(world, params)
 
     for _, component in pairs(TRACKING_COMPONENTS) do
         for id, record in world:queryChanged(component) do
-            if not record.new or not world:contains(id) or not world:get(id, Components.Part) then
+            if record.new and connections[id] then
+                continue
+            end
+
+            if not world:contains(id) or world:get(id, Components.Explosion) then
+                if connections[id] then
+                    connections[id]:Disconnect()
+                    connections[id] = nil
+                end
+
+                continue
+            end
+
+            local hasComponent = false
+            
+            for _, metatable in pairs(TRACKING_COMPONENTS) do
+                hasComponent = not not world:get(id, metatable)
+
+                if hasComponent then
+                    break
+                end
+            end
+
+            if not hasComponent then
                 if connections[id] then
                     connections[id]:Disconnect()
                     connections[id] = nil
@@ -30,10 +51,7 @@ local function generateCollisions(world, params)
 
             local part = world:get(id, Components.Part)
 
-            -- .Touched seems to ignore characters some of the time with explosions.
-            if world:get(id, Components.Explosion) then
-                params.hitQueue[id] = workspace:GetPartsInPart(part.part, overlapParams)
-            elseif not connections[id] then
+            if not connections[id] then
                 connections[id] = getTouchedSignal(part.part):Connect(function(hit)
                     local queue = params.hitQueue[id]
 

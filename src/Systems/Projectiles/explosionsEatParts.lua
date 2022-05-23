@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 
 local Priorities = require(script.Parent.Parent.Priorities)
-local generateCollisions = require(script.Parent.generateCollisions)
+local generateExplosionCollisions = require(script.Parent.generateExplosionCollisions)
 local General = require(script.Parent.Parent.Parent.Utilities.General)
 local Components = require(script.Parent.Parent.Parent.Components)
 
@@ -30,7 +30,7 @@ end
 
 return {
     system = explosionsEatParts;
-    event = "PreSimulation";
-    priority = Priorities.CoreAfter + 9;
-    after = { generateCollisions };
+    event = "PostSimulation";
+    priority = Priorities.Projectiles;
+    after = { generateExplosionCollisions };
 }
