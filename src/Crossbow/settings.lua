@@ -91,6 +91,11 @@ return function(crossbow)
 					and Filters.canCollide(part, "Crossbow_Projectile")
 					and not General.getCharacter(part)
 			end;
+			paintballRicochetFilter = function(part)
+				return
+					Filters.canCollide(part, "Crossbow_Projectile")
+					or General.getCharacter(part)
+			end;
 			always = Filters.always;
 			never = Filters.never;
 		};
@@ -257,7 +262,7 @@ return function(crossbow)
 			damageCooldown = Value.new(0, t.number);
 			canDamageFilter = Value.new("defaultCanDamage", callbackValidator);
 
-			ricochetFilter = Value.new("defaultRicochetFilter", callbackValidator);
+			ricochetFilter = Value.new("paintballRicochetFilter", callbackValidator);
 			ricochetDebounce = Value.new(0, t.number);
 
 			antigravity = Value.new(0.834, t.number);
