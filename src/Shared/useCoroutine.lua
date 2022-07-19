@@ -12,8 +12,8 @@ local function transform(state, ...)
         )
     end
 
-    if select("#", ...) > 1 then
-        table.insert(state.args, table.pack(select(2, ...)))
+    for i=2, select("#", ...) do
+        table.insert(state.args, select(i, ...))
     end
 end
 

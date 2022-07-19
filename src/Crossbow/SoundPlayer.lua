@@ -37,6 +37,8 @@ function SoundPlayer:_queueSound(sound, discriminator, binding, throttle, isForc
         return false
     end
 
+    self._activeSoundsCount[discriminator] = self:getActiveSoundCount(discriminator) + 1
+
     table.insert(self._queue, table.freeze({
         sound = sound;
         binding = binding;
@@ -46,7 +48,7 @@ function SoundPlayer:_queueSound(sound, discriminator, binding, throttle, isForc
     return true
 end
 
-function SoundPlayer:queueSound(sound, discriminator, binding,  throttle)
+function SoundPlayer:queueSound(sound, discriminator, binding, throttle)
     return self:_queueSound(sound, discriminator or sound, binding, throttle or math.huge, false)
 end
 
@@ -65,8 +67,6 @@ function SoundPlayer:step()
             CollectionService:AddTag(clone, "CrossbowSound")
             clone.SoundGroup = self._soundGroup
             self._soundToDiscriminator[clone] = record.discriminator
-
-            self._activeSoundsCount[record.discriminator] = self:getActiveSoundCount(record.discriminator) + 1
 
             if record.binding == nil then
                 clone.Parent = self._soundGroup

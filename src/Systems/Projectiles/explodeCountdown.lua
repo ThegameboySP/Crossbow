@@ -38,10 +38,10 @@ local function updateExplodeCountdown(world, params)
             dt = params.deltaTime
         end
 
-        local isRunning, args = useCoroutine(tickBomb, id, dt, explodeCountdown)
-        if args[1] then
+        local isRunning, tickIndices = useCoroutine(tickBomb, id, dt, explodeCountdown)
+        if tickIndices[1] then
             params.events:fire("queuePresentation", presentationHandler, world, params)
-            params.events:fire("explodeCountdown-ticked", id, explodeCountdown.tickColors[args[#args][1]])
+            params.events:fire("explodeCountdown-ticked", id, explodeCountdown.tickColors[tickIndices[#tickIndices]])
         end
         
         if not isRunning then
