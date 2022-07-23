@@ -14,9 +14,17 @@ local function showRicochetColor(world)
         end
     end
 
-    for _id, ricochetsRecord, part, originalColor in world:queryChanged(Components.Ricochets, Components.Part, OriginalColor) do
-        local ricochets = ricochetsRecord.new
+    for id, ricochetsRecord in world:queryChanged(Components.Ricochets) do
+        if not world:contains(id) then
+			continue
+		end
         
+        local part, originalColor = world:get(id, Components.Part, OriginalColor)
+        if not part or not originalColor then
+            continue
+        end
+
+        local ricochets = ricochetsRecord.new
         if ricochets then
             part.part.Color = originalColor.color:lerp(WHITE, ricochets.ricochets / ricochets.maxRicochets)
         end

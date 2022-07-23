@@ -3,7 +3,16 @@ local Components = require(script.Parent.Parent.Parent.Components)
 
 local function updateBodies(world)
 	-- If a Part + FixedVelocity was just added/changed, setup physics bodies.
-	for _id, partRecord, fixedVelocity in world:queryChanged(Components.Part, Components.FixedVelocity) do
+	for id, partRecord in world:queryChanged(Components.Part) do
+		if not world:contains(id) then
+			continue
+		end
+
+		local fixedVelocity = world:get(id, Components.FixedVelocity)
+		if not fixedVelocity then
+			continue
+		end
+
 		if partRecord.new then
 			local part = partRecord.new.part
 			part.Anchored = false
@@ -21,32 +30,67 @@ local function updateBodies(world)
 	end
 	
 	-- If a Part + Transform was just added/changed, set the part's CFrame.
-	for id, transformRecord, part in world:queryChanged(Components.Transform, Components.Part) do
+	for id, transformRecord in world:queryChanged(Components.Transform) do
+		if not world:contains(id) then
+			continue
+		end
+
+		local part = world:get(id, Components.Part)
+		if not part then
+			continue
+		end
+
 		if transformRecord.new then
 			if world:get(id, Components.Superball) then
 				part.part.Position = transformRecord.new.cframe.Position
 			else
 				part.part.CFrame = transformRecord.new.cframe
 			end
-			
 		end
 	end
 
-	for _id, velocityRecord, part in world:queryChanged(Components.Velocity, Components.Part) do
+	for id, velocityRecord in world:queryChanged(Components.Velocity) do
+		if not world:contains(id) then
+			continue
+		end
+
+		local part = world:get(id, Components.Part)
+		if not part then
+			continue
+		end
+
 		if velocityRecord.new then
 			part.part.AssemblyLinearVelocity = velocityRecord.new.velocity
 		end
 	end
 	
 	-- If a FixedVelocity + Part was just added/changed, update its physics bodies.
-	for _id, fixedVelocityRecord, part in world:queryChanged(Components.FixedVelocity, Components.Part) do
+	for id, fixedVelocityRecord in world:queryChanged(Components.FixedVelocity) do
+		if not world:contains(id) then
+			continue
+		end
+
+		local part = world:get(id, Components.Part)
+		if not part then
+			continue
+		end
+
 		if fixedVelocityRecord.new then
 			part.part.BodyVelocity.Velocity = fixedVelocityRecord.new.velocity
 			part.part.BodyGyro.CFrame = CFrame.lookAt(Vector3.zero, fixedVelocityRecord.new.velocity)
 		end
 	end
 
-	for _id, record, part in world:queryChanged(Components.Antigravity, Components.Part) do
+	for id, record in world:queryChanged(Components.Antigravity) do
+		if not world:contains(id) then
+			continue
+		end
+
+		local part = world:get(id, Components.Part)
+		if not part then
+			continue
+		end
+
 		if record.new then
 			part.part.Anchored = false
 

@@ -18,7 +18,7 @@ end
 local function presentationHandler(world, params)
     for _, id, color in params.events:iterate("explodeCountdown-ticked") do
         local part, explodeCountdown = world:get(id, Components.Part, Components.ExplodeCountdown)
-        if part then
+        if part and explodeCountdown then
             part.part.Color = color
 
             if explodeCountdown.tickSound then

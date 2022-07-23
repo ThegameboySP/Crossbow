@@ -23,7 +23,16 @@ local function clientExtrapolationOutgoing(world, params)
 		end
 	end
 
-	for id, projectileRecord, part in world:queryChanged(Components.Projectile, Components.Part, Components.Owned) do
+	for id, projectileRecord in world:queryChanged(Components.Projectile) do
+		if not world:contains(id) then
+			continue
+		end
+		
+		local part = world:get(id, Components.Part)
+		if not part or not world:get(id, Components.Owned) then
+			continue
+		end
+
 		if projectileRecord.new and not projectileRecord.old then
 			localIds[id] = true
 

@@ -36,7 +36,7 @@ local function removedQueued(world, params)
 	end
 
 	for _id, instanceRecord in world:queryChanged(Components.Instance) do
-		if instanceRecord.new == nil then
+		if instanceRecord.new == nil and instanceRecord.old then
 			instanceRecord.old.instance.Parent = nil
 		end
 	end

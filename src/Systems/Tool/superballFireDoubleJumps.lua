@@ -41,7 +41,16 @@ local function superballFireDoubleJumps(world, params)
         lastInputType == Enum.UserInputType.Touch
         or lastInputType == Enum.UserInputType.Gamepad1
 
-    for id, record, projectile, part in world:queryChanged(Components.Superball, Components.Projectile, Components.Part, Components.Owned) do
+    for id, record in world:queryChanged(Components.Superball) do
+        if not world:contains(id) then
+            continue
+        end
+         
+        local projectile, part, owned = world:get(id, Components.Projectile, Components.Part, Components.Owned)
+        if not projectile or not part or not owned then
+            continue
+        end
+
         if 
             (not usingAltInput or ((params.currentFrame - storage.lastJumpRequest) > 0.4))
             and not UserInputService:IsKeyDown(Enum.KeyCode.Space)

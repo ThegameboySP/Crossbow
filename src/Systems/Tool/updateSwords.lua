@@ -67,6 +67,10 @@ local function updateSwords(world, params)
             continue
         end
 
+        if tool == nil or damage == nil then
+            continue
+        end
+
         world:insert(id, sword:patch({
             state = state;
         }), damage:patch({

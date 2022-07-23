@@ -6,6 +6,6 @@ registry = "https://github.com/upliftgames/wally-index"
 exclude = ["examples", "Packages"]
 
 [dependencies]
-Matter = "evaera/matter@0.1.2"
+Matter = "evaera/matter@0.6.1"
 TestEZ = "roblox/testez@0.4.1"
 t = "osyrisrblx/t@3.0.0"
